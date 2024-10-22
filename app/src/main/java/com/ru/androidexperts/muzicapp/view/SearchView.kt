@@ -29,6 +29,6 @@ class SearchView : FrameLayout, UpdateText {
     fun removeTextChangedListener(textWatcher: TextWatcher) {
         binding.inputEditText.removeTextChangedListener(textWatcher)
     }
-    
+
     fun text() = binding.inputEditText.text.toString()
 }
