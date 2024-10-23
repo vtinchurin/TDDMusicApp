@@ -3,10 +3,10 @@ package com.ru.androidexperts.muzicapp.view.play
 import android.content.Context
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.AppCompatImageButton
 
-class PlayStopButton : View, UpdatePlayStopButton {
+class PlayStopButton : AppCompatImageButton, UpdatePlayStopButton {
 
     private lateinit var state: PlayStopUiState
 

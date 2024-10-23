@@ -15,6 +15,6 @@ interface PlayStopUiState : UiState {
         }
     }
 
-    object Play : Abstract(R.drawable.ic_play_background)
-    object Stop : Abstract(R.drawable.ic_stop_background)
+    object Play : Abstract(R.drawable.ic_play)
+    object Stop : Abstract(R.drawable.ic_stop)
 }
