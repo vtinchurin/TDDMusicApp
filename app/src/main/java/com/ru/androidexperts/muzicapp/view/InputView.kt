@@ -5,10 +5,11 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import com.ru.androidexperts.muzicapp.databinding.InputBinding
 
-class SearchView : FrameLayout, UpdateText {
+class InputView : FrameLayout, UpdateText {
 
-    private val binding = SearchBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = InputBinding.inflate(LayoutInflater.from(context), this, true)
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
