@@ -9,12 +9,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
 
-class SearchFragment : Fragment(), ClickListener.SearchFragment {
+class SearchFragment : Fragment(), RecyclerActions.Mutable {
 
     private var _binding: FragmentSearchSongsBinding? = null
     private val binding
         get() = _binding!!
     private lateinit var viewModel: SearchViewModel
+    private lateinit var adapter: GenericAdapter
 
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -38,7 +39,8 @@ class SearchFragment : Fragment(), ClickListener.SearchFragment {
 
         viewModel = requireActivity().application.searchViewModel
 
-        val adapter = GenericAdapter(
+        adapter = GenericAdapter(
+            recyclerActions = this,
             typeList = listOf(
                 UiStateType.Track,
                 UiStateType.Error,
@@ -49,9 +51,6 @@ class SearchFragment : Fragment(), ClickListener.SearchFragment {
         binding.recyclerView.adapter = adapter
         binding.inputView.addTextChangedListener(searchTextWatcher)
 
-        viewModel.startUpdates(observer = { listTrackUi ->
-            adapter.update(listTrackUi)
-        })
 
         val cachedTerm = viewModel.init(firstRun = savedInstanceState == null)
         binding.inputView.update(cachedTerm)
@@ -63,6 +62,13 @@ class SearchFragment : Fragment(), ClickListener.SearchFragment {
 
     override fun togglePlayPause(trackId: Long) {
         viewModel.togglePlayPause(trackId = trackId)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.startUpdates(observer = { listTrackUi ->
+            adapter.update(listTrackUi)
+        })
     }
 
     override fun onPause() {
@@ -77,9 +83,9 @@ class SearchFragment : Fragment(), ClickListener.SearchFragment {
     }
 }
 
-interface ClickListener {
+interface RecyclerActions {
 
-    interface Retry : ClickListener {
+    interface Retry {
         fun retry()
     }
 
@@ -87,5 +93,5 @@ interface ClickListener {
         fun togglePlayPause(trackId: Long)
     }
 
-    interface SearchFragment : Retry, TogglePlayPause
+    interface Mutable : Retry, TogglePlayPause
 }
