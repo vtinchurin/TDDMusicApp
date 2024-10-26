@@ -8,8 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
+import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
-class SearchFragment : Fragment(), RecyclerActions.Mutable {
+class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchSongsBinding? = null
     private val binding
@@ -40,28 +41,21 @@ class SearchFragment : Fragment(), RecyclerActions.Mutable {
         viewModel = requireActivity().application.searchViewModel
 
         adapter = GenericAdapter(
-            recyclerActions = this,
-            typeList = listOf(
-                UiStateType.Track,
-                UiStateType.Error,
-                UiStateType.Progress,
-                UiStateType.NoTrack
-            )
+            recyclerActions = object : RecyclerActions.Mutable {
+                override fun retry() {
+                    viewModel.fetch(term = binding.inputView.text())
+                }
+
+                override fun togglePlayPause(trackId: Long) {
+                    viewModel.togglePlayPause(trackId = trackId)
+                }
+            }
         )
         binding.recyclerView.adapter = adapter
         binding.inputView.addTextChangedListener(searchTextWatcher)
 
-
         val cachedTerm = viewModel.init(firstRun = savedInstanceState == null)
         binding.inputView.update(cachedTerm)
-    }
-
-    override fun retry() {
-        viewModel.fetch(term = binding.inputView.text())
-    }
-
-    override fun togglePlayPause(trackId: Long) {
-        viewModel.togglePlayPause(trackId = trackId)
     }
 
     override fun onResume() {
@@ -81,17 +75,4 @@ class SearchFragment : Fragment(), RecyclerActions.Mutable {
         super.onDestroyView()
         _binding = null
     }
-}
-
-interface RecyclerActions {
-
-    interface Retry {
-        fun retry()
-    }
-
-    interface TogglePlayPause {
-        fun togglePlayPause(trackId: Long)
-    }
-
-    interface Mutable : Retry, TogglePlayPause
 }
