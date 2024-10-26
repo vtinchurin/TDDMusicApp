@@ -44,12 +44,12 @@ class SearchViewModelTest {
                 )
             )
         )
-        repository.expecteTermCache(termCache = "Q")
+        repository.expectTermCache(termCache = "Q")
     }
 
     @Test
     fun initNoCacheTest() {
-        repository.expecteTermCache(termCache = "")
+        repository.expectTermCache(termCache = "")
 
         val actualTermCache = viewModel.init(firstRun = true)
         repository.checkCacheTerm(actualTermCache)
@@ -89,43 +89,9 @@ class SearchViewModelTest {
         fragment.checkUiStateCount(1)
 
         runAsync.returnResult()
-        observable.checkPostUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        observable.checkPostUiState(TRACK_LIST_BASE)
         observable.checkPostUiStateCalledCount(2)
-        fragment.checkUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        fragment.checkUiState(TRACK_LIST_BASE)
         fragment.checkUiStateCount(2)
 
         order.check(
@@ -152,43 +118,9 @@ class SearchViewModelTest {
         fragment.checkUiStateCount(1)
 
         runAsync.returnResult()
-        observable.checkPostUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        observable.checkPostUiState(TRACK_LIST_BASE)
         observable.checkPostUiStateCalledCount(2)
-        fragment.checkUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        fragment.checkUiState(TRACK_LIST_BASE)
         fragment.checkUiStateCount(2)
 
         order.check(listOf(OBSERVABLE_POST, RYNASYNC_HANDLE, REPOSITORY_LOAD, OBSERVABLE_POST))
@@ -219,7 +151,7 @@ class SearchViewModelTest {
 
     @Test
     fun recreateActivityTest() {
-        repository.expectTrackList(isSuccess = false)
+        repository.expectError()
 
         viewModel.load(term = "Q")
         observable.checkPostUiState(listOf<UiElement>(UiElement.Progress))
@@ -255,7 +187,7 @@ class SearchViewModelTest {
         val newInstanceFragmentOrderList = listOf(OBSERVABLE_POST)
         order.check(failLoadOrderList + newInstanceFragmentOrderList)
 
-        repository.expectTrackList(isSuccess = true)
+        repository.expectSuccess()
         viewModel.load(term = "Q")
 
         observable.checkPostUiState(listOf<UiElement>(UiElement.Progress))
@@ -266,43 +198,9 @@ class SearchViewModelTest {
         newInstanceFragment.checkUiStateCount(3)
 
         runAsync.returnResult()
-        observable.checkPostUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        observable.checkPostUiState(TRACK_LIST_BASE)
         observable.checkPostUiStateCalledCount(3)
-        newInstanceFragment.checkUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        newInstanceFragment.checkUiState(TRACK_LIST_BASE)
         newInstanceFragment.checkUiStateCount(3)
 
         val loadAfterRecreateOrderList =
@@ -314,49 +212,50 @@ class SearchViewModelTest {
     fun togglePlayPauseTrackTest() {
         viewModel.togglePlayPause(trackId = 1L)
 
-        observable.checkPostUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Play
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        observable.checkPostUiState(TRACK_LIST_PLAY_FIRST)
         observable.checkPostUiStateCalledCount(1)
         repository.togglePlayPauseCalledCount(1)
 
         viewModel.startUpdates(observer = fragment)
         observable.registerCalledCount(1)
-        fragment.checkUiState(
-            listOf<UiElement>(
-                TrackUi(
-                    id = 1L,
-                    authorName = "Q",
-                    trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Play
-                ),
-                TrackUi(
-                    id = 2L,
-                    authorName = "Q",
-                    trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
-                )
-            )
-        )
+        fragment.checkUiState(TRACK_LIST_PLAY_FIRST)
         fragment.checkUiStateCount(1)
 
         order.check(listOf(REPOSITORY_TOGGLE, OBSERVABLE_POST))
+    }
+
+    companion object {
+        private val TRACK_LIST_BASE = listOf<UiElement>(
+            TrackUi(
+                id = 1L,
+                authorName = "Q",
+                trackTitle = "1",
+                coverUrl = "1",
+                state = PlayStopUiState.Stop
+            ),
+            TrackUi(
+                id = 2L,
+                authorName = "Q",
+                trackTitle = "2",
+                coverUrl = "2",
+                state = PlayStopUiState.Stop
+            )
+        )
+        private val TRACK_LIST_PLAY_FIRST = listOf<UiElement>(
+            TrackUi(
+                id = 1L,
+                authorName = "Q",
+                trackTitle = "1",
+                coverUrl = "1",
+                state = PlayStopUiState.Play
+            ),
+            TrackUi(
+                id = 2L,
+                authorName = "Q",
+                trackTitle = "2",
+                coverUrl = "2",
+                state = PlayStopUiState.Stop
+            )
+        )
     }
 }
