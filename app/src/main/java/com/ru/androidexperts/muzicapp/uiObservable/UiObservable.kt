@@ -34,6 +34,7 @@ interface UiObservable<T : Any> : Update<T> {
                 cached = data
             }
 
+            //TODO refactor methods with scope functions
             override fun play(track: RecyclerItem) {
                 val tracks = cached.recyclerState().toMutableList()
                 val playedTrackIndex = tracks.indexOf(track)
