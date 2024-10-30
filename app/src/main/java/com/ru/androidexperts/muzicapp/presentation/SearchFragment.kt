@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
-import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
 class SearchFragment : Fragment() {
 
@@ -41,15 +40,7 @@ class SearchFragment : Fragment() {
         viewModel = requireActivity().application.searchViewModel
 
         adapter = GenericAdapter(
-            recyclerActions = object : RecyclerActions.Mutable {
-                override fun retry() {
-                    viewModel.fetch(term = binding.inputView.text())
-                }
-
-                override fun togglePlayPause(trackId: Long) {
-                    viewModel.togglePlayPause(trackId = trackId)
-                }
-            }
+            recyclerActions = viewModel
         )
         binding.recyclerView.adapter = adapter
         binding.inputView.addTextChangedListener(searchTextWatcher)
