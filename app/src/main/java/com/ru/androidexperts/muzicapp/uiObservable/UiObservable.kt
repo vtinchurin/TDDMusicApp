@@ -14,12 +14,13 @@ interface UiObservable<T : Any> : Update<T> {
 
         fun stop()
 
-        fun playNext()
+        fun nextTrack(): RecyclerItem
 
         class Base : Playlist<SearchUiState> {
 
             private var cached: SearchUiState = SearchUiState.Initial("")
             private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
+            private var playedTrackIndex = -1
             private var playedTrack: RecyclerItem = emptyTrack
 
             override fun update(observer: UiObserver<SearchUiState>) {
@@ -37,7 +38,11 @@ interface UiObservable<T : Any> : Update<T> {
             //TODO refactor methods with scope functions
             override fun play(track: RecyclerItem) {
                 val tracks = cached.recyclerState().toMutableList()
-                val playedTrackIndex = tracks.indexOf(track)
+                if (tracks.contains(playedTrack)) {
+                    playedTrackIndex = tracks.indexOf(playedTrack)
+                    tracks[playedTrackIndex] = playedTrack.changePlaying()
+                }
+                playedTrackIndex = tracks.indexOf(track)
                 playedTrack = track.changePlaying()
                 tracks[playedTrackIndex] = playedTrack
                 updateUi(SearchUiState.Success(recyclerState = tracks))
@@ -46,21 +51,21 @@ interface UiObservable<T : Any> : Update<T> {
             override fun stop() {
                 val tracks = cached.recyclerState().toMutableList()
                 if (tracks.contains(playedTrack)) {
-                    val playedTrackIndex = tracks.indexOf(playedTrack)
                     tracks[playedTrackIndex] = playedTrack.changePlaying()
                     updateUi(SearchUiState.Success(recyclerState = tracks))
                 }
+                playedTrackIndex = -1
                 playedTrack = emptyTrack
             }
 
-            override fun playNext() {
+            override fun nextTrack(): RecyclerItem {
                 val tracks = cached.recyclerState().toMutableList()
-                if (tracks.contains(playedTrack)) {
-                    val playedTrackIndex = tracks.indexOf(playedTrack)
-                    tracks[playedTrackIndex] = playedTrack.changePlaying()
-                    val nextTrack = tracks[playedTrackIndex + 1].changePlaying()
-                    tracks[playedTrackIndex + 1] = nextTrack
-                    updateUi(SearchUiState.Success(recyclerState = tracks))
+                return if (tracks.contains(playedTrack)) {
+                    playedTrackIndex++
+                    tracks[playedTrackIndex]
+                } else {
+                    playedTrackIndex = 0
+                    tracks[playedTrackIndex]
                 }
             }
 
