@@ -39,11 +39,10 @@ class SearchFragment : Fragment() {
 
         viewModel = requireActivity().application.searchViewModel
 
-        adapter = GenericAdapter(
+        adapter = GenericAdapter.Base(
             recyclerActions = viewModel
         )
         binding.recyclerView.adapter = adapter
-        binding.inputView.addTextChangedListener(searchTextWatcher)
 
         val cachedTerm = viewModel.init(firstRun = savedInstanceState == null)
         binding.inputView.update(cachedTerm)
@@ -51,9 +50,13 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.startUpdates(observer = { listTrackUi ->
-            adapter.update(listTrackUi)
+        viewModel.startUpdates(observer = { searchUiState ->
+            searchUiState.show(
+                input = binding.inputView,
+                adapter = adapter
+            )
         })
+        binding.inputView.addTextChangedListener(searchTextWatcher)
     }
 
     override fun onPause() {
