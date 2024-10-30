@@ -1,7 +1,5 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
-import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.view.UpdateText
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import org.junit.Assert.assertEquals
@@ -32,7 +30,7 @@ class ObservableTest {
         observable.update(observer)
         input.assertText("")
         adapter.assertRecyclerList(listOf())
-        order.check(listOf(SET_TEXT, UPDATE_UI))
+        order.check(listOf(UPDATE_UI))
     }
 
     @Test
@@ -76,7 +74,7 @@ class ObservableTest {
         adapter.assertRecyclerList(SUCCESS_LIST)
         order.check(
             listOf(
-                SET_TEXT, UPDATE_UI, SET_TEXT,
+                UPDATE_UI, SET_TEXT,
                 UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI
             )
         )
@@ -113,12 +111,61 @@ class ObservableTest {
 
         order.check(
             listOf(
-                SET_TEXT, UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
+                UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
                 UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI,
                 UPDATE_RECYCLER, UPDATE_UI
             )
         )
     }
+
+    @Test
+    fun `success result and play first and play next and stop`() {
+        observable.updateUi(SearchUiState.Initial(""))
+        observable.update(observer)
+        input.assertText("")
+        adapter.assertRecyclerList(listOf())
+        input.update("123")
+        observable.updateUi(SearchUiState.Loading)
+        input.assertText("123")
+        adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
+        input.assertText("123")
+        adapter.assertRecyclerList(SUCCESS_LIST)
+
+        observable.play(RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop))
+
+        input.assertText("123")
+        adapter.assertRecyclerList(
+            listOf(
+                RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Stop)
+            )
+        )
+
+        observable.play(observable.nextTrack())
+
+        input.assertText("123")
+        adapter.assertRecyclerList(
+            listOf(
+                RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop),
+                RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Play)
+            )
+        )
+
+        observable.stop()
+
+        input.assertText("123")
+        adapter.assertRecyclerList(SUCCESS_LIST)
+
+        order.check(
+            listOf(
+                UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
+                UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI,
+                UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI
+            )
+        )
+    }
+
 
     @Test
     fun `error no item message`() {
