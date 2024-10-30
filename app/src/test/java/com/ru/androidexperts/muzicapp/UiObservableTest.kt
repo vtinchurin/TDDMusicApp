@@ -94,13 +94,13 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
 
-        observable.play(RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop))
+        observable.play(0)
 
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -132,23 +132,23 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
 
-        observable.play(RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop))
+        observable.play(0)
 
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
             )
         )
 
-        observable.play(observable.nextTrack())
+        observable.play(1)
 
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop),
-                RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Play)
+                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Stop),
+                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Play)
             )
         )
 
@@ -188,8 +188,8 @@ class ObservableTest {
 
     companion object {
         private val SUCCESS_LIST = listOf(
-            RecyclerItem.TrackUi(1L, "1", "1", "1", "123", PlayStopUiState.Stop),
-            RecyclerItem.TrackUi(2L, "2", "2", "2", "123", PlayStopUiState.Stop)
+            RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Stop),
+            RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
         )
         private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
         private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi("No Internet"))
