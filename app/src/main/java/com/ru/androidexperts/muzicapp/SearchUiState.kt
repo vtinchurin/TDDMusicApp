@@ -1,7 +1,5 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
-import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.view.UpdateText
 
 interface SearchUiState {
@@ -27,7 +25,8 @@ interface SearchUiState {
     data class Initial(private val inputText: String) : Abstract(recyclerState = listOf()) {
 
         override fun show(input: UpdateText, adapter: GenericAdapter) {
-            input.update(inputText)
+            if (inputText != "")
+                input.update(inputText)
         }
     }
 
