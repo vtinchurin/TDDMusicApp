@@ -1,8 +1,6 @@
 package com.ru.androidexperts.muzicapp.uiObservable
 
 import com.ru.androidexperts.muzicapp.SearchUiState
-import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
-import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 
 interface UiObservable<T : Any> : Update<T> {
 
@@ -10,18 +8,15 @@ interface UiObservable<T : Any> : Update<T> {
 
     interface Playlist<T : Any> : UiObservable<T> {
 
-        fun play(track: RecyclerItem)
+        fun play(trackIndex: Int)
 
         fun stop()
-
-        fun nextTrack(): RecyclerItem
 
         class Base : Playlist<SearchUiState> {
 
             private var cached: SearchUiState = SearchUiState.Initial("")
             private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
             private var playedTrackIndex = -1
-            private var playedTrack: RecyclerItem = emptyTrack
 
             override fun update(observer: UiObserver<SearchUiState>) {
                 this.observer = observer
@@ -36,50 +31,22 @@ interface UiObservable<T : Any> : Update<T> {
             }
 
             //TODO refactor methods with scope functions
-            override fun play(track: RecyclerItem) {
+            override fun play(trackIndex: Int) {
                 val tracks = cached.recyclerState().toMutableList()
-                if (tracks.contains(playedTrack)) {
-                    playedTrackIndex = tracks.indexOf(playedTrack)
-                    tracks[playedTrackIndex] = playedTrack.changePlaying()
-                }
-                playedTrackIndex = tracks.indexOf(track)
-                playedTrack = track.changePlaying()
+                playedTrackIndex = trackIndex
+                val playedTrack = tracks[playedTrackIndex].changePlaying()
                 tracks[playedTrackIndex] = playedTrack
                 updateUi(SearchUiState.Success(recyclerState = tracks))
             }
 
             override fun stop() {
                 val tracks = cached.recyclerState().toMutableList()
-                if (tracks.contains(playedTrack)) {
-                    tracks[playedTrackIndex] = playedTrack.changePlaying()
-                    updateUi(SearchUiState.Success(recyclerState = tracks))
-                }
+                val stoppedTrack = tracks[playedTrackIndex].changePlaying()
+                tracks[playedTrackIndex] = stoppedTrack
+                updateUi(SearchUiState.Success(recyclerState = tracks))
                 playedTrackIndex = -1
-                playedTrack = emptyTrack
             }
 
-            override fun nextTrack(): RecyclerItem {
-                val tracks = cached.recyclerState().toMutableList()
-                return if (tracks.contains(playedTrack)) {
-                    playedTrackIndex++
-                    tracks[playedTrackIndex]
-                } else {
-                    playedTrackIndex = 0
-                    tracks[playedTrackIndex]
-                }
-            }
-
-            companion object {
-                private val emptyTrack =
-                    RecyclerItem.TrackUi(
-                        -777L,
-                        "https://dummydata.com",
-                        "https://dummyimage.com",
-                        "Empty",
-                        "Empty",
-                        PlayStopUiState.Stop
-                    )
-            }
         }
     }
 }
