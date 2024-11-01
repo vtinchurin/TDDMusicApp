@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "search_keys")
 data class SearchKeysCache(
+    @PrimaryKey
     @ColumnInfo("key")
     val key: String
 )

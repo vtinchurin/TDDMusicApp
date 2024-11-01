@@ -9,13 +9,16 @@ import androidx.room.Query
 interface TracksDao {
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveKey(key: String)
+    suspend fun saveKey(searchKey: SearchKeysCache)
+
+    @Query("select `key` from search_keys where 'key'=:key")
+    suspend fun key(key: String): SearchKeysCache
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTracks(tracks: List<TrackCache>)
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveTrackIdByKey(key: String, trackId: Long)
+    suspend fun saveTrackIdByKey(trackIdByKeysCache: TrackIdByKeysCache)
 
     @Query("select track_id from tracks_by_keys where search_key=:key")
     suspend fun trackIdsByKey(key: String): List<Long>
