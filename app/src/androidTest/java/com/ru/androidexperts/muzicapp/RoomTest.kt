@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ru.androidexperts.muzicapp.data.cache.SearchKeysCache
+import com.ru.androidexperts.muzicapp.data.cache.TermsCache
 import com.ru.androidexperts.muzicapp.data.cache.TrackCache
-import com.ru.androidexperts.muzicapp.data.cache.TrackIdByKeysCache
+import com.ru.androidexperts.muzicapp.data.cache.TrackIdByTermCache
 import com.ru.androidexperts.muzicapp.data.cache.TracksDao
 import com.ru.androidexperts.muzicapp.data.cache.TracksDatabase
 import kotlinx.coroutines.runBlocking
@@ -30,6 +30,7 @@ class RoomTest {
             TracksDatabase::class.java
         ).build()
         dao = database.dao()
+        database.clearAllTables()
     }
 
     @After
@@ -39,36 +40,35 @@ class RoomTest {
 
     @Test
     fun test() = runBlocking {
-        val searchKey = SearchKeysCache("key")
+        val termValue = "key"
+        val newTerm = TermsCache(term = termValue)
         val tracksList = listOf(
             TrackCache(
                 id = 1L,
-                trackTitle = "title",
-                authorName = "author",
-                coverUrl = "coverUrl",
-                sourceUrl = "sourceUrl"
+                trackTitle = "title 1",
+                authorName = "author 1",
+                coverUrl = "coverUrl 1",
+                sourceUrl = "sourceUrl 1"
             ),
             TrackCache(
                 id = 2L,
-                trackTitle = "title",
-                authorName = "author",
-                coverUrl = "coverUrl",
-                sourceUrl = "sourceUrl"
+                trackTitle = "title 2",
+                authorName = "author 2",
+                coverUrl = "coverUrl 2",
+                sourceUrl = "sourceUrl 2"
             )
         )
 
-        dao.saveKey(searchKey = searchKey)
-        assertEquals(searchKey, dao.key("key"))
+        dao.saveTerm(value = newTerm)
+        val savedTerm = dao.term(value = termValue)
+        assertEquals(savedTerm, dao.term(value = termValue))
 
         dao.saveTracks(tracksList)
-        assertEquals(tracksList[0], dao.track(1L))
-        assertEquals(tracksList[1], dao.track(2L))
-
         tracksList.forEach { track ->
-            dao.saveTrackIdByKey(TrackIdByKeysCache(searchKey = searchKey.key, trackId = track.id))
+            dao.saveTrackIdByTerm(
+                TrackIdByTermCache(termId = savedTerm.id, trackId = track.id)
+            )
         }
-
-        val trackIds = dao.trackIdsByKey(searchKey.key)
-        assertEquals(listOf(1L, 2L), trackIds)
+        assertEquals(tracksList, dao.tracksByTerm(term = termValue))
     }
 }

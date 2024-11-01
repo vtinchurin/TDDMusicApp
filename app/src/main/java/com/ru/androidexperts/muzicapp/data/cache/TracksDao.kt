@@ -9,20 +9,31 @@ import androidx.room.Query
 interface TracksDao {
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveKey(searchKey: SearchKeysCache)
+    suspend fun saveTerm(value: TermsCache)
 
-    @Query("select `key` from search_keys where 'key'=:key")
-    suspend fun key(key: String): SearchKeysCache
+    @Query("select * from terms where term=:value")
+    suspend fun term(value: String): TermsCache
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTracks(tracks: List<TrackCache>)
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveTrackIdByKey(trackIdByKeysCache: TrackIdByKeysCache)
+    suspend fun saveTrackIdByTerm(trackIdByTermCache: TrackIdByTermCache)
 
-    @Query("select track_id from tracks_by_keys where search_key=:key")
-    suspend fun trackIdsByKey(key: String): List<Long>
-
-    @Query("select * from tracks where id=:id")
-    suspend fun track(id: Long): TrackCache
+    @Query("""
+        SELECT
+            tracks.id,
+            tracks.track_title,
+            tracks.author_name,
+            tracks.cover_url,
+            tracks.source_url
+        FROM
+            tracks
+                INNER JOIN tracks_by_term
+                    ON tracks.id = tracks_by_term.track_id
+                INNER JOIN terms
+                    ON tracks_by_term.term_id = terms.id
+        WHERE
+            terms.term=:term""")
+    suspend fun tracksByTerm(term: String): List<TrackCache>
 }

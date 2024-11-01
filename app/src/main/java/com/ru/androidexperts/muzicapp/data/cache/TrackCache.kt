@@ -4,17 +4,19 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "search_keys")
-data class SearchKeysCache(
-    @PrimaryKey
-    @ColumnInfo("key")
-    val key: String
+@Entity(tableName = "terms")
+data class TermsCache(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo("id")
+    val id: Int = 0,
+    @ColumnInfo("term")
+    val term: String
 )
 
-@Entity(tableName = "tracks_by_keys", primaryKeys = ["search_key", "track_id"])
-data class TrackIdByKeysCache(
-    @ColumnInfo("search_key")
-    val searchKey: String,
+@Entity(tableName = "tracks_by_term", primaryKeys = ["term_id", "track_id"])
+data class TrackIdByTermCache(
+    @ColumnInfo("term_id")
+    val termId: Int,
     @ColumnInfo("track_id")
     val trackId: Long
 )
