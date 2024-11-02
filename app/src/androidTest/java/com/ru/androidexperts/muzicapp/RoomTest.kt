@@ -41,7 +41,7 @@ class RoomTest {
     @Test
     fun test() = runBlocking {
         val termValue = "key"
-        val newTerm = TermsCache(term = termValue)
+        val newTerm = TermsCache(id = 1001, term = termValue)
         val tracksList = listOf(
             TrackCache(
                 id = 1L,
@@ -60,13 +60,12 @@ class RoomTest {
         )
 
         dao.saveTerm(value = newTerm)
-        val savedTerm = dao.term(value = termValue)
-        assertEquals(savedTerm, dao.term(value = termValue))
+        assertEquals(true, dao.isCached(value = termValue))
 
         dao.saveTracks(tracksList)
         tracksList.forEach { track ->
             dao.saveTrackIdByTerm(
-                TrackIdByTermCache(termId = savedTerm.id, trackId = track.id)
+                TrackIdByTermCache(termId = newTerm.id, trackId = track.id)
             )
         }
         assertEquals(tracksList, dao.tracksByTerm(term = termValue))

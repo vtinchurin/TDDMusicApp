@@ -11,8 +11,8 @@ interface TracksDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTerm(value: TermsCache)
 
-    @Query("select * from terms where term=:value")
-    suspend fun term(value: String): TermsCache
+    @Query("select exists(select * from terms where term =:value)")
+    suspend fun isCached(value: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTracks(tracks: List<TrackCache>)
@@ -20,7 +20,8 @@ interface TracksDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTrackIdByTerm(trackIdByTermCache: TrackIdByTermCache)
 
-    @Query("""
+    @Query(
+        """
         SELECT
             tracks.id,
             tracks.track_title,
@@ -34,6 +35,7 @@ interface TracksDao {
                 INNER JOIN terms
                     ON tracks_by_term.term_id = terms.id
         WHERE
-            terms.term=:term""")
+            terms.term=:term"""
+    )
     suspend fun tracksByTerm(term: String): List<TrackCache>
 }
