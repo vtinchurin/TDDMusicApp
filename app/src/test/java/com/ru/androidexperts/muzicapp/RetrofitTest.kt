@@ -43,7 +43,7 @@ class RetrofitTest {
     fun test_load(): Unit = runBlocking {
         try {
             val dataList = cloudDataSource.load("Dropkick Murphys")
-            assertEquals(60, dataList.size)
+            assertEquals(12, dataList.size)
 
             val expected = TrackCloud(
                 trackId=200692683,
@@ -52,7 +52,7 @@ class RetrofitTest {
                 artworkUrl="https://is1-ssl.mzstatic.com/image/thumb/Music/92/1b/05/mzi.jifetyuy.jpg/100x100bb.jpg",
                 previewUrl="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/f6/f4/c8/f6f4c841-c09f-6841-a1a3-bad674d4eeef/mzaf_10021739629244800269.plus.aac.p.m4a"
             )
-            assertEquals(expected, dataList[1])
+            assertEquals(expected, dataList[0])
         } catch (e: Exception) {
             val exception = when (e) {
                 is IOException -> NoInternetConnectionException

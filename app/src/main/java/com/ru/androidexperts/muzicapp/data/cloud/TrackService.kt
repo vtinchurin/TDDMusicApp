@@ -9,7 +9,9 @@ interface TrackService {
 
     @GET("search")
     fun search(
-        @Query("term") term: String = ""
+        @Query("term") term: String = "",
+        @Query("media") type: String = "music",
+        @Query("limit") size: Int = 10
     ): Call<TrackResponse>
 }
 
