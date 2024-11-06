@@ -8,7 +8,7 @@ interface UiObservable<T : Any> : Update<T> {
 
     interface Playlist<T : Any> : UiObservable<T> {
 
-        fun play(trackIndex: Int)
+        fun play(trackId: Long)
 
         fun stop()
 
@@ -16,7 +16,7 @@ interface UiObservable<T : Any> : Update<T> {
 
             private var cached: SearchUiState = SearchUiState.Initial("")
             private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
-            private var playedTrackIndex = -1
+            private var playedTrackId = -1L
 
             override fun update(observer: UiObserver<SearchUiState>) {
                 this.observer = observer
@@ -30,27 +30,34 @@ interface UiObservable<T : Any> : Update<T> {
                 cached = data
             }
 
-            //TODO refactor methods with scope functions
-            override fun play(trackIndex: Int) {
+            override fun play(trackId: Long) {
                 val tracks = cached.recyclerState().toMutableList()
-                if (playedTrackIndex != -1) {
-                    val playedTrack = tracks[playedTrackIndex].changePlaying()
-                    tracks[playedTrackIndex] = playedTrack
+                tracks.apply {
+                    find {
+                        it.trackId() == playedTrackId
+                    }?.changePlaying()
+                    find { targetTrack ->
+                        targetTrack.trackId() == trackId
+                    }?.let { targetTrack ->
+                        targetTrack.changePlaying()
+                        playedTrackId = trackId
+                    }
+                }.also { newState ->
+                    updateUi(SearchUiState.Success(recyclerState = newState))
                 }
-                playedTrackIndex = trackIndex
-                val playedTrack = tracks[playedTrackIndex].changePlaying()
-                tracks[playedTrackIndex] = playedTrack
-                updateUi(SearchUiState.Success(recyclerState = tracks))
             }
 
             override fun stop() {
                 val tracks = cached.recyclerState().toMutableList()
-                val stoppedTrack = tracks[playedTrackIndex].changePlaying()
-                tracks[playedTrackIndex] = stoppedTrack
-                updateUi(SearchUiState.Success(recyclerState = tracks))
-                playedTrackIndex = -1
+                tracks.apply {
+                    find {
+                        it.trackId() == playedTrackId
+                    }?.changePlaying()
+                }.also { newState ->
+                    playedTrackId = -1L
+                    updateUi(SearchUiState.Success(recyclerState = newState))
+                }
             }
-
         }
     }
 }
