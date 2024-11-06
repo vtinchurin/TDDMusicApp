@@ -5,7 +5,7 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 
-class UpdateImageView : AppCompatImageView, UpdateImageUrl {
+class CustomImageView : AppCompatImageView, UpdateImageUrl {
 
     private var imageUrl = ""
 
