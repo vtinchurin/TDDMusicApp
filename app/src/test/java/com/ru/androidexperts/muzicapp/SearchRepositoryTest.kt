@@ -29,13 +29,13 @@ class SearchRepositoryTest {
     @Test
     fun `not cached data load`() {
         val tracks = repository.load(term = "not_cached")
-        cacheDataSource.checkContainsCalledCount(count = 1)
-        cloudDataSource.checkLoadCalledCount(count = 1)
-        cacheDataSource.checkSaveCalledCount(count = 1)
+        cacheDataSource.assertContainsCalledCount(count = 1)
+        cloudDataSource.assertLoadCalledCount(count = 1)
+        cacheDataSource.assertSaveCalledCount(count = 1)
         cacheDataSource.assertResult(CLOUD_AND_CACHED_TRACKS)
         assertEquals(tracks, CLOUD_AND_CACHED_TRACKS)
         cachedTerm.assertValue("not_cached")
-        order.check(
+        order.assert(
             listOf(
                 SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
@@ -49,13 +49,13 @@ class SearchRepositoryTest {
     @Test
     fun `cached data load`() {
         val tracks = repository.load(term = "cached")
-        cacheDataSource.checkContainsCalledCount(count = 1)
-        cloudDataSource.checkLoadCalledCount(count = 0)
-        cacheDataSource.checkSaveCalledCount(count = 0)
+        cacheDataSource.assertContainsCalledCount(count = 1)
+        cloudDataSource.assertLoadCalledCount(count = 0)
+        cacheDataSource.assertSaveCalledCount(count = 0)
         cacheDataSource.assertResult(CACHED_TRACKS)
         assertEquals(tracks, CACHED_TRACKS)
         cachedTerm.assertValue("cached")
-        order.check(
+        order.assert(
             listOf(
                 SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
@@ -102,9 +102,9 @@ class SearchRepositoryTest {
 
 private interface FakeCacheDataSource : CacheDataSource {
 
-    fun checkContainsCalledCount(count: Int)
+    fun assertContainsCalledCount(count: Int)
 
-    fun checkSaveCalledCount(count: Int)
+    fun assertSaveCalledCount(count: Int)
 
     fun checkLoadCalledCount(count: Int)
 
@@ -120,11 +120,11 @@ private interface FakeCacheDataSource : CacheDataSource {
         private var loadCalledCount = 0
         private var cachedTrackList = listOf<TrackCache>()
 
-        override fun checkContainsCalledCount(count: Int) {
+        override fun assertContainsCalledCount(count: Int) {
             assertEquals(count, containsCalledCount)
         }
 
-        override fun checkSaveCalledCount(count: Int) {
+        override fun assertSaveCalledCount(count: Int) {
             assertEquals(count, saveCalledCount)
         }
 
@@ -170,7 +170,7 @@ private interface FakeCacheDataSource : CacheDataSource {
 
 private interface FakeCloudDataSource : CloudDataSource {
 
-    fun checkLoadCalledCount(count: Int)
+    fun assertLoadCalledCount(count: Int)
 
     class Base(private val order: Order) : FakeCloudDataSource {
 
@@ -192,7 +192,7 @@ private interface FakeCloudDataSource : CloudDataSource {
             )
         )
 
-        override fun checkLoadCalledCount(count: Int) {
+        override fun assertLoadCalledCount(count: Int) {
             assertEquals(count, loadCalledCount)
         }
 
