@@ -13,31 +13,31 @@ interface SearchUiState {
 
     abstract class Abstract(
         private val recyclerState: List<RecyclerItem>,
+        private val inputText: String
     ) : SearchUiState {
 
         override fun show(input: UpdateText, adapter: GenericAdapter) {
             adapter.update(recyclerState)
+            if (inputText != "")
+                input.update(inputText)
         }
 
         override fun recyclerState() = recyclerState
     }
 
-    data class Initial(private val inputText: String) : Abstract(recyclerState = listOf()) {
-
-        override fun show(input: UpdateText, adapter: GenericAdapter) {
-            if (inputText != "")
-                input.update(inputText)
-        }
-    }
+    object Initial : Abstract(recyclerState = listOf(), inputText = "")
 
     data class Success(
         private val recyclerState: List<RecyclerItem>,
-    ) : Abstract(recyclerState = recyclerState)
+        private val inputText: String
+    ) : Abstract(recyclerState = recyclerState, inputText = inputText)
 
-    data class Error(private val message: String) :
-        Abstract(recyclerState = listOf(RecyclerItem.ErrorUi(message)))
+    data class Error(private val message: String, private val inputText: String) :
+        Abstract(recyclerState = listOf(RecyclerItem.ErrorUi(message)), inputText = inputText)
 
-    object Loading : Abstract(recyclerState = listOf(RecyclerItem.ProgressUi))
+    data class Load(private val inputText: String) :
+        Abstract(recyclerState = listOf(RecyclerItem.ProgressUi), inputText = inputText)
 
-    object NoTracks : Abstract(recyclerState = listOf(RecyclerItem.NoTracksUi))
+    data class NoTracks(private val inputText: String) :
+        Abstract(recyclerState = listOf(RecyclerItem.NoTracksUi), inputText = inputText)
 }
