@@ -1,5 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -29,12 +31,12 @@ class SearchRepositoryTest {
 
     @Test
     fun `not cached data load`(): Unit = runBlocking {
-        val tracks: List<Model> = repository.load(term = "not_cached")
+        val tracks: LoadResult = repository.load(term = "not_cached")
         cacheDataSource.assertContainsCalledCount(count = 1)
         cloudDataSource.assertLoadCalledCount(count = 1)
         cacheDataSource.assertSaveCalledCount(count = 1)
         cacheDataSource.assertResult(CLOUD_AND_CACHED_TRACKS)
-        assertEquals(tracks, LOAD_RESULT)
+        assertEquals(tracks, SUCCESS_LOAD_RESULT)
         cachedTerm.assertValue("not_cached")
         order.assert(
             listOf(
@@ -49,12 +51,12 @@ class SearchRepositoryTest {
 
     @Test
     fun `cached data load`(): Unit = runBlocking {
-        val tracks: List<Model> = repository.load(term = "cached")
+        val tracks: LoadResult = repository.load(term = "cached")
         cacheDataSource.assertContainsCalledCount(count = 1)
         cloudDataSource.assertLoadCalledCount(count = 0)
         cacheDataSource.assertSaveCalledCount(count = 0)
         cacheDataSource.assertResult(CACHED_TRACKS)
-        assertEquals(tracks, LOAD_RESULT)
+        assertEquals(tracks, SUCCESS_LOAD_RESULT)
         cachedTerm.assertValue("cached")
         order.assert(
             listOf(
@@ -98,20 +100,22 @@ class SearchRepositoryTest {
                 sourceUrl = "sourceUrl 4"
             )
         )
-        private val LOAD_RESULT: List<Model> = listOf(
-            Model.Track(
-                id = 3L,
-                trackTitle = "title 3",
-                authorName = "author 3",
-                coverUrl = "coverUrl 3",
-                sourceUrl = "sourceUrl 3"
-            ),
-            Model.Track(
-                id = 4L,
-                trackTitle = "title 4",
-                authorName = "author 4",
-                coverUrl = "coverUrl 4",
-                sourceUrl = "sourceUrl 4"
+        private val SUCCESS_LOAD_RESULT: LoadResult = LoadResult.Tracks(
+            data = listOf(
+                TrackModel.Base(
+                    id = 3L,
+                    trackTitle = "title 3",
+                    authorName = "author 3",
+                    coverUrl = "coverUrl 3",
+                    sourceUrl = "sourceUrl 3"
+                ),
+                TrackModel.Base(
+                    id = 4L,
+                    trackTitle = "title 4",
+                    authorName = "author 4",
+                    coverUrl = "coverUrl 4",
+                    sourceUrl = "sourceUrl 4"
+                )
             )
         )
     }
