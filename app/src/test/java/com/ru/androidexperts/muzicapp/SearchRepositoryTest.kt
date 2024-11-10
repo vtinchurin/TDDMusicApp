@@ -29,7 +29,7 @@ class SearchRepositoryTest {
 
     @Test
     fun `not cached data load`(): Unit = runBlocking {
-        val tracks: List<TrackModel> = repository.load(term = "not_cached")
+        val tracks: List<Model> = repository.load(term = "not_cached")
         cacheDataSource.assertContainsCalledCount(count = 1)
         cloudDataSource.assertLoadCalledCount(count = 1)
         cacheDataSource.assertSaveCalledCount(count = 1)
@@ -49,7 +49,7 @@ class SearchRepositoryTest {
 
     @Test
     fun `cached data load`(): Unit = runBlocking {
-        val tracks: List<TrackModel> = repository.load(term = "cached")
+        val tracks: List<Model> = repository.load(term = "cached")
         cacheDataSource.assertContainsCalledCount(count = 1)
         cloudDataSource.assertLoadCalledCount(count = 0)
         cacheDataSource.assertSaveCalledCount(count = 0)
@@ -98,15 +98,15 @@ class SearchRepositoryTest {
                 sourceUrl = "sourceUrl 4"
             )
         )
-        private val LOAD_RESULT: List<TrackModel> = listOf(
-            TrackModel(
+        private val LOAD_RESULT: List<Model> = listOf(
+            Model.Track(
                 id = 3L,
                 trackTitle = "title 3",
                 authorName = "author 3",
                 coverUrl = "coverUrl 3",
                 sourceUrl = "sourceUrl 3"
             ),
-            TrackModel(
+            Model.Track(
                 id = 4L,
                 trackTitle = "title 4",
                 authorName = "author 4",
