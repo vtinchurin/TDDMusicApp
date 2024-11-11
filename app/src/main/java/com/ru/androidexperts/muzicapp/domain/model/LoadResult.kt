@@ -19,9 +19,9 @@ interface LoadResult {
         }
     }
 
-    class Error(private val e: CustomException) : LoadResult {
+    class Error(private val e: DomainException) : LoadResult {
         override fun <R : Any> mapAll(mapper: TrackModel.Mapper<R>): List<R> {
-            return listOf(mapper.mapToError(e.toResource()))
+            return listOf(e.map(mapper))
         }
     }
 }
