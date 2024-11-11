@@ -1,4 +1,4 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.presentation.mappers
 
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.domain.model.TrackModel
