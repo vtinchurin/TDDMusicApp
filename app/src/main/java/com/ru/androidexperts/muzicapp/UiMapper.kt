@@ -1,7 +1,6 @@
 package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
-import com.ru.androidexperts.muzicapp.domain.model.CustomException
 import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 
@@ -12,7 +11,7 @@ class UiMapper : TrackModel.Mapper<RecyclerItem> {
         trackTitle: String,
         authorName: String,
         coverUrl: String,
-        sourceUrl: String
+        sourceUrl: String,
     ): RecyclerItem {
         return RecyclerItem.TrackUi(
             trackId = id,
@@ -25,11 +24,7 @@ class UiMapper : TrackModel.Mapper<RecyclerItem> {
 
     override fun mapToNoTracks() = RecyclerItem.NoTracksUi
 
-    override fun mapToError(e: CustomException): RecyclerItem {
-        val resource = when (e) {
-            is CustomException.NoInternetConnectionException -> e.toResource()
-            else -> e.toResource()
-        }
-        return RecyclerItem.ErrorUi(resource)
+    override fun mapToError(resId: Int): RecyclerItem {
+        return RecyclerItem.ErrorUi(resId = resId)
     }
 }

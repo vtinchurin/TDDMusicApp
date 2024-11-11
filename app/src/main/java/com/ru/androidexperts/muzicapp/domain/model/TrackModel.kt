@@ -27,6 +27,6 @@ interface TrackModel {
 
         fun mapToNoTracks(): T
 
-        fun mapToError(e: CustomException): T
+        fun mapToError(resId: Int): T
     }
 }

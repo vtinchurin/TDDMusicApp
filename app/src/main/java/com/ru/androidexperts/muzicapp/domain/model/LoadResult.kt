@@ -1,7 +1,5 @@
 package com.ru.androidexperts.muzicapp.domain.model
 
-import java.io.IOException
-
 interface LoadResult {
 
     interface Success : LoadResult {
@@ -31,13 +29,9 @@ interface LoadResult {
         }
     }
 
-    class Error(private val e: Exception) : HandleError {
+    class Error(private val e: CustomException) : HandleError {
         override fun <R : Any> map(mapper: TrackModel.Mapper<R>): R {
-            val exception = when (e) {
-                is IOException -> CustomException.NoInternetConnectionException()
-                else -> CustomException.ServiceUnavailable()
-            }
-            return mapper.mapToError(exception)
+            return mapper.mapToError(e.toResource())
         }
     }
 }
