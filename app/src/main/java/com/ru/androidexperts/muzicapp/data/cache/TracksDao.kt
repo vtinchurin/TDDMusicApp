@@ -9,13 +9,13 @@ import androidx.room.Query
 interface TracksDao {
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveTerm(value: TermsCache)
+    suspend fun saveTerm(value: TermsCache): Long
 
     @Query("select exists(select * from terms where term =:value)")
     suspend fun isCached(value: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun saveTracks(tracks: List<TrackCache>)
+    suspend fun saveTracks(tracks: List<TrackCache>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveTrackIdByTerm(trackIdByTermCache: TrackIdByTermCache)
