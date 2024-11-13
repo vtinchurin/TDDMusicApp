@@ -1,5 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
+import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.view.UpdateText
 
 interface SearchUiState {
@@ -22,11 +24,11 @@ interface SearchUiState {
         override fun recyclerState() = recyclerState
     }
 
-    data class Initial(private val inputText: String) : Abstract(recyclerState = listOf()) {
+    data class Initial(private val inputText: String = "") : Abstract(recyclerState = listOf()) {
 
         override fun show(input: UpdateText, adapter: GenericAdapter) {
-            if (inputText != "")
-                input.update(inputText)
+            if (inputText != "") input.update(inputText)
+            else adapter.update(listOf())
         }
     }
 
@@ -34,8 +36,8 @@ interface SearchUiState {
         private val recyclerState: List<RecyclerItem>,
     ) : Abstract(recyclerState = recyclerState)
 
-    data class Error(private val message: String) :
-        Abstract(recyclerState = listOf(RecyclerItem.ErrorUi(message)))
+    data class Error(private val errorItem: RecyclerItem) :
+        Abstract(recyclerState = listOf(errorItem))
 
     object Loading : Abstract(recyclerState = listOf(RecyclerItem.ProgressUi))
 
