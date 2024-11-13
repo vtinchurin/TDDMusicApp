@@ -48,7 +48,7 @@ interface FakeSearchRepository : SearchRepository {
         }
 
         override fun expectSuccess() {
-            expectError = true
+            expectError = false
         }
     }
 }

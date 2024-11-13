@@ -30,11 +30,9 @@ interface FakeUiObservable<T> : UiObservable<T> {
         override fun postUiState(uiState: T) {
             postUiStatesListCalled.add(uiState)
             order.add(OBSERVABLE_POST)
-            if (observerCached == null) {
-                uiStateCached = uiState
-            } else {
-                observerCached!!.invoke(uiState)
-            }
+            if (observerCached != null)
+                observerCached?.invoke(uiState)
+            uiStateCached = uiState
         }
 
         override fun assertPostUiStateCalledCount(count: Int) {
