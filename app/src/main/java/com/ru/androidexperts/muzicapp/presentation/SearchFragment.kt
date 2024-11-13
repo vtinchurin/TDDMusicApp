@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp.presentation
 
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
+import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
 class SearchFragment : Fragment() {
 
@@ -16,7 +18,6 @@ class SearchFragment : Fragment() {
         get() = _binding!!
     private lateinit var viewModel: SearchViewModel
     private lateinit var adapter: GenericAdapter
-
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
@@ -40,12 +41,24 @@ class SearchFragment : Fragment() {
         viewModel = requireActivity().application.searchViewModel
 
         adapter = GenericAdapter.Base(
-            recyclerActions = viewModel
+            recyclerActions = object: RecyclerActions.Mutable {
+                override fun retry() {
+                    viewModel.retry()
+                }
+
+                override fun play(trackId: Long) {
+                    viewModel.play(trackId)
+                }
+
+                override fun pause() {
+                    viewModel.pause()
+                }
+
+            }
         )
         binding.recyclerView.adapter = adapter
 
-        val cachedTerm = viewModel.init(firstRun = savedInstanceState == null)
-        binding.inputView.update(cachedTerm)
+        viewModel.init(firstRun = savedInstanceState == null)
     }
 
     override fun onResume() {

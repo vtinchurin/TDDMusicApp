@@ -7,7 +7,8 @@ interface RecyclerActions {
     }
 
     interface TogglePlayPause {
-        fun togglePlayPause(trackId: Long)
+        fun play(trackId: Long)
+        fun pause()
     }
 
     interface Mutable : Retry, TogglePlayPause
