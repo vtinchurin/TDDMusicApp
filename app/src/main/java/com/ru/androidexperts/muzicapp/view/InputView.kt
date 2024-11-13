@@ -20,7 +20,8 @@ class InputView : FrameLayout, UpdateText {
     )
 
     override fun update(newText: String) {
-        binding.inputEditText.setText(newText)
+        if(newText != text())
+            binding.inputEditText.setText(newText)
     }
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
