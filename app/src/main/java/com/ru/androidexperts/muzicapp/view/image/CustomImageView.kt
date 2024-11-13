@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Parcelable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.ru.androidexperts.muzicapp.R
+import com.squareup.picasso.Picasso
 
 class CustomImageView : AppCompatImageView, UpdateImageUrl {
 
@@ -33,6 +35,11 @@ class CustomImageView : AppCompatImageView, UpdateImageUrl {
 
     override fun update(newUrl: String) {
         imageUrl = newUrl
+        Picasso.get()
+            .load(imageUrl)
+            .placeholder(R.drawable.ic_artwork)
+            .error(R.drawable.ic_artwork)
+            .into(this)
     }
 
     fun imageUrl() = imageUrl
