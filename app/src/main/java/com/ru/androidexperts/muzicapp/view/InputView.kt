@@ -24,6 +24,10 @@ class InputView : FrameLayout, UpdateText {
             binding.inputEditText.setText(newText)
     }
 
+    override fun update(textResId: Int) {
+        binding.inputEditText.setText(textResId)
+    }
+
     fun addTextChangedListener(textWatcher: TextWatcher) {
         binding.inputEditText.addTextChangedListener(textWatcher)
     }
