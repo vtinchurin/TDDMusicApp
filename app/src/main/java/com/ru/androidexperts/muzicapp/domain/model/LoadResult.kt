@@ -2,26 +2,33 @@ package com.ru.androidexperts.muzicapp.domain.model
 
 interface LoadResult {
 
-    fun <R : Any> mapAll(mapper: TrackModel.Mapper<R>): List<R>
+    fun <T : Any> map(mapper: Mapper<T>): T
 
-    class Tracks(private val data: List<TrackModel>) : LoadResult {
+    class Tracks(private val data: List<ResultEntityModel>) : LoadResult {
 
-        override fun <R : Any> mapAll(mapper: TrackModel.Mapper<R>): List<R> {
-            return data.map {
-                it.map(mapper)
-            }
+        override fun <T : Any> map(mapper: Mapper<T>): T {
+            return mapper.mapSuccess(data)
         }
     }
 
     object Empty : LoadResult {
-        override fun <R : Any> mapAll(mapper: TrackModel.Mapper<R>): List<R> {
-            return listOf(mapper.mapToNoTracks())
+
+        override fun <T : Any> map(mapper: Mapper<T>): T {
+            return mapper.mapEmpty()
         }
     }
 
-    class Error(private val e: DomainException) : LoadResult {
-        override fun <R : Any> mapAll(mapper: TrackModel.Mapper<R>): List<R> {
-            return listOf(e.map(mapper))
+    class Error(private val error: ResultEntityModel) : LoadResult {
+
+        override fun <T : Any> map(mapper: Mapper<T>): T {
+            return mapper.mapError(error)
         }
+    }
+
+
+    interface Mapper<T : Any> {
+        fun mapSuccess(data: List<ResultEntityModel>): T
+        fun mapError(error: ResultEntityModel): T
+        fun mapEmpty(): T
     }
 }

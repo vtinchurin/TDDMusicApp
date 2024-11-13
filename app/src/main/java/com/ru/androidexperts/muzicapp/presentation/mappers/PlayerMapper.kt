@@ -1,29 +1,47 @@
 package com.ru.androidexperts.muzicapp.presentation.mappers
 
-import com.ru.androidexperts.muzicapp.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
 
-typealias Playlist = Pair<Long, String>
+typealias Playlist = List<Pair<Long, String>>
+typealias Item = Pair<Long, String>
 
-class PlayerMapper : TrackModel.Mapper<Playlist> {
-    override fun mapToTrackUi(
-        id: Long,
-        trackTitle: String,
-        authorName: String,
-        coverUrl: String,
-        sourceUrl: String,
-    ): Playlist {
-        return id to sourceUrl
+class PlayerMapper : LoadResult.Mapper<Playlist> {
+
+    override fun mapSuccess(data: List<ResultEntityModel>): Playlist {
+        return data.map {
+            it.map(InnerMapper)
+        }
     }
 
-    override fun mapToNoTracks(): Playlist {
-        return EMPTY
+    override fun mapError(error: ResultEntityModel): Playlist {
+        return listOf(error.map(InnerMapper))
     }
 
-    override fun mapToError(resId: Int): Playlist {
-        return EMPTY
+    override fun mapEmpty(): Playlist {
+        return listOf()
     }
 
-    companion object {
-        private val EMPTY = Playlist(-1L, "")
+    companion object InnerMapper : ResultEntityModel.Mapper<Item> {
+
+        private val EMPTY = Item(-1L, "")
+
+        override fun mapToTrackUi(
+            id: Long,
+            trackTitle: String,
+            authorName: String,
+            coverUrl: String,
+            sourceUrl: String,
+        ): Item {
+            return id to sourceUrl
+        }
+
+        override fun mapToNoTracks(): Item {
+            return EMPTY
+        }
+
+        override fun mapToError(resId: Int): Item {
+            return EMPTY
+        }
     }
 }
