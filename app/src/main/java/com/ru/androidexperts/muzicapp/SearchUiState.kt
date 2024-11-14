@@ -24,11 +24,14 @@ interface SearchUiState {
         override fun recyclerState() = recyclerState
     }
 
-    data class Initial(private val inputText: String = "") : Abstract(recyclerState = listOf()) {
+    data class Initial(
+        private val inputText: String = "",
+        private val recyclerState: List<RecyclerItem> = listOf(),
+    ) : Abstract(recyclerState = recyclerState) {
 
         override fun show(input: UpdateText, adapter: GenericAdapter) {
             if (inputText != "") input.update(inputText)
-            else adapter.update(listOf())
+            super.show(input, adapter)
         }
     }
 
