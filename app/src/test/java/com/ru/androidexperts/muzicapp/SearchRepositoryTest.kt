@@ -13,6 +13,8 @@ class SearchRepositoryTest {
     private lateinit var cacheDataSource: FakeCacheDataSource
     private lateinit var cloudDataSource: FakeCloudDataSource
     private lateinit var cachedTerm: FakeCache
+    private lateinit var handleError: HandleError
+    private lateinit var mapper: DataException.Mapper<ResultEntityModel>
     private lateinit var order: Order
 
     @Before
@@ -21,10 +23,14 @@ class SearchRepositoryTest {
         cacheDataSource = FakeCacheDataSource.Base(order)
         cloudDataSource = FakeCloudDataSource.Base(order)
         cachedTerm = FakeCache.Base(order)
+        handleError = HandleError.ToData()
+        mapper = DataException.Mapper.ToDomain()
         cacheDataSource.setCachedData(CACHED_TRACKS)
-        repository = SearchRepository.Base(
+        repository = SearchRepositoryImpl(
             cacheDataSource = cacheDataSource,
             cloudDataSource = cloudDataSource,
+            handleError = handleError,
+            mapper = mapper,
             cachedTerm = cachedTerm,
         )
     }
@@ -161,30 +167,21 @@ private interface FakeCacheDataSource : CacheDataSource {
             cachedTrackList = trackList
         }
 
-        override suspend fun termContains(term: String): Boolean {
+        override suspend fun isCached(term: String): Boolean {
             containsCalledCount++
             order.add(CHECK_TERM_CONTAINS)
             return this.term == term
         }
 
-        override suspend fun load(term: String): List<TrackCached> {
+        override suspend fun getTracks(term: String): List<TrackCached> {
             order.add(CACHE_LOAD)
             loadCalledCount++
             return cachedTrackList
         }
 
-        override suspend fun save(term: String, trackList: List<TrackCloud>) {
+        override suspend fun saveTracks(term: String, trackList: List<TrackCache>) {
             order.add(CACHE_SAVE)
-            val cachedList = trackList.map {
-                TrackCached(
-                    id = it.trackId,
-                    trackTitle = it.trackName,
-                    authorName = it.artistName,
-                    coverUrl = it.artworkUrl,
-                    sourceUrl = it.previewUrl,
-                )
-            }
-            setCachedData(cachedList)
+            setCachedData(trackList)
         }
     }
 }
