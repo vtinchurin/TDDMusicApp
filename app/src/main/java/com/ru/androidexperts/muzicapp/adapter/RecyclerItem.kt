@@ -26,6 +26,8 @@ interface RecyclerItem {
 
     fun trackId(): Long = -1L
 
+    fun isPlaying(): Boolean = false
+
     data class TrackUi(
         private val trackId: Long,
         private val coverUrl: String,
@@ -48,9 +50,9 @@ interface RecyclerItem {
 
         override fun playOrStop(actions: RecyclerActions.TogglePlayPause) {
             if (isPlaying is PlayStopUiState.Play)
-                actions.stop()
-            else
                 actions.play(this.trackId)
+            else
+                actions.pause()
         }
 
         override fun trackId() = trackId
@@ -64,18 +66,21 @@ interface RecyclerItem {
 
         override fun type() = RecyclerItemType.Track
 
+        override fun isPlaying(): Boolean {
+            return isPlaying !is PlayStopUiState.Play
+        }
     }
 
     object ProgressUi : RecyclerItem {
         override fun type() = RecyclerItemType.Progress
     }
 
-    data class ErrorUi(private val message: String) : RecyclerItem {
+    data class ErrorUi(private val resId: Int) : RecyclerItem {
 
         override fun type() = RecyclerItemType.Error
 
         override fun show(errorMessage: UpdateText) {
-            errorMessage.update(message)
+            errorMessage.update(resId)
         }
     }
 
