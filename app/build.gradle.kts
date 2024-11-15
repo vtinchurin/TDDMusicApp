@@ -45,6 +45,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     androidTestImplementation(libs.androidx.room.testing)
 
+    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
