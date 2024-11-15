@@ -18,5 +18,9 @@ class CustomTextView : AppCompatTextView, UpdateText {
         text = newText
     }
 
+    override fun update(textResId: Int) {
+        setText(textResId)
+    }
+
     override fun getFreezesText() = true
 }
