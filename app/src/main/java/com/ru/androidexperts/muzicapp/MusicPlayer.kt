@@ -3,9 +3,8 @@ package com.ru.androidexperts.muzicapp
 import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player.Listener
-import androidx.media3.common.Player.STATE_ENDED
-import androidx.media3.common.Player.STATE_READY
 import androidx.media3.exoplayer.ExoPlayer
+import com.ru.androidexperts.muzicapp.presentation.mappers.Playlist
 
 
 interface MusicPlayer {
@@ -14,70 +13,81 @@ interface MusicPlayer {
 
     fun pause()
 
-    fun update(tracksUri: List<Pair<Long, String>>, callback: (currentTrack: Long) -> Unit)
+    fun update(
+        newPlayList: List<Pair<Long, String>>,
+        callback: (isLast: Boolean, index: Long) -> Unit,
+    )
 
     class Base(context: Context) : MusicPlayer {
 
         private var playlistWasUpdated = false
-        private var mediaItems: List<MediaItem> = listOf()
-        private var updateCallback: (Long) -> Unit = {}
-        private var currentTrackId: Long = -1
+        private var currentPlayList: Playlist = listOf()
+        private var updateCallback = { _: Boolean, _: Long -> }
+        private var isFirstUpdate = true
+
         private val listener = object : Listener {
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                currentTrackId = player.currentMediaItem?.mediaId?.toLong() ?: -1
-                updateCallback.invoke(currentTrackId)
+                updateCallback.invoke(IS_PLAYED, mediaItem?.mediaId?.toLong() ?: -1L)
             }
 
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == STATE_ENDED) {
-                    currentTrackId = -1
-                    updateCallback.invoke(currentTrackId)
-                } else if (playbackState == STATE_READY && player.playWhenReady)
-                    updateCallback.invoke(currentTrackId)
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                updateCallback.invoke(
+                    playWhenReady,
+                    player.currentMediaItem?.mediaId?.toLong() ?: -1L
+                )
+                super.onPlayWhenReadyChanged(playWhenReady, reason)
             }
         }
 
         private val player = ExoPlayer.Builder(context)
             .build()
-        init {
-            player.addListener(listener)
-        }
 
         override fun update(
-            tracksUri: List<Pair<Long, String>>,
-            callback: (currentTrackId: Long) -> Unit
+            newPlayList: Playlist,
+            callback: (isLast: Boolean, index: Long) -> Unit,
         ) {
-            val items = tracksUri.map { (id, uri) ->
-                MediaItem.Builder().setMediaId(id.toString()).setUri(uri).build()
-            }
-            if (mediaItems != items) {
-                mediaItems = items
+            if (isFirstUpdate)
                 updateCallback = callback
-                playlistWasUpdated = true
-                updateCallback.invoke(currentTrackId)
+            isFirstUpdate = false
+            newPlayList.find {
+                it.first == (player.currentMediaItem?.mediaId?.toLong() ?: -1L)
+            }?.let {
+                updateCallback.invoke(IS_PLAYED, player.currentMediaItem?.mediaId?.toLong() ?: -1L)
             }
+            currentPlayList = newPlayList
+            playlistWasUpdated = true
         }
 
         override fun play(trackId: Long) {
+            val trackIndex = currentPlayList.map {
+                it.first
+            }.indexOf(trackId)
             if (playlistWasUpdated) {
+                val mediaItems = currentPlayList.map {
+                    MediaItem
+                        .fromUri(it.second)
+                        .buildUpon()
+                        .setMediaId(it.first.toString())
+                        .build()
+                }
                 player.setMediaItems(mediaItems)
+                player.addListener(listener)
                 player.prepare()
+                player.seekTo(trackIndex, 0)
                 playlistWasUpdated = false
             }
-            mediaItems.forEachIndexed{ index, item->
-                if (item.mediaId == trackId.toString()){
-                    player.seekTo(
-                        index,
-                        if (trackId == currentTrackId) player.currentPosition else 0
-                    )
-                    player.play()
-                }
-            }
+            if (player.currentMediaItemIndex != trackIndex)
+                player.seekTo(trackIndex, 0)
+            player.play()
         }
 
         override fun pause() {
             player.pause()
-            updateCallback.invoke(-1)
         }
+    }
+
+    companion object {
+        const val IS_PLAYED = true
     }
 }

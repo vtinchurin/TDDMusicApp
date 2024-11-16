@@ -2,6 +2,11 @@ package com.ru.androidexperts.muzicapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.ru.androidexperts.muzicapp.databinding.ItemErrorBinding
+import com.ru.androidexperts.muzicapp.databinding.ItemNoSongsBinding
+import com.ru.androidexperts.muzicapp.databinding.ItemProgressBinding
+import com.ru.androidexperts.muzicapp.databinding.ItemTrackBinding
+import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
 interface RecyclerItemType {
 

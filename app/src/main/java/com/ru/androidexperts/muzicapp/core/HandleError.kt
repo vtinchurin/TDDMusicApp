@@ -1,8 +1,6 @@
 package com.ru.androidexperts.muzicapp.core
 
 import com.ru.androidexperts.muzicapp.data.DataException
-import com.ru.androidexperts.muzicapp.data.NoInternetConnectionException
-import com.ru.androidexperts.muzicapp.data.ServiceUnavailable
 import java.io.IOException
 
 interface HandleError {
@@ -12,8 +10,8 @@ interface HandleError {
     class ToData : HandleError {
         override fun handleError(e: Exception): DataException {
             return when (e) {
-                is IOException -> NoInternetConnectionException()
-                else -> ServiceUnavailable()
+                is IOException -> DataException.NoInternetConnectionException()
+                else -> DataException.ServiceUnavailable()
             }
         }
     }

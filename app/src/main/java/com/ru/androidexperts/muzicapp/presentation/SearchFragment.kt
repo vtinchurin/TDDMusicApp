@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.ru.androidexperts.muzicapp.MuzicApp
+import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
 import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
@@ -17,7 +19,7 @@ class SearchFragment : Fragment() {
     private val binding
         get() = _binding!!
     private lateinit var viewModel: SearchViewModel
-    private lateinit var adapter: GenericAdapter
+    private lateinit var adapter: GenericAdapter.Base
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
@@ -38,10 +40,10 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = requireActivity().application.searchViewModel
+        viewModel = (requireActivity().application as MuzicApp).searchViewModel
 
         adapter = GenericAdapter.Base(
-            recyclerActions = object: RecyclerActions.Mutable {
+            clickActions = object: RecyclerActions.Mutable {
                 override fun retry() {
                     viewModel.retry()
                 }
@@ -58,7 +60,7 @@ class SearchFragment : Fragment() {
         )
         binding.recyclerView.adapter = adapter
 
-        viewModel.init(firstRun = savedInstanceState == null)
+        viewModel.init(isFirstRun = savedInstanceState == null)
     }
 
     override fun onResume() {

@@ -3,6 +3,7 @@ package com.ru.androidexperts.muzicapp.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
 
 interface GenericAdapter {
