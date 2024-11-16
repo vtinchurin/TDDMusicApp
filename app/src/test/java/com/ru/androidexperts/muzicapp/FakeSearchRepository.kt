@@ -1,5 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
@@ -35,7 +37,7 @@ interface FakeSearchRepository : SearchRepository {
             order.add(REPOSITORY_LOAD)
             if (expectError)
                 throw IllegalStateException("No internet connection")
-            return LoadResult.Seccess(expectedTrackList)
+            return LoadResult.Tracks(expectedTrackList)
         }
 
         override fun termCached(): String {

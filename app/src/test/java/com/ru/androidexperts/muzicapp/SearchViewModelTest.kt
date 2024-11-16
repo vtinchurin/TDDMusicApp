@@ -1,5 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import org.junit.Before
 import org.junit.Test
@@ -274,7 +276,7 @@ class SearchViewModelTest {
     companion object {
         private val SEARCH_UI_STATE_SUCCESS_BASE = SearchUiState.Success(
             listOf<RecyclerItem>(
-                TrackUi(
+                RecyclerItem.TrackUi(
                     id = 1L,
                     sourceUrl = "1",
                     authorName = "Q",
@@ -282,7 +284,7 @@ class SearchViewModelTest {
                     coverUrl = "1",
                     state = PlayStopUiState.Stop
                 ),
-                TrackUi(
+                RecyclerItem.TrackUi(
                     id = 2L,
                     sourceUrl = "2",
                     authorName = "Q",
@@ -294,7 +296,7 @@ class SearchViewModelTest {
         )
         private val SEARCH_STATE_PLAY_FIRST = SearchUiState.Success(
             listOf<RecyclerItem>(
-                TrackUi(
+                RecyclerItem.TrackUi(
                     id = 1L,
                     sourceUrl = "1",
                     authorName = "Q",
@@ -302,7 +304,7 @@ class SearchViewModelTest {
                     coverUrl = "1",
                     state = PlayStopUiState.Play
                 ),
-                TrackUi(
+                RecyclerItem.TrackUi(
                     id = 2L,
                     sourceUrl = "2",
                     authorName = "Q",

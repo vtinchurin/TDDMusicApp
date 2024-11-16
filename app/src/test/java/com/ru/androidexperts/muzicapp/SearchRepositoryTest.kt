@@ -1,7 +1,16 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.core.HandleError
+import com.ru.androidexperts.muzicapp.core.cache.Cache
+import com.ru.androidexperts.muzicapp.data.DataException
+import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
+import com.ru.androidexperts.muzicapp.data.cache.TrackCache
+import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
+import com.ru.androidexperts.muzicapp.data.cloud.TrackCloud
+import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryImpl
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -108,14 +117,14 @@ class SearchRepositoryTest {
         )
         private val SUCCESS_LOAD_RESULT: LoadResult = LoadResult.Tracks(
             data = listOf(
-                TrackModel.Base(
+                ResultEntityModel.Track(
                     id = 3L,
                     trackTitle = "title 3",
                     authorName = "author 3",
                     coverUrl = "coverUrl 3",
                     sourceUrl = "sourceUrl 3"
                 ),
-                TrackModel.Base(
+                ResultEntityModel.Track(
                     id = 4L,
                     trackTitle = "title 4",
                     authorName = "author 4",

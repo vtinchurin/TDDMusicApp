@@ -1,8 +1,10 @@
 package com.ru.androidexperts.muzicapp
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.ru.androidexperts.muzicapp.core.HandleError
+import com.ru.androidexperts.muzicapp.core.cache.StringCache
 import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.data.cache.TracksDatabase
@@ -46,6 +48,10 @@ class MuzicApp : Application() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
+        val sharedPreferences = applicationContext.getSharedPreferences(
+            getString(R.string.app_name), Context.MODE_PRIVATE
+        )
+
         searchViewModel = SearchViewModel(
             repository = SearchRepositoryImpl(
                 cacheDataSource = CacheDataSource.Base(
@@ -55,7 +61,10 @@ class MuzicApp : Application() {
                     service = retrofit.create(TrackService::class.java)
                 ),
                 handleError = HandleError.ToData(),
-                mapper = DataException.Mapper.ToDomain()
+                mapper = DataException.Mapper.ToDomain(),
+                termCache = StringCache.Base(
+                    "termKey", sharedPreferences, ""
+                )
             ),
             player = MusicPlayer.Base(context = applicationContext),
             toUi = UiMapper(),

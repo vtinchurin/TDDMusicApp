@@ -13,7 +13,7 @@ abstract class DataException(private val resId: Int) : Exception() {
 
         fun map(resId: Int): T
 
-        class ToDomain : Mapper<ResultEntityModel.Error> {
+        class ToDomain : Mapper<ResultEntityModel> {
             override fun map(resId: Int): ResultEntityModel.Error {
                 return ResultEntityModel.Error(resId)
             }

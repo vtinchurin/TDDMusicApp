@@ -1,6 +1,7 @@
 package com.ru.androidexperts.muzicapp.data.repository
 
 import com.ru.androidexperts.muzicapp.core.HandleError
+import com.ru.androidexperts.muzicapp.core.cache.StringCache
 import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.data.cache.TrackCache
@@ -14,7 +15,7 @@ class SearchRepositoryImpl(
     private val cloudDataSource: CloudDataSource,
     private val handleError: HandleError,
     private val mapper: DataException.Mapper<ResultEntityModel>,
-    private val termCache: StringCache,
+    private val termCache: StringCache.Base,
 ) : SearchRepository {
 
     override fun lastCachedTerm(): String = termCache.restore()

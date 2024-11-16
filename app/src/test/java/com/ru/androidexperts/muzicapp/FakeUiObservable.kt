@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
 import org.junit.Assert.assertEquals
 
 interface FakeUiObservable<T> : UiObservable<T> {

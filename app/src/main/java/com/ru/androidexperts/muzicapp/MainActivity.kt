@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.rootLayout, SearchFragment())
+            .replace(R.id.container, SearchFragment())
             .commit()
     }
 }

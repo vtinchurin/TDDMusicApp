@@ -1,5 +1,9 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
+import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
+import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.view.UpdateText
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import org.junit.Assert.assertEquals

@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.core.RunAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 

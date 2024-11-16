@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 import org.junit.Assert.assertEquals
 
 interface FakeFragment : UiObserver<SearchUiState> {
