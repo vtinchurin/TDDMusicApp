@@ -14,12 +14,10 @@ class SearchRepositoryImpl(
     private val cloudDataSource: CloudDataSource,
     private val handleError: HandleError,
     private val mapper: DataException.Mapper<ResultEntityModel>,
-    //private val termCache: Cache.Mutable<String>,
+    private val termCache: StringCache,
 ) : SearchRepository {
 
-    private var cachedTerm = ""
-
-    override fun lastCachedTerm(): String = cachedTerm//termCache.read()
+    override fun lastCachedTerm(): String = termCache.restore()
 
     override suspend fun load(term: String): LoadResult {
         try {
@@ -47,8 +45,7 @@ class SearchRepositoryImpl(
                     sourceUrl = trackCache.sourceUrl,
                 )
             }
-            //termCache.save(value = term)
-            cachedTerm = term
+            termCache.save(value = term)
             return LoadResult.Tracks(tracks)
         } catch (e: Exception) {
             val dataException = handleError.handleError(e)
