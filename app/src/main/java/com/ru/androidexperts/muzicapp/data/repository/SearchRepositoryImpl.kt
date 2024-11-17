@@ -15,7 +15,7 @@ class SearchRepositoryImpl(
     private val cloudDataSource: CloudDataSource,
     private val handleError: HandleError,
     private val mapper: DataException.Mapper<ResultEntityModel>,
-    private val termCache: StringCache.Base,
+    private val termCache: StringCache,
 ) : SearchRepository {
 
     override fun lastCachedTerm(): String = termCache.restore()

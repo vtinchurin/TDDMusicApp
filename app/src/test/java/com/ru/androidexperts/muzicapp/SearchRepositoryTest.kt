@@ -1,7 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.core.HandleError
-import com.ru.androidexperts.muzicapp.core.cache.Cache
+import com.ru.androidexperts.muzicapp.core.cache.StringCache
 import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.data.cache.TrackCache
@@ -40,7 +40,7 @@ class SearchRepositoryTest {
             cloudDataSource = cloudDataSource,
             handleError = handleError,
             mapper = mapper,
-            cachedTerm = cachedTerm,
+            termCache = cachedTerm,
         )
     }
 
@@ -53,7 +53,7 @@ class SearchRepositoryTest {
         cacheDataSource.assertResult(CLOUD_AND_CACHED_TRACKS)
         assertEquals(tracks, SUCCESS_LOAD_RESULT)
         cachedTerm.assertValue("not_cached")
-        order.assert(
+        order.check(
             listOf(
                 SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
@@ -73,7 +73,7 @@ class SearchRepositoryTest {
         cacheDataSource.assertResult(CACHED_TRACKS)
         assertEquals(tracks, SUCCESS_LOAD_RESULT)
         cachedTerm.assertValue("cached")
-        order.assert(
+        order.check(
             listOf(
                 SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
@@ -182,7 +182,7 @@ private interface FakeCacheDataSource : CacheDataSource {
             return this.term == term
         }
 
-        override suspend fun getTracks(term: String): List<TrackCached> {
+        override suspend fun getTracks(term: String): List<TrackCache> {
             order.add(CACHE_LOAD)
             loadCalledCount++
             return cachedTrackList
@@ -213,7 +213,7 @@ private interface FakeCloudDataSource : CloudDataSource {
             TrackCloud(
                 trackId = 4L,
                 trackName = "title 4",
-                authorName = "author 4",
+                artistName = "author 4",
                 artworkUrl = "coverUrl 4",
                 previewUrl = "sourceUrl 4"
             )
@@ -233,7 +233,7 @@ private interface FakeCloudDataSource : CloudDataSource {
     }
 }
 
-private interface FakeCache : Cache.Mutable<String> {
+private interface FakeCache : StringCache {
 
     fun assertValue(value: String)
 

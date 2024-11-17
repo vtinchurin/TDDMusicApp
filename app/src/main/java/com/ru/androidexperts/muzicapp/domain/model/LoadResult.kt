@@ -4,7 +4,7 @@ interface LoadResult {
 
     fun <T : Any> map(mapper: Mapper<T>): T
 
-    class Tracks(private val data: List<ResultEntityModel>) : LoadResult {
+    data class Tracks(private val data: List<ResultEntityModel>) : LoadResult {
 
         override fun <T : Any> map(mapper: Mapper<T>): T {
             return mapper.mapSuccess(data)
@@ -18,7 +18,7 @@ interface LoadResult {
         }
     }
 
-    class Error(private val error: ResultEntityModel) : LoadResult {
+    data class Error(private val error: ResultEntityModel) : LoadResult {
 
         override fun <T : Any> map(mapper: Mapper<T>): T {
             return mapper.mapError(error)

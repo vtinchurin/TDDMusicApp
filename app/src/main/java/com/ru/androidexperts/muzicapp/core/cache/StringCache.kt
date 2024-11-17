@@ -2,13 +2,13 @@ package com.ru.androidexperts.muzicapp.core.cache
 
 import android.content.SharedPreferences
 
-interface StringCache {
+interface StringCache : Cache.Mutable<String> {
 
     class Base(
         private val key: String,
         private val sharedPreferences: SharedPreferences,
         private val defaultValue: String,
-    ) : Cache.Mutable<String> {
+    ) : StringCache {
 
         override fun save(value: String) {
             sharedPreferences.edit().putString(key, value).apply()
