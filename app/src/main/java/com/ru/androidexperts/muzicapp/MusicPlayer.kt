@@ -13,17 +13,15 @@ interface MusicPlayer {
 
     fun pause()
 
-    fun update(
-        newPlayList: List<Pair<Long, String>>,
-        callback: (isLast: Boolean, index: Long) -> Unit,
-    )
+    fun init(observableUpdate: (isLast: Boolean, trackId: Long) -> Unit)
+
+    fun update(newPlayList: Playlist)
 
     class Base(context: Context) : MusicPlayer {
 
         private var playlistWasUpdated = false
         private var currentPlayList: Playlist = listOf()
         private var updateCallback = { _: Boolean, _: Long -> }
-        private var isFirstUpdate = true
 
         private val listener = object : Listener {
 
@@ -43,24 +41,17 @@ interface MusicPlayer {
         private val player = ExoPlayer.Builder(context)
             .build()
 
-        override fun update(
-            newPlayList: Playlist,
-            callback: (isLast: Boolean, index: Long) -> Unit,
-        ) {
-            if (isFirstUpdate)
-                updateCallback = callback
-            isFirstUpdate = false
-            newPlayList.find {
-                it.first == (player.currentMediaItem?.mediaId?.toLong() ?: -1L)
-            }?.let {
-                updateCallback.invoke(IS_PLAYED, player.currentMediaItem?.mediaId?.toLong() ?: -1L)
-            }
+        override fun init(observableUpdate: (isLast: Boolean, index: Long) -> Unit) {
+            updateCallback = observableUpdate
+        }
+
+        override fun update(newPlayList: Playlist) {
             currentPlayList = newPlayList
             playlistWasUpdated = true
         }
 
         override fun play(trackId: Long) {
-            val trackIndex = currentPlayList.map {
+            val trackIndex: Int = currentPlayList.map {
                 it.first
             }.indexOf(trackId)
             if (playlistWasUpdated) {
