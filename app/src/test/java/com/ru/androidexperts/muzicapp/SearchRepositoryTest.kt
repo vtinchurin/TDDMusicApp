@@ -195,15 +195,15 @@ private interface FakeCloudDataSource : CloudDataSource {
         private var loadCalledCount = 0
         private val tracks: List<TrackCloud> = listOf(
             TrackCloud(
-                id = 3L,
-                trackId = "title 3",
+                trackId = 3L,
+                trackName = "title 3",
                 artistName = "author 3",
                 artworkUrl = "coverUrl 3",
                 previewUrl = "sourceUrl 3"
             ),
             TrackCloud(
-                id = 4L,
-                trackId = "title 4",
+                trackId = 4L,
+                trackName = "title 4",
                 authorName = "author 4",
                 artworkUrl = "coverUrl 4",
                 previewUrl = "sourceUrl 4"
