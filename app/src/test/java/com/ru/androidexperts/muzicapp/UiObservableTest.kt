@@ -184,7 +184,7 @@ class ObservableTest {
     fun `error internet connection message`() {
         observable.updateUi(SearchUiState.Initial("123"))
         observable.update(observer)
-        observable.updateUi(SearchUiState.Error("No Internet"))
+        observable.updateUi(SearchUiState.Error(RecyclerItem.ErrorUi(R.string.no_internet_connection)))
         input.assertText("123")
         adapter.assertRecyclerList(ERROR_MESSAGE)
         order.check(listOf(SET_TEXT, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI))
@@ -196,7 +196,7 @@ class ObservableTest {
             RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
         )
         private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
-        private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi("No Internet"))
+        private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi(R.string.no_internet_connection))
     }
 
 }
@@ -217,6 +217,8 @@ interface FakeUpdateText : UpdateText {
             text = newText
             order.add(SET_TEXT)
         }
+
+        override fun update(textResId: Int) = Unit
 
     }
 }
@@ -239,20 +241,6 @@ interface FakeGenericAdapter : GenericAdapter {
             order.add(UPDATE_RECYCLER)
         }
     }
-}
-
-class Order {
-
-    private val commands = mutableListOf<String>()
-
-    fun add(command: String) {
-        commands.add(command)
-    }
-
-    fun check(commands: List<String>) {
-        assertEquals(this.commands, commands)
-    }
-
 }
 
 private const val SET_TEXT = "UpdateText#update"
