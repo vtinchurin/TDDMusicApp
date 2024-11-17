@@ -51,15 +51,15 @@ class SearchRepositoryTest {
         cloudDataSource.assertLoadCalledCount(count = 1)
         cacheDataSource.assertSaveCalledCount(count = 1)
         cacheDataSource.assertResult(CLOUD_AND_CACHED_TRACKS)
-        assertEquals(tracks, SUCCESS_LOAD_RESULT)
+        assertEquals(tracks, SUCCESS_CLOUD_LOAD_RESULT)
         cachedTerm.assertValue("not_cached")
         order.check(
             listOf(
-                SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
                 CLOUD_LOAD,
                 CACHE_SAVE,
-                CACHE_LOAD
+                CACHE_LOAD,
+                SHARED_PREFS_SAVE
             )
         )
     }
@@ -71,13 +71,13 @@ class SearchRepositoryTest {
         cloudDataSource.assertLoadCalledCount(count = 0)
         cacheDataSource.assertSaveCalledCount(count = 0)
         cacheDataSource.assertResult(CACHED_TRACKS)
-        assertEquals(tracks, SUCCESS_LOAD_RESULT)
+        assertEquals(tracks, SUCCESS_CACHED_LOAD_RESULT)
         cachedTerm.assertValue("cached")
         order.check(
             listOf(
-                SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
                 CACHE_LOAD,
+                SHARED_PREFS_SAVE
             )
         )
     }
@@ -115,7 +115,7 @@ class SearchRepositoryTest {
                 sourceUrl = "sourceUrl 4"
             )
         )
-        private val SUCCESS_LOAD_RESULT: LoadResult = LoadResult.Tracks(
+        private val SUCCESS_CLOUD_LOAD_RESULT: LoadResult = LoadResult.Tracks(
             data = listOf(
                 ResultEntityModel.Track(
                     id = 3L,
@@ -130,6 +130,24 @@ class SearchRepositoryTest {
                     authorName = "author 4",
                     coverUrl = "coverUrl 4",
                     sourceUrl = "sourceUrl 4"
+                )
+            )
+        )
+        private val SUCCESS_CACHED_LOAD_RESULT: LoadResult = LoadResult.Tracks(
+            data = listOf(
+                ResultEntityModel.Track(
+                    id = 1L,
+                    trackTitle = "title 1",
+                    authorName = "author 1",
+                    coverUrl = "coverUrl 1",
+                    sourceUrl = "sourceUrl 1"
+                ),
+                ResultEntityModel.Track(
+                    id = 2L,
+                    trackTitle = "title 2",
+                    authorName = "author 2",
+                    coverUrl = "coverUrl 2",
+                    sourceUrl = "sourceUrl 2"
                 )
             )
         )
@@ -189,6 +207,7 @@ private interface FakeCacheDataSource : CacheDataSource {
         }
 
         override suspend fun saveTracks(term: String, trackList: List<TrackCache>) {
+            saveCalledCount++
             order.add(CACHE_SAVE)
             setCachedData(trackList)
         }
