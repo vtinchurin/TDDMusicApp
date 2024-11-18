@@ -34,30 +34,30 @@ class ObservableTest {
         observable.update(observer)
         input.assertText("")
         adapter.assertRecyclerList(listOf())
-        order.check(listOf(UPDATE_UI))
+        order.check(listOf(UPDATE_RECYCLER, UPDATE_UI))
     }
 
     @Test
     fun `initial with cached word`() {
-        observable.updateUi(SearchUiState.Initial("123"))
+        observable.updateUi(SearchUiState.Initial("123", SUCCESS_LIST))
         observable.update(observer)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf())
-        order.check(listOf(SET_TEXT, UPDATE_UI))
+        adapter.assertRecyclerList(SUCCESS_LIST)
+        order.check(listOf(SET_TEXT, UPDATE_RECYCLER, UPDATE_UI))
     }
 
     @Test
     fun `loading after initial`() {
-        observable.updateUi(SearchUiState.Initial("123"))
+        observable.updateUi(SearchUiState.Initial("123", SUCCESS_LIST))
         observable.update(observer)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf())
+        adapter.assertRecyclerList(SUCCESS_LIST)
         observable.updateUi(SearchUiState.Loading)
         input.assertText("123")
         adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
         order.check(
             listOf(
-                SET_TEXT, UPDATE_UI,
+                SET_TEXT, UPDATE_RECYCLER, UPDATE_UI,
                 UPDATE_RECYCLER, UPDATE_UI,
             )
         )
@@ -65,7 +65,7 @@ class ObservableTest {
 
     @Test
     fun `success result`() {
-        observable.updateUi(SearchUiState.Initial(""))
+        observable.updateUi(SearchUiState.Initial())
         observable.update(observer)
         input.assertText("")
         adapter.assertRecyclerList(listOf())
@@ -78,7 +78,7 @@ class ObservableTest {
         adapter.assertRecyclerList(SUCCESS_LIST)
         order.check(
             listOf(
-                UPDATE_UI, SET_TEXT,
+                UPDATE_RECYCLER, UPDATE_UI, SET_TEXT,
                 UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI
             )
         )
@@ -86,7 +86,7 @@ class ObservableTest {
 
     @Test
     fun `success result and play first and stop`() {
-        observable.updateUi(SearchUiState.Initial(""))
+        observable.updateUi(SearchUiState.Initial())
         observable.update(observer)
         input.assertText("")
         adapter.assertRecyclerList(listOf())
@@ -115,7 +115,7 @@ class ObservableTest {
 
         order.check(
             listOf(
-                UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
+                UPDATE_RECYCLER, UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
                 UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI,
                 UPDATE_RECYCLER, UPDATE_UI
             )
@@ -124,7 +124,7 @@ class ObservableTest {
 
     @Test
     fun `success result and play first and play next and stop`() {
-        observable.updateUi(SearchUiState.Initial(""))
+        observable.updateUi(SearchUiState.Initial())
         observable.update(observer)
         input.assertText("")
         adapter.assertRecyclerList(listOf())
@@ -163,7 +163,7 @@ class ObservableTest {
 
         order.check(
             listOf(
-                UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
+                UPDATE_RECYCLER, UPDATE_UI, SET_TEXT, UPDATE_RECYCLER,
                 UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI,
                 UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI
             )
@@ -187,7 +187,7 @@ class ObservableTest {
         observable.updateUi(SearchUiState.Error(RecyclerItem.ErrorUi(R.string.no_internet_connection)))
         input.assertText("123")
         adapter.assertRecyclerList(ERROR_MESSAGE)
-        order.check(listOf(SET_TEXT, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI))
+        order.check(listOf(SET_TEXT, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI))
     }
 
     companion object {

@@ -51,9 +51,9 @@ interface RecyclerItem {
 
         override fun playOrStop(actions: RecyclerActions.TogglePlayPause) {
             if (isPlaying is PlayStopUiState.Play)
-                actions.play(this.trackId)
-            else
                 actions.pause()
+            else
+                actions.play(this.trackId)
         }
 
         override fun trackId() = trackId
@@ -68,7 +68,7 @@ interface RecyclerItem {
         override fun type() = RecyclerItemType.Track
 
         override fun isPlaying(): Boolean {
-            return isPlaying !is PlayStopUiState.Play
+            return isPlaying is PlayStopUiState.Play
         }
     }
 

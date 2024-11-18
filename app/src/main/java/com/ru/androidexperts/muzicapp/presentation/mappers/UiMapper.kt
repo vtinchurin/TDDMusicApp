@@ -50,7 +50,7 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
                     coverUrl = coverUrl,
                     authorName = authorName,
                     trackTitle = trackTitle,
-                    isPlaying = if (playingTrackId == id) PlayStopUiState.Stop else PlayStopUiState.Play
+                    isPlaying = if (playingTrackId == id) PlayStopUiState.Play else PlayStopUiState.Stop
                 )
             }
 
