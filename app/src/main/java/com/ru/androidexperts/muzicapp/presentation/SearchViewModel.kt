@@ -24,6 +24,18 @@ class SearchViewModel(
 
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
+    init{
+        player.init { isPlaying, trackId ->
+            if (isPlaying) {
+                toUi.update(trackId)
+                observable.play(trackId)
+            } else {
+                observable.stop()
+                toUi.update()
+            }
+        }
+    }
+
     fun init(isFirstRun:Boolean = true) {
         if(isFirstRun){
             val lastTerm = repository.lastCachedTerm()
@@ -31,11 +43,8 @@ class SearchViewModel(
                 runAsync.handleAsync(viewModelScope, {
                     repository.load(lastTerm)
                 }){ loadResult ->
+                    player.update(loadResult.map(toPlayList))
                     observable.updateUi(SearchUiState.Initial(lastTerm,loadResult.map(toUi).recyclerState()))
-                    player.update(loadResult.map(toPlayList)) { isPlaying, trackId ->
-                        if (isPlaying) observable.play(trackId)
-                        else observable.stop()
-                    }
                 }
             } else observable.updateUi(SearchUiState.Initial())
         }
@@ -47,13 +56,10 @@ class SearchViewModel(
             runAsync.handleAsync(viewModelScope, {
                 repository.load(term)
             }) { loadResult ->
+                player.update(loadResult.map(toPlayList))
                 observable.updateUi(loadResult.map(toUi))
-                player.update(loadResult.map(toPlayList)) { isPlaying, trackId ->
-                    if (isPlaying) observable.play(trackId)
-                    else observable.stop()
-                }
             }
-        } else observable.updateUi(SearchUiState.Initial(inputText = term))
+        }
     }
 
     override fun retry() {

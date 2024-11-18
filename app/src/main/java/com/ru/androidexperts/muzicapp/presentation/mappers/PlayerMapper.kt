@@ -22,7 +22,7 @@ class PlayerMapper : LoadResult.Mapper<Playlist> {
         return listOf()
     }
 
-    companion object InnerMapper : ResultEntityModel.Mapper<Item> {
+    private object InnerMapper : ResultEntityModel.Mapper<Item> {
 
         private val EMPTY = Item(-1L, "")
 

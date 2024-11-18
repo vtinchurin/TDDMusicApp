@@ -67,7 +67,7 @@ class MuzicApp : Application() {
                 )
             ),
             player = MusicPlayer.Base(context = applicationContext),
-            toUi = UiMapper(),
+            toUi = UiMapper.Base(),
             toPlayList = PlayerMapper()
         )
     }

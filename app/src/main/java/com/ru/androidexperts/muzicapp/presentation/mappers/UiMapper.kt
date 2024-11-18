@@ -6,46 +6,59 @@ import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 
-class UiMapper : LoadResult.Mapper<SearchUiState> {
+interface UiMapper : LoadResult.Mapper<SearchUiState> {
 
-    override fun mapSuccess(data: List<ResultEntityModel>): SearchUiState {
-        val tracksUiList = data.map {
-            it.map(InnerMapper)
-        }
-        return SearchUiState.Success(tracksUiList)
-    }
+    fun update(trackId: Long = -1L)
 
-    override fun mapError(error: ResultEntityModel): SearchUiState {
-        val errorUi = error.map(InnerMapper)
-        return SearchUiState.Error(errorUi)
-    }
+    class Base : UiMapper {
 
-    override fun mapEmpty(): SearchUiState {
-        return SearchUiState.NoTracks
-    }
+        private var playingTrackId = -1L
 
-    companion object InnerMapper : ResultEntityModel.Mapper<RecyclerItem> {
-
-        override fun mapToTrackUi(
-            id: Long,
-            trackTitle: String,
-            authorName: String,
-            coverUrl: String,
-            sourceUrl: String,
-        ): RecyclerItem {
-            return RecyclerItem.TrackUi(
-                trackId = id,
-                coverUrl = coverUrl,
-                authorName = authorName,
-                trackTitle = trackTitle,
-                isPlaying = PlayStopUiState.Play
-            )
+        override fun update(trackId: Long) {
+            playingTrackId = trackId
         }
 
-        override fun mapToNoTracks() = RecyclerItem.NoTracksUi
+        override fun mapSuccess(data: List<ResultEntityModel>): SearchUiState {
+            val mapper = InnerMapper(playingTrackId)
+            val tracksUiList = data.map {
+                it.map(mapper)
+            }
+            return SearchUiState.Success(tracksUiList)
+        }
 
-        override fun mapToError(resId: Int): RecyclerItem {
-            return RecyclerItem.ErrorUi(resId = resId)
+        override fun mapError(error: ResultEntityModel): SearchUiState {
+            val errorUi = error.map(InnerMapper())
+            return SearchUiState.Error(errorUi)
+        }
+
+        override fun mapEmpty(): SearchUiState {
+            return SearchUiState.NoTracks
+        }
+
+        private inner class InnerMapper(private val playingTrackId: Long = -1L) :
+            ResultEntityModel.Mapper<RecyclerItem> {
+
+            override fun mapToTrackUi(
+                id: Long,
+                trackTitle: String,
+                authorName: String,
+                coverUrl: String,
+                sourceUrl: String,
+            ): RecyclerItem {
+                return RecyclerItem.TrackUi(
+                    trackId = id,
+                    coverUrl = coverUrl,
+                    authorName = authorName,
+                    trackTitle = trackTitle,
+                    isPlaying = if (playingTrackId == id) PlayStopUiState.Stop else PlayStopUiState.Play
+                )
+            }
+
+            override fun mapToNoTracks() = RecyclerItem.NoTracksUi
+
+            override fun mapToError(resId: Int): RecyclerItem {
+                return RecyclerItem.ErrorUi(resId = resId)
+            }
         }
     }
 }
