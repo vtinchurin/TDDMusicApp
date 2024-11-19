@@ -1,36 +1,30 @@
 package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
-    fun expectTrackList(list: List<Track>)
+
+    fun expectTrackList(list: List<ResultEntityModel>)
+
     fun assertLoadCalledCount(expectedCount: Int)
+
     fun expectTermCached(termCache: String)
+
     fun expectError()
+
     fun expectSuccess()
 
     class Base(
         private val order: Order,
     ) : FakeSearchRepository {
 
-        private var expectedTrackList: List<Track> = listOf()
+        private var expectedTrackList: List<ResultEntityModel> = listOf()
         private var loadCalledCount = 0
         private var termCached = ""
         private var expectError = false
-
-        override fun expectTrackList(list: List<Track>) {
-            expectedTrackList = list
-        }
-
-        override fun assertLoadCalledCount(expectedCount: Int) {
-            assertEquals(expectedCount, loadCalledCount)
-        }
-
-        override fun expectTermCached(termCache: String) {
-            this.termCached = termCache
-        }
 
         override suspend fun load(term: String): LoadResult {
             loadCalledCount++
@@ -40,9 +34,21 @@ interface FakeSearchRepository : SearchRepository {
             return LoadResult.Tracks(expectedTrackList)
         }
 
-        override fun termCached(): String {
+        override fun lastCachedTerm(): String {
             order.add(REPOSITORY_TERM)
             return termCached
+        }
+
+        override fun expectTrackList(list: List<ResultEntityModel>) {
+            expectedTrackList = list
+        }
+
+        override fun assertLoadCalledCount(expectedCount: Int) {
+            assertEquals(expectedCount, loadCalledCount)
+        }
+
+        override fun expectTermCached(termCache: String) {
+            this.termCached = termCache
         }
 
         override fun expectError() {

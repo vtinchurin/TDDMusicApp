@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.ru.androidexperts.muzicapp.MuzicApp
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
-import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 
 class SearchFragment : Fragment() {
 
@@ -43,20 +42,7 @@ class SearchFragment : Fragment() {
         viewModel = (requireActivity().application as MuzicApp).searchViewModel
 
         adapter = GenericAdapter.Base(
-            clickActions = object: RecyclerActions.Mutable {
-                override fun retry() {
-                    viewModel.retry()
-                }
-
-                override fun play(trackId: Long) {
-                    viewModel.play(trackId)
-                }
-
-                override fun pause() {
-                    viewModel.pause()
-                }
-
-            }
+            clickActions = viewModel
         )
         binding.recyclerView.adapter = adapter
 

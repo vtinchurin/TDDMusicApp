@@ -1,19 +1,23 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.presentation.mappers.Playlist
 import org.junit.Assert.assertEquals
 
 interface FakeMusicPlayer : MusicPlayer{
+
     fun stopTracks()
+
     fun assertUpdateTracksUriList(tracksUriList: List<Pair<Long, String>>)
 
     class Base(private val order: Order) : FakeMusicPlayer{
+
         private var currentTrack: Long = -1
-        private lateinit var updateCallback: (currentTrack: Long) -> Unit
+        private var updateCallback = { _: Boolean, _: Long -> }
         private var uriList = listOf<Pair<Long, String>>()
 
         override fun stopTracks() {
             currentTrack = -1
-            updateCallback.invoke(currentTrack)
+            updateCallback.invoke(false, currentTrack)
         }
 
         override fun assertUpdateTracksUriList(tracksUriList: List<Pair<Long, String>>) {
@@ -22,22 +26,23 @@ interface FakeMusicPlayer : MusicPlayer{
 
         override fun play(trackId: Long) {
             currentTrack = trackId
-            updateCallback.invoke(trackId)
+            updateCallback.invoke(true, trackId)
         }
 
         override fun pause() {
-            updateCallback.invoke(-1)
+            updateCallback.invoke(false, -1)
         }
 
-        override fun update(
-            tracksUri: List<Pair<Long, String>>,
-            callback: (currentTrack: Long) -> Unit
-        ) {
-            order.add("player update")
-            updateCallback = callback
-            uriList = tracksUri
-            updateCallback.invoke(currentTrack)
+        override fun init(observableUpdate: (isLast: Boolean, trackId: Long) -> Unit) {
+            updateCallback = observableUpdate
+            order.add(PLAYER_INIT)
+        }
+
+        override fun update(newPlayList: Playlist) {
+            uriList = newPlayList
+            order.add(PLAYER_UPDATE)
         }
     }
 }
 const val PLAYER_UPDATE = "player update"
+const val PLAYER_INIT = "player init"

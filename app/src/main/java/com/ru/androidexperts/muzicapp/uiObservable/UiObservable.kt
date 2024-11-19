@@ -8,25 +8,37 @@ interface UiObservable<T : Any> : Update<T> {
 
     interface Playlist<T : Any> : UiObservable<T> {
 
+        fun update(input: String)
+
         fun play(trackId: Long)
 
         fun stop()
 
         class Base : Playlist<SearchUiState> {
 
-            private var cached: SearchUiState = SearchUiState.Initial("")
+            private var cached: SearchUiState = SearchUiState.Initial()
+            private var input = ""
             private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
+
+            override fun update(input: String) {
+                this.input = input
+            }
 
             override fun update(observer: UiObserver<SearchUiState>) {
                 this.observer = observer
-                if (!observer.isEmpty())
+                if (!observer.isEmpty()) {
                     observer.updateUi(cached)
+                    input = ""
+                }
             }
 
             override fun updateUi(data: SearchUiState) {
-                if (!observer.isEmpty())
-                    observer.updateUi(data)
-                cached = data
+                cached = if (input.isNotEmpty()) {
+                    SearchUiState.Initial(input, data.recyclerState())
+                } else data
+                if (!observer.isEmpty()) {
+                    observer.updateUi(cached)
+                }
             }
 
             override fun play(trackId: Long) {

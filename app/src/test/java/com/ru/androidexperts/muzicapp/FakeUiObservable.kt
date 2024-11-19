@@ -1,54 +1,76 @@
 package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
+import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 import org.junit.Assert.assertEquals
 
-interface FakeUiObservable<T> : UiObservable<T> {
-    fun assertPostUiStateCalledCount(count: Int)
-    fun assertRegisterCalledCount(count: Int)
-    fun assertPostUiStates(uiStates: List<T>)
-    abstract class Abstract<T : Any>(
+interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
+
+    fun assertUiStates(uiState: SearchUiState)
+
+    class Base(
         private val order: Order
-    ) : FakeUiObservable<T> {
-        private var uiStateCached: T? = null
-        private var observerCached: ((T) -> Unit)? = null
-        private var unregisterCalledCount = 0
-        private var registerCalledCount = 0
-        private var postUiStatesListCalled = mutableListOf<T>()
-        override fun register(observer: (T) -> Unit) {
+    ) : FakeUiObservable<SearchUiState> {
+
+        private var cached: SearchUiState = SearchUiState.Initial("")
+        private var input = ""
+        private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
+
+        override fun update(input: String) {
+            this.input = input
+        }
+
+        override fun update(observer: UiObserver<SearchUiState>) {
+            this.observer = observer
+            if (!observer.isEmpty())
+                observer.updateUi(cached)
+            input = ""
             order.add(OBSERVABLE_REGISTER)
-            registerCalledCount++
-            observerCached = observer
-            if (uiStateCached != null) {
-                observerCached!!.invoke(uiStateCached!!)
+        }
+
+        override fun updateUi(data: SearchUiState) {
+            cached = if (input.isNotEmpty()) {
+                SearchUiState.Initial(input, data.recyclerState())
+            } else data
+            if (!observer.isEmpty()) {
+                observer.updateUi(cached)
             }
         }
-        override fun unregister() {
-            order.add(OBSERVABLE_UNREGISTER)
-            unregisterCalledCount++
-            observerCached = null
-        }
-        override fun postUiState(uiState: T) {
-            postUiStatesListCalled.add(uiState)
-            order.add(OBSERVABLE_POST)
-            if (observerCached != null)
-                observerCached?.invoke(uiState)
-            uiStateCached = uiState
+
+        override fun play(trackId: Long) {
+            val tracks = cached.recyclerState().toMutableList()
+            tracks.find {
+                it.isPlaying()
+            }?.let {
+                val index = tracks.indexOf(it)
+                tracks[index] = it.changePlaying()
+            }
+            tracks.find {
+                it.trackId() == trackId
+            }?.let {
+                val index = tracks.indexOf(it)
+                tracks[index] = it.changePlaying()
+            }
+            updateUi(SearchUiState.Success(recyclerState = tracks))
         }
 
-        override fun assertPostUiStateCalledCount(count: Int) {
-            assertEquals(count, postUiStatesListCalled.size)
+        override fun stop() {
+            val tracks = cached.recyclerState().toMutableList()
+            tracks.find {
+                it.isPlaying()
+            }?.let {
+                val index = tracks.indexOf(it)
+                tracks[index] = it.changePlaying()
+            }
+            updateUi(SearchUiState.Success(recyclerState = tracks))
         }
 
-        override fun assertRegisterCalledCount(count: Int) {
-            assertEquals(count, registerCalledCount)
-        }
-
-        override fun assertPostUiStates(uiStates: List<T>) {
-            assertEquals(uiStates, postUiStatesListCalled)
+        override fun assertUiStates(uiState: SearchUiState) {
+            assertEquals(uiState, cached)
         }
     }
 }
+
 const val OBSERVABLE_REGISTER = "observable register"
 const val OBSERVABLE_UNREGISTER = "observable unregister"
 const val OBSERVABLE_POST= "observable post"

@@ -24,7 +24,7 @@ class SearchViewModel(
 
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    init{
+    init {
         player.init { isPlaying, trackId ->
             if (isPlaying) {
                 toUi.update(trackId)
@@ -39,23 +39,20 @@ class SearchViewModel(
     fun init(isFirstRun:Boolean = true) {
         if(isFirstRun){
             val lastTerm = repository.lastCachedTerm()
-            if (lastTerm.isNotEmpty()){
-                runAsync.handleAsync(viewModelScope, {
-                    repository.load(lastTerm)
-                }){ loadResult ->
-                    player.update(loadResult.map(toPlayList))
-                    observable.updateUi(SearchUiState.Initial(lastTerm,loadResult.map(toUi).recyclerState()))
-                }
-            } else observable.updateUi(SearchUiState.Initial())
+            observable.update(lastTerm)
+            fetch(lastTerm)
         }
     }
 
     fun fetch(term: String) {
-        if(term.isNotEmpty()) {
+        if (term.isNotEmpty()) {
             observable.updateUi(SearchUiState.Loading)
-            runAsync.handleAsync(viewModelScope, {
-                repository.load(term)
-            }) { loadResult ->
+            runAsync.handleAsync(
+                viewModelScope,
+                {
+                    repository.load(term)
+                }
+            ) { loadResult ->
                 player.update(loadResult.map(toPlayList))
                 observable.updateUi(loadResult.map(toUi))
             }

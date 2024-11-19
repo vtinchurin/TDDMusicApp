@@ -21,6 +21,7 @@ class SearchRepositoryImpl(
     override fun lastCachedTerm(): String = termCache.restore()
 
     override suspend fun load(term: String): LoadResult {
+        termCache.save(value = term)
         try {
             if (!cacheDataSource.isCached(term)) {
                 val result = cloudDataSource.load(term)
@@ -46,7 +47,6 @@ class SearchRepositoryImpl(
                     sourceUrl = trackCache.sourceUrl,
                 )
             }
-            termCache.save(value = term)
             return LoadResult.Tracks(tracks)
         } catch (e: Exception) {
             val dataException = handleError.handleError(e)
