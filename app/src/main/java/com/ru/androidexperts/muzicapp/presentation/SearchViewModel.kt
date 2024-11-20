@@ -48,10 +48,8 @@ class SearchViewModel(
         if (term.isNotEmpty()) {
             observable.updateUi(SearchUiState.Loading)
             runAsync.handleAsync(
-                viewModelScope,
-                {
-                    repository.load(term)
-                }
+                scope = viewModelScope,
+                heavyOperation = { repository.load(term) }
             ) { loadResult ->
                 player.update(loadResult.map(toPlayList))
                 observable.updateUi(loadResult.map(toUi))
