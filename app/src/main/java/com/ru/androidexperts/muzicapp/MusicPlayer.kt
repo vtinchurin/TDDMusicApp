@@ -1,6 +1,5 @@
 package com.ru.androidexperts.muzicapp
 
-import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player.Listener
 import androidx.media3.exoplayer.ExoPlayer
@@ -13,35 +12,42 @@ interface MusicPlayer {
 
     fun pause()
 
-    fun init(observableUpdate: (isLast: Boolean, trackId: Long) -> Unit)
+    fun init(observableUpdate: PlayerCallback = PlayerCallback.Empty)
 
     fun update(newPlayList: Playlist)
 
-    class Base(context: Context) : MusicPlayer {
+    class Base(private val player: ExoPlayer) : MusicPlayer {
 
         private var playlistWasUpdated = false
         private var currentPlayList: Playlist = listOf()
-        private var updateCallback = { _: Boolean, _: Long -> }
+        private var updateCallback: PlayerCallback = PlayerCallback.Empty
 
         private val listener = object : Listener {
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                updateCallback.invoke(IS_PLAYED, mediaItem?.mediaId?.toLong() ?: -1L)
+                updateCallback.update(IS_PLAYED, mediaItem?.mediaId?.toLong() ?: -1L)
             }
 
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                updateCallback.invoke(
+                updateCallback.update(
                     playWhenReady,
                     player.currentMediaItem?.mediaId?.toLong() ?: -1L
                 )
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
             }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (player.playbackState == 4) {
+                    updateCallback.update(
+                        !IS_PLAYED,
+                        player.currentMediaItem?.mediaId?.toLong() ?: -1L
+                    )
+                }
+                super.onIsPlayingChanged(isPlaying)
+            }
         }
 
-        private val player = ExoPlayer.Builder(context)
-            .build()
-
-        override fun init(observableUpdate: (isLast: Boolean, index: Long) -> Unit) {
+        override fun init(observableUpdate: PlayerCallback) {
             updateCallback = observableUpdate
         }
 
