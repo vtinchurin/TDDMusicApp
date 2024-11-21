@@ -5,6 +5,7 @@ import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
 
 interface UiMapper : LoadResult.Mapper<SearchUiState> {
 
@@ -47,7 +48,7 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             ): RecyclerItem {
                 return RecyclerItem.TrackUi(
                     trackId = id,
-                    coverUrl = coverUrl,
+                    coverUrl = TrackImageUiState.Stop(coverUrl),
                     authorName = authorName,
                     trackTitle = trackTitle,
                     isPlaying = if (playingTrackId == id) PlayStopUiState.Play else PlayStopUiState.Stop
