@@ -43,10 +43,21 @@ interface GenericAdapter {
         override fun onBindViewHolder(holder: GenericViewHolder, position: Int) =
             holder.bind(data[position])
 
+        override fun onBindViewHolder(
+            holder: GenericViewHolder,
+            position: Int,
+            payloads: MutableList<Any>
+        ) {
+            holder.bind(data[position])
+        }
 
         private inner class DiffUtilCallback(
             private val newList: List<RecyclerItem>,
         ) : DiffUtil.Callback() {
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any {
+                return true
+            }
 
             override fun getOldListSize(): Int {
                 return data.size

@@ -2,14 +2,15 @@ package com.ru.androidexperts.muzicapp.adapter
 
 import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 import com.ru.androidexperts.muzicapp.view.UpdateText
-import com.ru.androidexperts.muzicapp.view.image.UpdateImageUrl
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import com.ru.androidexperts.muzicapp.view.play.UpdatePlayStopButton
+import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
+import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUpdate
 
 interface RecyclerItem {
 
     fun show(
-        image: UpdateImageUrl,
+        image: TrackImageUpdate,
         authorName: UpdateText,
         trackTitle: UpdateText,
         playStopBtn: UpdatePlayStopButton,
@@ -31,14 +32,14 @@ interface RecyclerItem {
 
     data class TrackUi(
         private val trackId: Long,
-        private val coverUrl: String,
+        private val coverUrl: TrackImageUiState,
         private val authorName: String,
         private val trackTitle: String,
         private val isPlaying: PlayStopUiState,
     ) : RecyclerItem {
 
         override fun show(
-            image: UpdateImageUrl,
+            image: TrackImageUpdate,
             authorName: UpdateText,
             trackTitle: UpdateText,
             playStopBtn: UpdatePlayStopButton,
@@ -60,9 +61,9 @@ interface RecyclerItem {
 
         override fun changePlaying(): RecyclerItem {
             return if (isPlaying is PlayStopUiState.Play)
-                this.copy(isPlaying = PlayStopUiState.Stop)
+                this.copy(coverUrl = coverUrl.changeState(),isPlaying = PlayStopUiState.Stop)
             else
-                this.copy(isPlaying = PlayStopUiState.Play)
+                this.copy(coverUrl = coverUrl.changeState(),isPlaying = PlayStopUiState.Play)
         }
 
         override fun type() = RecyclerItemType.Track
