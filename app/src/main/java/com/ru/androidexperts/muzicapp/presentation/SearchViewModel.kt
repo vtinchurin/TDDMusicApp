@@ -1,6 +1,7 @@
 package com.ru.androidexperts.muzicapp.presentation
 
 import com.ru.androidexperts.muzicapp.MusicPlayer
+import com.ru.androidexperts.muzicapp.PlayerCallback
 import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.core.RunAsync
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
@@ -23,21 +24,19 @@ class SearchViewModel(
 ) : RecyclerActions.Mutable {
 
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-
-    init {
-        player.init { isPlaying, trackId ->
-            if (isPlaying) {
-                toUi.update(trackId)
-                observable.play(trackId)
-            } else {
-                observable.stop()
-                toUi.update()
-            }
+    private val playerCallback = PlayerCallback { isPlaying, trackId ->
+        if (isPlaying) {
+            toUi.update(trackId)
+            observable.play(trackId)
+        } else {
+            observable.stop()
+            toUi.update()
         }
     }
 
-    fun init(isFirstRun:Boolean = true) {
-        if(isFirstRun){
+    fun init(isFirstRun: Boolean = true) {
+        if (isFirstRun) {
+            player.init(playerCallback)
             val lastTerm = repository.lastCachedTerm()
             observable.updateUi(lastTerm)
             fetch(lastTerm)
@@ -54,7 +53,7 @@ class SearchViewModel(
                 player.update(loadResult.map(toPlayList))
                 observable.updateUi(loadResult.map(toUi))
             }
-        }
+        } else observable.updateUi(SearchUiState.Initial())
     }
 
     override fun retry() {
