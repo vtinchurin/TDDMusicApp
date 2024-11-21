@@ -39,7 +39,7 @@ class SearchViewModel(
     fun init(isFirstRun:Boolean = true) {
         if(isFirstRun){
             val lastTerm = repository.lastCachedTerm()
-            observable.update(lastTerm)
+            observable.updateUi(lastTerm)
             fetch(lastTerm)
         }
     }

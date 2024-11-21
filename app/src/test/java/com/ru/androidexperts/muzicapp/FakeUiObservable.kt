@@ -16,7 +16,7 @@ interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
         private var input = ""
         private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
 
-        override fun update(input: String) {
+        override fun updateUi(input: String) {
             this.input = input
         }
 

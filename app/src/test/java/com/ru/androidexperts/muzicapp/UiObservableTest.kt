@@ -1,5 +1,5 @@
-package com.ru.androidexperts.muzicapp
-
+import com.ru.androidexperts.muzicapp.Order
+import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
@@ -7,6 +7,7 @@ import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.view.UpdateText
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import org.junit.Assert.assertEquals
+import com.ru.androidexperts.muzicapp.R
 import org.junit.Before
 import org.junit.Test
 
@@ -30,16 +31,18 @@ class ObservableTest {
     }
 
     @Test
-    fun `initial without cached data`() {
+    fun `initial - without cached data`() {
         observable.update(observer)
-        input.assertText("")
+        input.assertText(emptyString())
         adapter.assertRecyclerList(listOf())
         order.check(listOf(UPDATE_RECYCLER, UPDATE_UI))
     }
 
     @Test
-    fun `initial with cached word`() {
-        observable.updateUi(SearchUiState.Initial("123", SUCCESS_LIST))
+    fun `initial - observer was subscribed after result returned`() {
+        observable.updateUi("123")
+        observable.updateUi(SearchUiState.Loading)
+        observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         observable.update(observer)
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
@@ -47,14 +50,15 @@ class ObservableTest {
     }
 
     @Test
-    fun `loading after initial`() {
-        observable.updateUi(SearchUiState.Initial("123", SUCCESS_LIST))
+    fun `initial - observer was subscribed before result returned`() {
+        observable.updateUi("123")
+        observable.updateUi(SearchUiState.Loading)
         observable.update(observer)
         input.assertText("123")
-        adapter.assertRecyclerList(SUCCESS_LIST)
-        observable.updateUi(SearchUiState.Loading)
-        input.assertText("123")
         adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
+        input.assertText("123")
+        adapter.assertRecyclerList(SUCCESS_LIST)
         order.check(
             listOf(
                 SET_TEXT, UPDATE_RECYCLER, UPDATE_UI,
@@ -64,10 +68,9 @@ class ObservableTest {
     }
 
     @Test
-    fun `success result`() {
-        observable.updateUi(SearchUiState.Initial())
+    fun `fetch - success result`() {
         observable.update(observer)
-        input.assertText("")
+        input.assertText(emptyString())
         adapter.assertRecyclerList(listOf())
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
@@ -88,7 +91,7 @@ class ObservableTest {
     fun `success result and play first and stop`() {
         observable.updateUi(SearchUiState.Initial())
         observable.update(observer)
-        input.assertText("")
+        input.assertText(emptyString())
         adapter.assertRecyclerList(listOf())
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
@@ -124,9 +127,8 @@ class ObservableTest {
 
     @Test
     fun `success result and play first and play next and stop`() {
-        observable.updateUi(SearchUiState.Initial())
         observable.update(observer)
-        input.assertText("")
+        input.assertText(emptyString())
         adapter.assertRecyclerList(listOf())
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
@@ -175,7 +177,7 @@ class ObservableTest {
     fun `error no item message`() {
         observable.updateUi(SearchUiState.NoTracks)
         observable.update(observer)
-        input.assertText("")
+        input.assertText(emptyString())
         adapter.assertRecyclerList(ERROR_NO_ITEM)
         order.check(listOf(UPDATE_RECYCLER, UPDATE_UI))
     }
@@ -197,6 +199,7 @@ class ObservableTest {
         )
         private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
         private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi(R.string.no_internet_connection))
+        private fun emptyString() = ""
     }
 
 }

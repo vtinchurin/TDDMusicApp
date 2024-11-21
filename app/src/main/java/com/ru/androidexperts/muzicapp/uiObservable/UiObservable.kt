@@ -8,7 +8,7 @@ interface UiObservable<T : Any> : Update<T> {
 
     interface Playlist<T : Any> : UiObservable<T> {
 
-        fun update(input: String)
+        fun updateUi(input: String)
 
         fun play(trackId: Long)
 
@@ -20,7 +20,7 @@ interface UiObservable<T : Any> : Update<T> {
             private var input = ""
             private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
 
-            override fun update(input: String) {
+            override fun updateUi(input: String) {
                 this.input = input
             }
 
