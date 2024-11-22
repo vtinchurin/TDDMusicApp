@@ -1,6 +1,7 @@
 package com.ru.androidexperts.muzicapp
 
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.media3.exoplayer.ExoPlayer
 import com.ru.androidexperts.muzicapp.presentation.mappers.Playlist
@@ -29,13 +30,13 @@ interface MusicPlayer {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                if(player.playbackState == 3){
+                if(player.playbackState == Player.EVENT_IS_LOADING_CHANGED){
                     updateCallback.update(
                         isPlaying,
                         player.currentMediaItem?.mediaId?.toLong() ?: -1L
                     )
                 }
-                if (player.playbackState == 4) {
+                if (player.playbackState == Player.EVENT_PLAYBACK_STATE_CHANGED) {
                     updateCallback.update(
                         !IS_PLAYED,
                         player.currentMediaItem?.mediaId?.toLong() ?: -1L
@@ -74,7 +75,7 @@ interface MusicPlayer {
             }
             if (player.currentMediaItemIndex != trackIndex)
                 player.seekTo(trackIndex, 0)
-            else if(player.playbackState==4)
+            else if(player.playbackState == Player.EVENT_PLAYBACK_STATE_CHANGED)
                 player.seekTo(0)
             player.play()
         }
