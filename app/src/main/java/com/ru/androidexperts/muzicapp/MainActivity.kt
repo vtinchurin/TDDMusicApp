@@ -19,8 +19,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, SearchFragment())
-            .commit()
+        if (savedInstanceState == null)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, SearchFragment())
+                .commit()
     }
 }
