@@ -4,31 +4,38 @@ interface LoadResult {
 
     fun <T : Any> map(mapper: Mapper<T>): T
 
-    data class Tracks(private val data: List<ResultEntityModel>) : LoadResult {
+    data class Tracks(private val data: List<TrackModel>) : LoadResult {
 
         override fun <T : Any> map(mapper: Mapper<T>): T {
             return mapper.mapSuccess(data)
         }
     }
 
-    object Empty : LoadResult {
+    object Empty: LoadResult {
 
         override fun <T : Any> map(mapper: Mapper<T>): T {
             return mapper.mapEmpty()
         }
     }
 
-    data class Error(private val error: ResultEntityModel) : LoadResult {
+    object NoTracks:LoadResult {
+        override fun <T : Any> map(mapper: Mapper<T>): T {
+            return mapper.mapNoTrack()
+        }
+    }
+
+    data class Error(private val errorResId: Int) : LoadResult {
 
         override fun <T : Any> map(mapper: Mapper<T>): T {
-            return mapper.mapError(error)
+            return mapper.mapError(errorResId)
         }
     }
 
 
     interface Mapper<T : Any> {
-        fun mapSuccess(data: List<ResultEntityModel>): T
-        fun mapError(error: ResultEntityModel): T
+        fun mapSuccess(data: List<TrackModel>): T
+        fun mapError(errorResId: Int): T
+        fun mapNoTrack():T
         fun mapEmpty(): T
     }
 }

@@ -9,7 +9,7 @@ import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.data.cloud.TrackCloud
 import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryImpl
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -23,7 +23,7 @@ class SearchRepositoryTest {
     private lateinit var cloudDataSource: FakeCloudDataSource
     private lateinit var cachedTerm: FakeCache
     private lateinit var handleError: HandleError
-    private lateinit var mapper: DataException.Mapper<ResultEntityModel>
+    private lateinit var mapper: DataException.Mapper<LoadResult.Error>
     private lateinit var order: Order
 
     @Before
@@ -33,13 +33,13 @@ class SearchRepositoryTest {
         cloudDataSource = FakeCloudDataSource.Base(order)
         cachedTerm = FakeCache.Base(order)
         handleError = HandleError.ToData()
-        mapper = DataException.Mapper.ToDomain()
+        mapper = DataException.Mapper.ToErrorLoadResult()
         cacheDataSource.setCachedData(CACHED_TRACKS)
         repository = SearchRepositoryImpl(
             cacheDataSource = cacheDataSource,
             cloudDataSource = cloudDataSource,
             handleError = handleError,
-            mapper = mapper,
+            errorLoadResult = mapper,
             termCache = cachedTerm,
         )
     }
@@ -55,11 +55,11 @@ class SearchRepositoryTest {
         cachedTerm.assertValue("not_cached")
         order.check(
             listOf(
+                SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
                 CLOUD_LOAD,
                 CACHE_SAVE,
                 CACHE_LOAD,
-                SHARED_PREFS_SAVE
             )
         )
     }
@@ -75,9 +75,9 @@ class SearchRepositoryTest {
         cachedTerm.assertValue("cached")
         order.check(
             listOf(
+                SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
                 CACHE_LOAD,
-                SHARED_PREFS_SAVE
             )
         )
     }
@@ -117,14 +117,14 @@ class SearchRepositoryTest {
         )
         private val SUCCESS_CLOUD_LOAD_RESULT: LoadResult = LoadResult.Tracks(
             data = listOf(
-                ResultEntityModel.Track(
+                TrackModel.Base(
                     id = 3L,
                     trackTitle = "title 3",
                     authorName = "author 3",
                     coverUrl = "coverUrl 3",
                     sourceUrl = "sourceUrl 3"
                 ),
-                ResultEntityModel.Track(
+                TrackModel.Base(
                     id = 4L,
                     trackTitle = "title 4",
                     authorName = "author 4",
@@ -135,14 +135,14 @@ class SearchRepositoryTest {
         )
         private val SUCCESS_CACHED_LOAD_RESULT: LoadResult = LoadResult.Tracks(
             data = listOf(
-                ResultEntityModel.Track(
+                TrackModel.Base(
                     id = 1L,
                     trackTitle = "title 1",
                     authorName = "author 1",
                     coverUrl = "coverUrl 1",
                     sourceUrl = "sourceUrl 1"
                 ),
-                ResultEntityModel.Track(
+                TrackModel.Base(
                     id = 2L,
                     trackTitle = "title 2",
                     authorName = "author 2",

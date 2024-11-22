@@ -1,7 +1,7 @@
 package com.ru.androidexperts.muzicapp.data
 
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 
 abstract class DataException(private val resId: Int) : Exception() {
 
@@ -13,9 +13,9 @@ abstract class DataException(private val resId: Int) : Exception() {
 
         fun map(resId: Int): T
 
-        class ToDomain : Mapper<ResultEntityModel> {
-            override fun map(resId: Int): ResultEntityModel.Error {
-                return ResultEntityModel.Error(resId)
+        class ToErrorLoadResult : Mapper<LoadResult.Error> {
+            override fun map(resId: Int): LoadResult.Error {
+                return LoadResult.Error(resId)
             }
         }
     }

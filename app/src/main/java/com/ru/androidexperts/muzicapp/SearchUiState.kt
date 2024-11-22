@@ -13,7 +13,18 @@ interface SearchUiState {
 
     fun recyclerState(): List<RecyclerItem>
 
-    abstract class Abstract(
+    abstract class Single(
+        private val recyclerItem: RecyclerItem,
+    ) : SearchUiState {
+
+        override fun show(input: UpdateText, adapter: GenericAdapter) {
+            adapter.update(listOf(recyclerItem))
+        }
+
+        override fun recyclerState() = listOf(recyclerItem)
+    }
+
+    abstract class Multiple(
         private val recyclerState: List<RecyclerItem>,
     ) : SearchUiState {
 
@@ -27,22 +38,24 @@ interface SearchUiState {
     data class Initial(
         private val inputText: String = "",
         private val recyclerState: List<RecyclerItem> = listOf(),
-    ) : Abstract(recyclerState = recyclerState) {
+    ) : Multiple(recyclerState) {
 
         override fun show(input: UpdateText, adapter: GenericAdapter) {
             if (inputText != "") input.update(inputText)
             super.show(input, adapter)
         }
+
+        override fun recyclerState() = recyclerState
     }
 
     data class Success(
         private val recyclerState: List<RecyclerItem>,
-    ) : Abstract(recyclerState = recyclerState)
+    ) : Multiple(recyclerState = recyclerState)
 
-    data class Error(private val errorItem: RecyclerItem) :
-        Abstract(recyclerState = listOf(errorItem))
+    data class Error(private val errorResId: Int) :
+        Single(recyclerItem = RecyclerItem.ErrorUi(resId = errorResId))
 
-    object Loading : Abstract(recyclerState = listOf(RecyclerItem.ProgressUi))
+    object Loading : Single(recyclerItem = RecyclerItem.ProgressUi)
 
-    object NoTracks : Abstract(recyclerState = listOf(RecyclerItem.NoTracksUi))
+    object NoTracks : Single(recyclerItem = RecyclerItem.NoTracksUi)
 }

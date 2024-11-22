@@ -3,7 +3,7 @@ package com.ru.androidexperts.muzicapp.presentation.mappers
 import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
 
@@ -19,7 +19,7 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             playingTrackId = trackId
         }
 
-        override fun mapSuccess(data: List<ResultEntityModel>): SearchUiState {
+        override fun mapSuccess(data: List<TrackModel>): SearchUiState {
             val mapper = InnerMapper(playingTrackId)
             val tracksUiList = data.map {
                 it.map(mapper)
@@ -27,17 +27,20 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             return SearchUiState.Success(tracksUiList)
         }
 
-        override fun mapError(error: ResultEntityModel): SearchUiState {
-            val errorUi = error.map(InnerMapper())
-            return SearchUiState.Error(errorUi)
+        override fun mapError(errorResId: Int): SearchUiState {
+            return SearchUiState.Error(errorResId)
         }
 
-        override fun mapEmpty(): SearchUiState {
+        override fun mapNoTrack(): SearchUiState {
             return SearchUiState.NoTracks
         }
 
+        override fun mapEmpty(): SearchUiState {
+            return SearchUiState.Initial()
+        }
+
         private inner class InnerMapper(private val playingTrackId: Long = -1L) :
-            ResultEntityModel.Mapper<RecyclerItem> {
+            TrackModel.Mapper<RecyclerItem> {
 
             override fun mapToTrackUi(
                 id: Long,
@@ -53,12 +56,6 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
                     trackTitle = trackTitle,
                     isPlaying = if (playingTrackId == id) PlayStopUiState.Play else PlayStopUiState.Stop
                 )
-            }
-
-            override fun mapToNoTracks() = RecyclerItem.NoTracksUi
-
-            override fun mapToError(resId: Int): RecyclerItem {
-                return RecyclerItem.ErrorUi(resId = resId)
             }
         }
     }

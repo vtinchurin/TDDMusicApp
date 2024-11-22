@@ -1,47 +1,44 @@
 package com.ru.androidexperts.muzicapp.presentation.mappers
 
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 
 typealias Playlist = List<Pair<Long, String>>
 typealias Item = Pair<Long, String>
 
-class PlayerMapper : LoadResult.Mapper<Playlist> {
+interface PlayerMapper : LoadResult.Mapper<Playlist> {
 
-    override fun mapSuccess(data: List<ResultEntityModel>): Playlist {
-        return data.map {
-            it.map(InnerMapper)
-        }
-    }
+    class Base : PlayerMapper {
 
-    override fun mapError(error: ResultEntityModel): Playlist {
-        return listOf(error.map(InnerMapper))
-    }
-
-    override fun mapEmpty(): Playlist {
-        return listOf()
-    }
-
-    private object InnerMapper : ResultEntityModel.Mapper<Item> {
-
-        private val EMPTY = Item(-1L, "")
-
-        override fun mapToTrackUi(
-            id: Long,
-            trackTitle: String,
-            authorName: String,
-            coverUrl: String,
-            sourceUrl: String,
-        ): Item {
-            return id to sourceUrl
+        override fun mapSuccess(data: List<TrackModel>): Playlist {
+            return data.map {
+                it.map(InnerMapper)
+            }
         }
 
-        override fun mapToNoTracks(): Item {
-            return EMPTY
+        override fun mapError(errorResId: Int): Playlist {
+            return listOf()
         }
 
-        override fun mapToError(resId: Int): Item {
-            return EMPTY
+        override fun mapNoTrack(): Playlist {
+            return listOf()
+        }
+
+        override fun mapEmpty(): Playlist {
+            return listOf()
+        }
+
+        private object InnerMapper : TrackModel.Mapper<Item> {
+
+            override fun mapToTrackUi(
+                id: Long,
+                trackTitle: String,
+                authorName: String,
+                coverUrl: String,
+                sourceUrl: String,
+            ): Item {
+                return id to sourceUrl
+            }
         }
     }
 }
