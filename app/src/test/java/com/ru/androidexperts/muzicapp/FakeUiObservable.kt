@@ -6,15 +6,16 @@ import org.junit.Assert.assertEquals
 
 interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
 
-    fun assertUiStates(uiState: SearchUiState)
+    fun assertCurrentUiState(uiState: SearchUiState)
 
-    class Base(
-        private val order: Order
-    ) : FakeUiObservable<SearchUiState> {
+    fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>)
+
+    class Base(private val order: Order) : FakeUiObservable<SearchUiState> {
 
         private var cached: SearchUiState = SearchUiState.Initial("")
         private var input = ""
         private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
+        private val uiStatesHistory = mutableListOf<SearchUiState>()
 
         override fun updateUi(input: String) {
             this.input = input
@@ -22,18 +23,26 @@ interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
 
         override fun update(observer: UiObserver<SearchUiState>) {
             this.observer = observer
-            if (!observer.isEmpty())
+            if (!observer.isEmpty()) {
                 observer.updateUi(cached)
+                order.add(OBSERVABLE_REGISTER)
+                order.add(OBSERVABLE_POST)
+                uiStatesHistory.add(cached)
+            } else
+                order.add(OBSERVABLE_UNREGISTER)
             input = ""
-            order.add(OBSERVABLE_REGISTER)
         }
 
         override fun updateUi(data: SearchUiState) {
             cached = if (input.isNotEmpty()) {
                 SearchUiState.Initial(input, data.recyclerState())
-            } else data
+            } else
+                data
+
             if (!observer.isEmpty()) {
                 observer.updateUi(cached)
+                order.add(OBSERVABLE_POST)
+                uiStatesHistory.add(cached)
             }
         }
 
@@ -65,8 +74,12 @@ interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
             updateUi(SearchUiState.Success(recyclerState = tracks))
         }
 
-        override fun assertUiStates(uiState: SearchUiState) {
+        override fun assertCurrentUiState(uiState: SearchUiState) {
             assertEquals(uiState, cached)
+        }
+
+        override fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>) {
+            assertEquals(expectedUiStates, uiStatesHistory)
         }
     }
 }

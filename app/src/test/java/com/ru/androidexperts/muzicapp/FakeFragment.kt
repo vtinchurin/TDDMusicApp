@@ -5,7 +5,9 @@ import org.junit.Assert.assertEquals
 
 interface FakeFragment : UiObserver<SearchUiState> {
 
-    fun assertCurrentUiStates(list: List<SearchUiState>)
+    fun assertCurrentUiState(expectedState: SearchUiState)
+
+    fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>)
 
     class Base : FakeFragment {
 
@@ -15,8 +17,12 @@ interface FakeFragment : UiObserver<SearchUiState> {
             statesList.add(data)
         }
 
-        override fun assertCurrentUiStates(list: List<SearchUiState>) {
-            assertEquals(list, statesList)
+        override fun assertCurrentUiState(expectedState: SearchUiState) {
+            assertEquals(expectedState, statesList.last())
+        }
+
+        override fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>) {
+            assertEquals(expectedUiStates, statesList)
         }
     }
 }

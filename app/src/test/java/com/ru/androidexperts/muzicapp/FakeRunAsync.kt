@@ -27,8 +27,10 @@ interface FakeRunAsync : RunAsync {
 
         override fun returnResult() {
             cached.invoke(result)
+            order.add(RUN_ASYNC_RETURN_RESULT)
         }
     }
 }
 
 const val RUN_ASYNC_HANDLE = "runAsync handle"
+const val RUN_ASYNC_RETURN_RESULT = "runAsync returnResult"

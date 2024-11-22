@@ -1,8 +1,11 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.core.HandleError
+import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
+import okio.IOException
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
@@ -25,13 +28,21 @@ interface FakeSearchRepository : SearchRepository {
         private var loadCalledCount = 0
         private var termCached = ""
         private var expectError = false
+        private val handleError = HandleError.ToData()
+        private val mapper = DataException.Mapper.ToDomain()
 
         override suspend fun load(term: String): LoadResult {
-            loadCalledCount++
-            order.add(REPOSITORY_LOAD)
-            if (expectError)
-                throw IllegalStateException("No internet connection")
-            return LoadResult.Tracks(expectedTrackList)
+            try {
+                loadCalledCount++
+                order.add(REPOSITORY_LOAD)
+                if (expectError)
+                    throw IOException("No internet connection")
+                return LoadResult.Tracks(expectedTrackList)
+            } catch (e: Exception) {
+                val dataException = handleError.handleError(e)
+                val error = dataException.map(mapper)
+                return LoadResult.Error(error)
+            }
         }
 
         override fun lastCachedTerm(): String {
