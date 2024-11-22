@@ -28,15 +28,13 @@ interface MusicPlayer {
                 updateCallback.update(IS_PLAYED, mediaItem?.mediaId?.toLong() ?: -1L)
             }
 
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                updateCallback.update(
-                    playWhenReady,
-                    player.currentMediaItem?.mediaId?.toLong() ?: -1L
-                )
-                super.onPlayWhenReadyChanged(playWhenReady, reason)
-            }
-
             override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if(player.playbackState == 3){
+                    updateCallback.update(
+                        isPlaying,
+                        player.currentMediaItem?.mediaId?.toLong() ?: -1L
+                    )
+                }
                 if (player.playbackState == 4) {
                     updateCallback.update(
                         !IS_PLAYED,
@@ -76,6 +74,8 @@ interface MusicPlayer {
             }
             if (player.currentMediaItemIndex != trackIndex)
                 player.seekTo(trackIndex, 0)
+            else if(player.playbackState==4)
+                player.seekTo(0)
             player.play()
         }
 

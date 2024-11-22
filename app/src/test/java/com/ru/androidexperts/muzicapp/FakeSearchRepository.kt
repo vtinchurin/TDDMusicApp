@@ -1,16 +1,14 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.core.HandleError
-import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import okio.IOException
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
 
-    fun expectTrackList(list: List<ResultEntityModel>)
+    fun expectTrackList(list: List<TrackModel>)
 
     fun assertLoadCalledCount(expectedCount: Int)
 
@@ -24,12 +22,10 @@ interface FakeSearchRepository : SearchRepository {
         private val order: Order,
     ) : FakeSearchRepository {
 
-        private var expectedTrackList: List<ResultEntityModel> = listOf()
+        private var expectedTrackList: List<TrackModel> = listOf()
         private var loadCalledCount = 0
         private var termCached = ""
         private var expectError = false
-        private val handleError = HandleError.ToData()
-        private val mapper = DataException.Mapper.ToDomain()
 
         override suspend fun load(term: String): LoadResult {
             try {
@@ -39,9 +35,7 @@ interface FakeSearchRepository : SearchRepository {
                     throw IOException("No internet connection")
                 return LoadResult.Tracks(expectedTrackList)
             } catch (e: Exception) {
-                val dataException = handleError.handleError(e)
-                val error = dataException.map(mapper)
-                return LoadResult.Error(error)
+                return LoadResult.Error(R.string.no_internet_connection)
             }
         }
 
@@ -50,7 +44,7 @@ interface FakeSearchRepository : SearchRepository {
             return termCached
         }
 
-        override fun expectTrackList(list: List<ResultEntityModel>) {
+        override fun expectTrackList(list: List<TrackModel>) {
             expectedTrackList = list
         }
 

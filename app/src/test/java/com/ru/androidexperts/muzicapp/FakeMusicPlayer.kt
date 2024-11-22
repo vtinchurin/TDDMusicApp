@@ -12,12 +12,12 @@ interface FakeMusicPlayer : MusicPlayer{
     class Base(private val order: Order) : FakeMusicPlayer{
 
         private var currentTrack: Long = -1
-        private var updateCallback = { _: Boolean, _: Long -> }
+        private var updateCallback: PlayerCallback = PlayerCallback.Empty
         private var uriList = listOf<Pair<Long, String>>()
 
         override fun stopTracks() {
             currentTrack = -1
-            updateCallback.invoke(false, currentTrack)
+            updateCallback.update(false, currentTrack)
         }
 
         override fun assertUpdateTracksUriList(tracksUriList: List<Pair<Long, String>>) {
@@ -26,14 +26,14 @@ interface FakeMusicPlayer : MusicPlayer{
 
         override fun play(trackId: Long) {
             currentTrack = trackId
-            updateCallback.invoke(true, trackId)
+            updateCallback.update(true, trackId)
         }
 
         override fun pause() {
-            updateCallback.invoke(false, -1)
+            updateCallback.update(false, -1)
         }
 
-        override fun init(observableUpdate: (isLast: Boolean, trackId: Long) -> Unit) {
+        override fun init(observableUpdate: PlayerCallback) {
             updateCallback = observableUpdate
             order.add(PLAYER_INIT)
         }

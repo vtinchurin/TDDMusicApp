@@ -1,15 +1,15 @@
 package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
-import com.ru.androidexperts.muzicapp.domain.model.ResultEntityModel
+import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.presentation.mappers.UiMapper
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
 import org.junit.Before
 import org.junit.Test
 
-//TODO tests for play/stop track
 class SearchViewModelTest {
 
     private lateinit var viewModel: SearchViewModel
@@ -33,20 +33,20 @@ class SearchViewModelTest {
             runAsync = runAsync,
             player = player,
             toUi = UiMapper.Base(),
-            toPlayList = PlayerMapper()
+            toPlayList = PlayerMapper.Base()
         )
         fragment = FakeFragment.Base()
 
         repository.expectTrackList(
-            listOf<ResultEntityModel>(
-                ResultEntityModel.Track(
+            listOf<TrackModel>(
+                TrackModel.Base(
                     id = 1L,
                     authorName = "Q",
                     trackTitle = "1",
                     coverUrl = "1",
                     sourceUrl = "1"
                 ),
-                ResultEntityModel.Track(
+                TrackModel.Base(
                     id = 2L,
                     authorName = "Q",
                     trackTitle = "2",
@@ -128,6 +128,7 @@ class SearchViewModelTest {
 
     @Test
     fun loadTest() {
+        viewModel.init(isFirstRun = true)
         viewModel.fetch(term = "Q")
         observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(1)
@@ -149,6 +150,7 @@ class SearchViewModelTest {
         order.check(
             listOf(
                 PLAYER_INIT,
+                REPOSITORY_TERM,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
@@ -162,7 +164,7 @@ class SearchViewModelTest {
 
     @Test
     fun noTrackLoadTest() {
-        repository.expectTrackList(listOf<ResultEntityModel>())
+        repository.expectTrackList(listOf<TrackModel>())
 
         viewModel.fetch(term = "QQ")
 
@@ -186,7 +188,6 @@ class SearchViewModelTest {
         )
         order.check(
             listOf(
-                PLAYER_INIT,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
@@ -214,7 +215,6 @@ class SearchViewModelTest {
         fragment.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
 
         val failLoadOrderList = listOf(
-            PLAYER_INIT,
             RUN_ASYNC_HANDLE,
             REPOSITORY_LOAD,
             PLAYER_UPDATE,
@@ -294,21 +294,21 @@ class SearchViewModelTest {
 
     companion object {
         private val SEARCH_UI_STATE_ERROR_NO_INTERNET =
-            SearchUiState.Error(RecyclerItem.ErrorUi(R.string.no_internet_connection))
+            SearchUiState.Error(R.string.no_internet_connection)
         private val SEARCH_UI_STATE_SUCCESS_BASE = SearchUiState.Success(
             listOf<RecyclerItem>(
                 RecyclerItem.TrackUi(
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = "1",
+                    coverUrl = TrackImageUiState.Stop("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = "2",
+                    coverUrl = TrackImageUiState.Stop("2"),
                     isPlaying = PlayStopUiState.Stop
                 )
             )
@@ -319,14 +319,14 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = "1",
+                    coverUrl = TrackImageUiState.Play("1"),
                     isPlaying = PlayStopUiState.Play
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = "2",
+                    coverUrl = TrackImageUiState.Stop("2"),
                     isPlaying = PlayStopUiState.Stop
                 )
             )
@@ -337,14 +337,14 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = "1",
+                    coverUrl = TrackImageUiState.Stop("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = "2",
+                    coverUrl = TrackImageUiState.Play("2"),
                     isPlaying = PlayStopUiState.Play
                 )
             )

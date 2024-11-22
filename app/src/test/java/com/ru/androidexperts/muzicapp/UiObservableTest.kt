@@ -1,4 +1,5 @@
 import com.ru.androidexperts.muzicapp.Order
+import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
@@ -6,9 +7,8 @@ import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
 import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.view.UpdateText
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
-import org.junit.Assert.assertEquals
-import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -187,7 +187,7 @@ class ObservableTest {
     fun `error internet connection message`() {
         observable.updateUi(SearchUiState.Initial("123"))
         observable.update(observer)
-        observable.updateUi(SearchUiState.Error(RecyclerItem.ErrorUi(R.string.no_internet_connection)))
+        observable.updateUi(SearchUiState.Error(R.string.no_internet_connection))
         input.assertText("123")
         adapter.assertRecyclerList(ERROR_MESSAGE)
         order.check(listOf(SET_TEXT, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI))

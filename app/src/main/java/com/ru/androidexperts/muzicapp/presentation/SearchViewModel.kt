@@ -39,21 +39,20 @@ class SearchViewModel(
             player.init(playerCallback)
             val lastTerm = repository.lastCachedTerm()
             observable.updateUi(lastTerm)
-            fetch(lastTerm)
+            if (lastTerm.isNotEmpty())
+                fetch(lastTerm)
         }
     }
 
     fun fetch(term: String) {
-        if (term.isNotEmpty()) {
-            observable.updateUi(SearchUiState.Loading)
-            runAsync.handleAsync(
-                scope = viewModelScope,
-                heavyOperation = { repository.load(term) }
-            ) { loadResult ->
-                player.update(loadResult.map(toPlayList))
-                observable.updateUi(loadResult.map(toUi))
-            }
-        } else observable.updateUi(SearchUiState.Initial())
+        observable.updateUi(SearchUiState.Loading)
+        runAsync.handleAsync(
+            scope = viewModelScope,
+            heavyOperation = { repository.load(term) }
+        ) { loadResult ->
+            player.update(loadResult.map(toPlayList))
+            observable.updateUi(loadResult.map(toUi))
+        }
     }
 
     override fun retry() {
