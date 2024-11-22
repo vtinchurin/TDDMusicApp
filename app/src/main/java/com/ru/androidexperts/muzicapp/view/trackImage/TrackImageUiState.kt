@@ -10,7 +10,7 @@ interface TrackImageUiState : Serializable {
 
     fun changeState(): TrackImageUiState
 
-    abstract class Base(protected val url: String) : TrackImageUiState {
+    abstract class Base(private val url: String) : TrackImageUiState {
         override fun update(view: TrackImageUpdate) {
             Picasso.get() //TODO need to looking for better solution for Picasso integration
                 .load(url)
@@ -20,7 +20,7 @@ interface TrackImageUiState : Serializable {
         }
     }
 
-    class Play(url: String) : Base(url) {
+    data class Play(private val url: String) : Base(url) {
         override fun update(view: TrackImageUpdate) {
             super.update(view)
             view.startAnimation()
@@ -31,7 +31,7 @@ interface TrackImageUiState : Serializable {
         }
     }
 
-    class Stop(url: String) : Base(url) {
+    data class Stop(private val url: String) : Base(url) {
         override fun update(view: TrackImageUpdate) {
             super.update(view)
             view.stopAnimation()

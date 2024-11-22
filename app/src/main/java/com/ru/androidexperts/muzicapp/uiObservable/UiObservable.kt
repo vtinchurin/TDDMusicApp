@@ -22,6 +22,7 @@ interface UiObservable<T : Any> : Update<T> {
 
             override fun updateUi(input: String) {
                 this.input = input
+                cached = SearchUiState.Initial(input)
             }
 
             override fun update(observer: UiObserver<SearchUiState>) {

@@ -8,6 +8,7 @@ import com.ru.androidexperts.muzicapp.view.UpdateText
 import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
 import org.junit.Assert.assertEquals
 import com.ru.androidexperts.muzicapp.R
+import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
 import org.junit.Before
 import org.junit.Test
 
@@ -106,8 +107,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Play("1"), "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -143,8 +144,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Play("1"), "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -153,8 +154,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Stop),
-                RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Play)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Stop("1"), "1", "123", PlayStopUiState.Stop),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Play("2"), "2", "123", PlayStopUiState.Play)
             )
         )
 
@@ -194,8 +195,8 @@ class ObservableTest {
 
     companion object {
         private val SUCCESS_LIST = listOf(
-            RecyclerItem.TrackUi(0, "1", "1", "123", PlayStopUiState.Stop),
-            RecyclerItem.TrackUi(1, "2", "2", "123", PlayStopUiState.Stop)
+            RecyclerItem.TrackUi(0, TrackImageUiState.Stop("1"), "1", "123", PlayStopUiState.Stop),
+            RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
         )
         private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
         private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi(R.string.no_internet_connection))
