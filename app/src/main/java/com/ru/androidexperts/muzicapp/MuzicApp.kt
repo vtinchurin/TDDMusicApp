@@ -2,6 +2,7 @@ package com.ru.androidexperts.muzicapp
 
 import android.app.Application
 import android.content.Context
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.ru.androidexperts.muzicapp.core.HandleError
 import com.ru.androidexperts.muzicapp.core.cache.StringCache
@@ -61,14 +62,14 @@ class MuzicApp : Application() {
                     service = retrofit.create(TrackService::class.java)
                 ),
                 handleError = HandleError.ToData(),
-                mapper = DataException.Mapper.ToDomain(),
+                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
                 termCache = StringCache.Base(
                     "termKey", sharedPreferences, ""
                 )
             ),
-            player = MusicPlayer.Base(context = applicationContext),
+            player = MusicPlayer.Base(player = ExoPlayer.Builder(this).build()),
             toUi = UiMapper.Base(),
-            toPlayList = PlayerMapper()
+            toPlayList = PlayerMapper.Base()
         )
     }
 }
