@@ -7,6 +7,7 @@ import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.data.cache.TrackCache
 import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.data.cloud.TrackCloud
+import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryBase
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
@@ -34,7 +35,7 @@ class SearchRepositoryTest {
         handleError = HandleError.ToData()
         mapper = DataException.Mapper.ToErrorLoadResult()
         cacheDataSource.setCachedData(CACHED_TRACKS)
-        repository = SearchRepository.Base(
+        repository = SearchRepositoryBase(
             cacheDataSource = cacheDataSource,
             cloudDataSource = cloudDataSource,
             handleError = handleError,

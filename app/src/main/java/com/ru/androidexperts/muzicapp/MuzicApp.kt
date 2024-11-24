@@ -54,8 +54,19 @@ class MuzicApp : Application() {
         val sharedPreferences = applicationContext.getSharedPreferences(
             getString(R.string.app_name), Context.MODE_PRIVATE
         )
+        val testSharedPreferences = applicationContext.getSharedPreferences(
+            "test", Context.MODE_PRIVATE
+        )
 
         val repository = if (runUiTests)
+            SearchRepositoryFake(
+                handleError = HandleError.ToData(),
+                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
+                termCache = StringCache.Base(
+                    "termKey", testSharedPreferences, ""
+                )
+            )
+        else
             SearchRepositoryBase(
                 cacheDataSource = CacheDataSource.Base(
                     dao = database.dao()
@@ -69,18 +80,12 @@ class MuzicApp : Application() {
                     "termKey", sharedPreferences, ""
                 )
             )
-        else
-            SearchRepositoryFake(
-                handleError = HandleError.ToData(),
-                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
-                termCache = StringCache.Base(
-                    "termKey", sharedPreferences, ""
-                )
-            )
+        val player: MusicPlayer = if (runUiTests) MusicPlayer.TestPlayer()
+        else MusicPlayer.Base(ExoPlayer.Builder(this).build())
 
         searchViewModel = SearchViewModel(
             repository = repository,
-            player = MusicPlayer.Base(player = ExoPlayer.Builder(this).build()),
+            player = player,
             toUi = UiMapper.Base(),
             toPlayList = PlayerMapper.Base()
         )

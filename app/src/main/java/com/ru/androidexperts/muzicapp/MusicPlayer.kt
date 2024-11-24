@@ -85,6 +85,29 @@ interface MusicPlayer {
         }
     }
 
+    class TestPlayer : MusicPlayer {
+
+        private var callback: PlayerCallback = PlayerCallback.Empty
+        private var currentPlayList: Playlist = listOf()
+
+        override fun init(observableUpdate: PlayerCallback) {
+            callback = observableUpdate
+        }
+
+        override fun update(newPlayList: Playlist){
+            currentPlayList = newPlayList
+        }
+
+        override fun play(trackId: Long) {
+            callback.update(IS_PLAYED,trackId)
+            //todo add autoplay next track
+        }
+
+        override fun pause() {
+            callback.update(!IS_PLAYED,-1)
+        }
+    }
+
     companion object {
         const val IS_PLAYED = true
     }

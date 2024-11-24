@@ -6,6 +6,7 @@ import com.ru.androidexperts.muzicapp.data.DataException
 import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
+import kotlinx.coroutines.delay
 import java.io.IOException
 
 class SearchRepositoryFake(
@@ -37,15 +38,18 @@ class SearchRepositoryFake(
     }
 
     override suspend fun load(term: String): LoadResult {
+        delay(1500)
         loadCalledCount++
         termCache.save(value = term)
-
         try {
+            if(term.isEmpty())
+                return LoadResult.Empty
+
             if (loadCalledCount == 1)
                 throw IOException()
 
-            if (term.isEmpty() || term == NON_EXISTENT_ARTIST)
-                return LoadResult.Empty
+            if (term == NON_EXISTENT_ARTIST)
+                return LoadResult.NoTracks
 
             if (term == EXISTENT_ARTIST)
                 return LoadResult.Tracks(tracks)
