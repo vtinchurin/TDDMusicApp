@@ -1,13 +1,13 @@
 package com.ru.androidexperts.muzicapp
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
-import org.junit.Rule
 
 @RunWith(AndroidJUnit4::class)
 class ScenarioTest {
@@ -15,6 +15,13 @@ class ScenarioTest {
     @get:Rule
     val scenarioRule = ActivityScenarioRule(MainActivity::class.java)
 
+    @Before
+    fun close() {
+        val sharedPreferences = ApplicationProvider
+            .getApplicationContext<Context>()
+            .getSharedPreferences("test", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+    }
     /**
      * MG-01
      */
@@ -34,7 +41,7 @@ class ScenarioTest {
         appPage.clickRetry()
         assertWithRecreate { appPage.assertProgressState() }
 
-        appPage.waitTillSuccessResponse()
+        appPage.waitTillNoTracksResponse()
 
         assertWithRecreate { appPage.assertEmptyState() }
 

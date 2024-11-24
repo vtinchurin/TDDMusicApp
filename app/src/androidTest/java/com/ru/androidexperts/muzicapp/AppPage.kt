@@ -49,6 +49,9 @@ class AppPage : AbstractPage(
     fun waitTillSuccessResponse() {
         recyclerViewUi.waitTillSuccess()
     }
+    fun waitTillNoTracksResponse() {
+        recyclerViewUi.waitTillNoTracks()
+    }
 
     fun assertEmptyState() {
         recyclerViewUi.isEmpty()

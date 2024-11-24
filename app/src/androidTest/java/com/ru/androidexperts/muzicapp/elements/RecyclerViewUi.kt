@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import com.ru.androidexperts.muzicapp.ContainerAbstractUi
 import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.matchers.RecyclerViewMatcher
@@ -23,6 +24,7 @@ interface RecyclerViewUi {
     fun assertItemPlayState(index: Int)
     fun waitTillTrackStopped(index: Int)
     fun waitTillSuccess()
+    fun waitTillNoTracks()
 
     class Base(
         private val id: Int,
@@ -76,7 +78,11 @@ interface RecyclerViewUi {
         }
 
         override fun waitTillError() {
-            interaction.perform(waitTillDisplayed(R.id.errorItem, 3000))
+            onView(isRoot()).perform(waitTillDisplayed(R.id.errorItem, 3000))
+        }
+
+        override fun waitTillNoTracks() {
+            onView(isRoot()).perform(waitTillDisplayed(R.id.noSongsItem, 3000))
         }
 
         override fun assertError() {
@@ -88,6 +94,7 @@ interface RecyclerViewUi {
         }
 
         override fun isEmpty() {
+            //Todo need fix it))))
             errorItemUI.isEmptyResult()
         }
 
@@ -110,7 +117,7 @@ interface RecyclerViewUi {
         }
 
         override fun waitTillSuccess() {
-            interaction.perform(waitTillDisplayed(R.id.trackItem, 3000))
+            onView(isRoot()).perform(waitTillDisplayed(R.id.trackItem, 3000))
             progressUi.doesNotExist()
         }
     }

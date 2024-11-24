@@ -1,6 +1,7 @@
 package com.ru.androidexperts.muzicapp.elements
 
 import android.view.View
+import android.widget.FrameLayout
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
@@ -9,7 +10,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.google.android.material.textfield.TextInputLayout
 import com.ru.androidexperts.muzicapp.AbstractUi
 import com.ru.androidexperts.muzicapp.ContainerAbstractUi
 import com.ru.androidexperts.muzicapp.R
@@ -28,7 +28,7 @@ interface InputUi : Visibility {
         containerClassTypeMatcher: Matcher<View>
     ) : ContainerAbstractUi(
         id = id,
-        classType = TextInputLayout::class.java,
+        classType = FrameLayout::class.java,
         matchers = listOf(
             containerIdMatcher,
             containerClassTypeMatcher,
@@ -60,8 +60,8 @@ interface InputUi : Visibility {
         matchers = listOf(
             withId(id),
             isAssignableFrom(android.widget.EditText::class.java),
-            containerIdMatcher,
-            containerClassTypeMatcher
+            //containerIdMatcher,
+            //containerClassTypeMatcher
         ),
     ), InputUi {
 

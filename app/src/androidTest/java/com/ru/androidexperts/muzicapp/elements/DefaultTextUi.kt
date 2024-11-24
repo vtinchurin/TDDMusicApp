@@ -1,7 +1,7 @@
 package com.ru.androidexperts.muzicapp.elements
 
 import android.view.View
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.ru.androidexperts.muzicapp.AbstractUi
@@ -10,7 +10,6 @@ import com.ru.androidexperts.muzicapp.assertions.AssertText
 import com.ru.androidexperts.muzicapp.assertions.Enabled
 import com.ru.androidexperts.muzicapp.assertions.Existence
 import com.ru.androidexperts.muzicapp.assertions.Visibility
-import com.ru.androidexperts.muzicapp.matchers.TextColorMatcher
 import org.hamcrest.Matcher
 
 interface DefaultTextUi : Enabled, Existence, Visibility, AssertText {
@@ -23,8 +22,8 @@ interface DefaultTextUi : Enabled, Existence, Visibility, AssertText {
     ) : AbstractUi(
         matchers = listOf(
             withId(id),
-            isAssignableFrom(TextView::class.java),
-            TextColorMatcher(textColor),
+            isAssignableFrom(AppCompatTextView::class.java),
+            //TextColorMatcher(textColor),
             containerIdMatcher,
             containerClassTypeMatcher
         )
