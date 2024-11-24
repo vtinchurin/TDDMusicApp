@@ -10,7 +10,7 @@ import com.ru.androidexperts.muzicapp.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 
-class SearchRepositoryImpl(
+class SearchRepositoryBase(
     private val cacheDataSource: CacheDataSource,
     private val cloudDataSource: CloudDataSource,
     private val handleError: HandleError,
@@ -22,7 +22,7 @@ class SearchRepositoryImpl(
 
     override suspend fun load(term: String): LoadResult {
         termCache.save(value = term)
-        if(term.isEmpty())
+        if (term.isEmpty())
             return LoadResult.Empty
         try {
             if (!cacheDataSource.isCached(term)) {

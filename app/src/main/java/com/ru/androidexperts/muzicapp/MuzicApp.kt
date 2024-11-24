@@ -11,7 +11,8 @@ import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.data.cache.TracksDatabase
 import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.data.cloud.TrackService
-import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryImpl
+import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryBase
+import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryFake
 import com.ru.androidexperts.muzicapp.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.presentation.mappers.UiMapper
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit
 class MuzicApp : Application() {
 
     lateinit var searchViewModel: SearchViewModel
+    private val runUiTests = true
 
     override fun onCreate() {
         super.onCreate()
@@ -53,8 +55,8 @@ class MuzicApp : Application() {
             getString(R.string.app_name), Context.MODE_PRIVATE
         )
 
-        searchViewModel = SearchViewModel(
-            repository = SearchRepositoryImpl(
+        val repository = if (runUiTests)
+            SearchRepositoryBase(
                 cacheDataSource = CacheDataSource.Base(
                     dao = database.dao()
                 ),
@@ -66,7 +68,18 @@ class MuzicApp : Application() {
                 termCache = StringCache.Base(
                     "termKey", sharedPreferences, ""
                 )
-            ),
+            )
+        else
+            SearchRepositoryFake(
+                handleError = HandleError.ToData(),
+                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
+                termCache = StringCache.Base(
+                    "termKey", sharedPreferences, ""
+                )
+            )
+
+        searchViewModel = SearchViewModel(
+            repository = repository,
             player = MusicPlayer.Base(player = ExoPlayer.Builder(this).build()),
             toUi = UiMapper.Base(),
             toPlayList = PlayerMapper.Base()

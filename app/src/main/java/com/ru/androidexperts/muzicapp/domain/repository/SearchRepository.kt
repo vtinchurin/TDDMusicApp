@@ -7,5 +7,4 @@ interface SearchRepository {
     fun lastCachedTerm(): String
 
     suspend fun load(term: String): LoadResult
-
 }

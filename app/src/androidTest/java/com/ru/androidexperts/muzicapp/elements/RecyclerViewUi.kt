@@ -52,14 +52,14 @@ interface RecyclerViewUi {
         private val itemList: List<TrackUi> = listOf(
             TrackUi.Base(
                 index = 0,
-                authorName = "Author 1",
+                authorName = "ExistentArtist",
                 songName = "Song 1",
                 containerIdMatcher = this.containerIdMatcher,
                 containerClassTypeMatcher = this.containerClassTypeMatcher,
             ),
             TrackUi.Base(
                 index = 1,
-                authorName = "Author 2",
+                authorName = "ExistentArtist",
                 songName = "Song 2",
                 containerIdMatcher = this.containerIdMatcher,
                 containerClassTypeMatcher = this.containerClassTypeMatcher,
