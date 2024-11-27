@@ -4,24 +4,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trackItem"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingEnd="16dp">
 
     <com.ru.androidexperts.muzicapp.view.trackImage.TrackImage
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="8dp"
         app:shapeAppearanceOverlay="@style/circleImageView"
         app:strokeWidth="0dp"
         app:strokeColor="@android:color/darker_gray"
         android:layout_margin="8dp"
-        android:src="@drawable/ic_artwork"/>
+        tools:src="@drawable/ic_artwork"/>
 
     <LinearLayout
+        android:id="@+id/textContainer"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:padding="8dp"
+        android:gravity="center"
         android:orientation="vertical">
 
         <com.ru.androidexperts.muzicapp.view.CustomTextView
@@ -48,9 +51,10 @@
 
     <com.ru.androidexperts.muzicapp.view.play.PlayStopButton
         android:id="@+id/playButton"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_play"
+        android:layout_height="wrap_content"
+        tools:src="@drawable/ic_play"
         android:background="@null"
         android:paddingHorizontal="8dp"/>
 </LinearLayout>

@@ -51,7 +51,7 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             ): RecyclerItem {
                 return RecyclerItem.TrackUi(
                     trackId = id,
-                    coverUrl = TrackImageUiState.Stop(coverUrl),
+                    coverUrl = TrackImageUiState.Base(coverUrl,playingTrackId == id),
                     authorName = authorName,
                     trackTitle = trackTitle,
                     isPlaying = if (playingTrackId == id) PlayStopUiState.Play else PlayStopUiState.Stop

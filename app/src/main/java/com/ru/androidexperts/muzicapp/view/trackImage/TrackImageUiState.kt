@@ -10,35 +10,25 @@ interface TrackImageUiState : Serializable {
 
     fun changeState(): TrackImageUiState
 
-    abstract class Base(private val url: String) : TrackImageUiState {
+    data class Base(
+        private val url: String,
+        private val isPlaying: Boolean = false,
+    ) : TrackImageUiState {
         override fun update(view: TrackImageUpdate) {
             Picasso.get() //TODO need to looking for better solution for Picasso integration
                 .load(url)
                 .placeholder(R.drawable.ic_artwork)
                 .error(R.drawable.ic_artwork)
                 .into(view as TrackImage)
-        }
-    }
 
-    data class Play(private val url: String) : Base(url) {
-        override fun update(view: TrackImageUpdate) {
-            super.update(view)
-            view.startAnimation()
+            if (isPlaying)
+                view.startAnimation()
+            else
+                view.stopAnimation()
         }
 
         override fun changeState(): TrackImageUiState {
-            return Stop(url)
-        }
-    }
-
-    data class Stop(private val url: String) : Base(url) {
-        override fun update(view: TrackImageUpdate) {
-            super.update(view)
-            view.stopAnimation()
-        }
-
-        override fun changeState(): TrackImageUiState {
-            return Play(url)
+            return this.copy(isPlaying = !isPlaying)
         }
     }
 }

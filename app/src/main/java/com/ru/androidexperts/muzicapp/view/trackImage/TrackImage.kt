@@ -10,7 +10,7 @@ import com.google.android.material.imageview.ShapeableImageView
 
 class TrackImage : ShapeableImageView, TrackImageUpdate {
 
-    private var state: TrackImageUiState = TrackImageUiState.Stop("")
+    private var state: TrackImageUiState = TrackImageUiState.Base("")
     private val animation = ObjectAnimator.ofFloat(
         this,
         "rotation", 0f, 360f
