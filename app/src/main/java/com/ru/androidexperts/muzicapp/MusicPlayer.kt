@@ -5,6 +5,12 @@ import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.media3.exoplayer.ExoPlayer
 import com.ru.androidexperts.muzicapp.presentation.mappers.Playlist
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 interface MusicPlayer {
@@ -100,7 +106,20 @@ interface MusicPlayer {
 
         override fun play(trackId: Long) {
             callback.update(IS_PLAYED,trackId)
-            //todo add autoplay next track
+            CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate).launch {
+                withContext(Dispatchers.IO) {
+                    delay(3000)
+                }
+                withContext(Dispatchers.Main) {
+                    pause()
+
+                    val indexOfNextTrack = currentPlayList.indexOf(
+                        currentPlayList.find { it.first == trackId }
+                    ) + 1
+                    if (indexOfNextTrack <= currentPlayList.lastIndex)
+                        play(currentPlayList[indexOfNextTrack].first)
+                }
+            }
         }
 
         override fun pause() {
