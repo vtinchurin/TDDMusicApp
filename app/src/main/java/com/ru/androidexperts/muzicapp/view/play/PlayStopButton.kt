@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp.view.play
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -37,8 +38,10 @@ class PlayStopButton : AppCompatImageButton, UpdatePlayStopButton {
         state.update(this)
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun update(newRes: Int) {
-        setBackgroundResource(newRes)
+        val drawable = this.resources.getDrawable(newRes,null)
+        setBackgroundDrawable(drawable)
     }
 }
 

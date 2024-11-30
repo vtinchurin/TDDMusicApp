@@ -4,6 +4,7 @@ package com.ru.androidexperts.muzicapp.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,12 @@ import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
 
 class SearchFragment : Fragment() {
+
+    private var index = 0
+
+    init {
+        index++
+    }
 
     private var _binding: FragmentSearchSongsBinding? = null
     private val binding
@@ -45,7 +52,6 @@ class SearchFragment : Fragment() {
             clickActions = viewModel
         )
         binding.recyclerView.adapter = adapter
-
         viewModel.init(isFirstRun = savedInstanceState == null)
     }
 

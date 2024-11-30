@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Before
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,49 +15,44 @@ class ScenarioTest {
     @get:Rule
     val scenarioRule = ActivityScenarioRule(MainActivity::class.java)
 
-    @Before
+    @After
     fun close() {
         val sharedPreferences = ApplicationProvider
             .getApplicationContext<Context>()
             .getSharedPreferences("test", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
     }
-    /**
-     * MG-01
-     */
+
     @Test
     fun caseNumber1() {
-        val appPage: AppPage = AppPage()
+        val searchPage = SearchPage()
 
-        appPage.assertInitialState()
+        assertWithRecreate { searchPage.assertInitialState() }
 
-        appPage.addUserInput(text = "NonExistentArtist")
-        assertWithRecreate { appPage.assertProgressState() }
+        searchPage.addUserInput(text = "NonExistentArtist")
+        assertWithRecreate { searchPage.assertProgressState() }
 
-        appPage.waitTillError()
+        searchPage.waitTillError()
+        assertWithRecreate { searchPage.assertErrorState() }
 
-        assertWithRecreate { appPage.assertErrorState() }
+        searchPage.clickRetry()
+        assertWithRecreate { searchPage.assertProgressState() }
 
-        appPage.clickRetry()
-        assertWithRecreate { appPage.assertProgressState() }
+        searchPage.waitTillNoTracksResponse()
+        assertWithRecreate { searchPage.assertEmptyState() }
 
-        appPage.waitTillNoTracksResponse()
+        searchPage.addUserInput(text = "ExistentArtist")
+        searchPage.waitTillSuccessResponse()
+        assertWithRecreate { searchPage.assertSuccessState() }
 
-        assertWithRecreate { appPage.assertEmptyState() }
+        searchPage.clickFirstTrackPlayButton()
+        assertWithRecreate { searchPage.assertFirstTrackPlayState() }
 
-        appPage.addUserInput(text = "ExistentArtist")
-        assertWithRecreate { appPage.assertSuccessState() }
+        searchPage.waitTillFirstTrackStopped()
+        assertWithRecreate { searchPage.assertSecondTrackPlayState() }
 
-        appPage.clickFirstTrackPlayButton()
-        assertWithRecreate { appPage.assertFirstTrackPlayState() }
-
-        appPage.waitTillFirstTrackStopped()
-
-        assertWithRecreate { appPage.assertSecondTrackPlayState() }
-
-        appPage.waitTillSecondTrackStopped()
-
-        assertWithRecreate { appPage.assertSuccessState() }
+        searchPage.waitTillSecondTrackStopped()
+        assertWithRecreate { searchPage.assertSuccessState() }
     }
 
     private fun assertWithRecreate(assertion: () -> Unit) {
