@@ -107,8 +107,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Play("1"), "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1",isPlaying = true), "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -144,8 +144,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Play("1"), "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1",isPlaying = true), "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -154,8 +154,8 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Stop("1"), "1", "123", PlayStopUiState.Stop),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Play("2"), "2", "123", PlayStopUiState.Play)
+                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
+                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2",isPlaying = true), "2", "123", PlayStopUiState.Play)
             )
         )
 
@@ -195,8 +195,8 @@ class ObservableTest {
 
     companion object {
         private val SUCCESS_LIST = listOf(
-            RecyclerItem.TrackUi(0, TrackImageUiState.Stop("1"), "1", "123", PlayStopUiState.Stop),
-            RecyclerItem.TrackUi(1, TrackImageUiState.Stop("2"), "2", "123", PlayStopUiState.Stop)
+            RecyclerItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
+            RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
         )
         private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
         private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi(R.string.no_internet_connection))

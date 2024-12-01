@@ -301,14 +301,14 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = TrackImageUiState.Stop("1"),
+                    coverUrl = TrackImageUiState.Base("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = TrackImageUiState.Stop("2"),
+                    coverUrl = TrackImageUiState.Base("2"),
                     isPlaying = PlayStopUiState.Stop
                 )
             )
@@ -319,14 +319,14 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = TrackImageUiState.Play("1"),
+                    coverUrl = TrackImageUiState.Base("1",isPlaying = true),
                     isPlaying = PlayStopUiState.Play
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = TrackImageUiState.Stop("2"),
+                    coverUrl = TrackImageUiState.Base("2"),
                     isPlaying = PlayStopUiState.Stop
                 )
             )
@@ -337,14 +337,14 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = TrackImageUiState.Stop("1"),
+                    coverUrl = TrackImageUiState.Base("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
                 RecyclerItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = TrackImageUiState.Play("2"),
+                    coverUrl = TrackImageUiState.Base("2",isPlaying = true),
                     isPlaying = PlayStopUiState.Play
                 )
             )
