@@ -1,9 +1,11 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.presentation.mappers.Playlist
+import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
+import com.ru.androidexperts.muzicapp.core.player.PlayerCallback
+import com.ru.androidexperts.muzicapp.search.presentation.mappers.Playlist
 import org.junit.Assert.assertEquals
 
-interface FakeMusicPlayer : MusicPlayer{
+interface FakeMusicPlayer : MusicPlayer {
 
     fun stopTracks()
 

@@ -1,6 +1,6 @@
 package com.ru.androidexperts.muzicapp.core
 
-import com.ru.androidexperts.muzicapp.data.DataException
+import com.ru.androidexperts.muzicapp.search.data.DataException
 import java.io.IOException
 
 interface HandleError {

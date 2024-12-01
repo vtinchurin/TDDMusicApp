@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <com.ru.androidexperts.muzicapp.view.trackImage.TrackImage
+    <com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImage
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -27,7 +27,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <com.ru.androidexperts.muzicapp.view.CustomTextView
+        <com.ru.androidexperts.muzicapp.search.presentation.view.CustomTextView
             android:id="@+id/authorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:layout_marginBottom="4dp"
             tools:text="Author"/>
 
-        <com.ru.androidexperts.muzicapp.view.CustomTextView
+        <com.ru.androidexperts.muzicapp.search.presentation.view.CustomTextView
             android:id="@+id/songName"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             tools:text="Song name long text long text long text long text long text"/>
     </LinearLayout>
 
-    <com.ru.androidexperts.muzicapp.view.play.PlayStopButton
+    <com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopButton
         android:id="@+id/playButton"
         android:layout_gravity="center"
         android:layout_width="wrap_content"

@@ -1,13 +1,13 @@
 import com.ru.androidexperts.muzicapp.Order
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.SearchUiState
-import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
-import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
-import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
-import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
-import com.ru.androidexperts.muzicapp.view.UpdateText
-import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
-import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.GenericAdapter
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
+import com.ru.androidexperts.muzicapp.search.presentation.view.UpdateText
+import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImageUiState
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +17,7 @@ class AbstractTest {
     private lateinit var observer: UiObserver<SearchUiState>
     private lateinit var input: FakeUpdateText
     private lateinit var adapter: FakeGenericAdapter
-    private val observable = UiObservable.Playlist.Base()
+    private val observable = Playlist.Base()
     private lateinit var order: Order
 
     @Before

@@ -1,10 +1,11 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
-import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
 import org.junit.Assert.assertEquals
 
-interface FakeUiObservable<T: Any> : UiObservable.Playlist<T> {
+interface FakeUiObservable<T: Any> : Playlist<T> {
 
     fun assertCurrentUiState(uiState: SearchUiState)
 

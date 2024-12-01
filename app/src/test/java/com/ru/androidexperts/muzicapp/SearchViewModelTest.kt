@@ -1,12 +1,13 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
-import com.ru.androidexperts.muzicapp.domain.model.TrackModel
-import com.ru.androidexperts.muzicapp.presentation.SearchViewModel
-import com.ru.androidexperts.muzicapp.presentation.mappers.PlayerMapper
-import com.ru.androidexperts.muzicapp.presentation.mappers.UiMapper
-import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
-import com.ru.androidexperts.muzicapp.view.trackImage.TrackImageUiState
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
+import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
+import com.ru.androidexperts.muzicapp.search.presentation.mappers.UiMapper
+import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImageUiState
 import org.junit.Before
 import org.junit.Test
 

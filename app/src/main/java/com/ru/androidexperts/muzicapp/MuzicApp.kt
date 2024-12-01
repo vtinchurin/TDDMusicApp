@@ -1,10 +1,10 @@
 package com.ru.androidexperts.muzicapp
 
 import android.app.Application
-import com.ru.androidexperts.muzicapp.di.core.Core
-import com.ru.androidexperts.muzicapp.di.core.viewmodels.ManageViewModels
-import com.ru.androidexperts.muzicapp.di.core.viewmodels.ProvideViewModel
-import com.ru.androidexperts.muzicapp.di.core.viewmodels.ViewModelTag
+import com.ru.androidexperts.muzicapp.di.Core
+import com.ru.androidexperts.muzicapp.di.ManageViewModels
+import com.ru.androidexperts.muzicapp.di.ProvideViewModel
+import com.ru.androidexperts.muzicapp.di.ViewModelTag
 
 class MuzicApp : Application(), ProvideViewModel {
 

@@ -1,8 +1,8 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.TrackModel
-import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
+import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
 import okio.IOException
 import org.junit.Assert.assertEquals
 

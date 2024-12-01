@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.ru.androidexperts.muzicapp.di.core.viewmodels.ViewModelTag
-import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.di.ViewModelTag
+import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.di.UiState
 
 interface AbstractFragment {
 

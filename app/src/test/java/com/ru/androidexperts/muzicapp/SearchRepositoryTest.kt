@@ -2,15 +2,15 @@ package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.core.HandleError
 import com.ru.androidexperts.muzicapp.core.cache.StringCache
-import com.ru.androidexperts.muzicapp.data.DataException
-import com.ru.androidexperts.muzicapp.data.cache.CacheDataSource
-import com.ru.androidexperts.muzicapp.data.cache.TrackCache
-import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
-import com.ru.androidexperts.muzicapp.data.cloud.TrackCloud
-import com.ru.androidexperts.muzicapp.data.repository.SearchRepositoryBase
-import com.ru.androidexperts.muzicapp.domain.model.LoadResult
-import com.ru.androidexperts.muzicapp.domain.model.TrackModel
-import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
+import com.ru.androidexperts.muzicapp.search.data.DataException
+import com.ru.androidexperts.muzicapp.search.data.cache.CacheDataSource
+import com.ru.androidexperts.muzicapp.search.data.cache.TrackCache
+import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
+import com.ru.androidexperts.muzicapp.search.data.cloud.TrackCloud
+import com.ru.androidexperts.muzicapp.search.data.repository.SearchRepositoryBase
+import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
