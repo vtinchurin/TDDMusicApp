@@ -6,23 +6,22 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
+import com.ru.androidexperts.muzicapp.core.AbstractFragment
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
 import com.ru.androidexperts.muzicapp.di.core.viewmodels.ProvideViewModel
+import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
 
-class SearchFragment : Fragment() {
+class SearchFragment :
+    AbstractFragment.Async<FragmentSearchSongsBinding, SearchUiState, SearchViewModel>() {
 
-    private var index = 0
-
-    init {
-        index++
+    override val update = UiObserver<SearchUiState> {
+        it.show(
+            input = binding.inputView,
+            adapter = adapter
+        )
     }
-
-    private var _binding: FragmentSearchSongsBinding? = null
-    private val binding
-        get() = _binding!!
-    private lateinit var viewModel: SearchViewModel
     private lateinit var adapter: GenericAdapter.Base
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -32,14 +31,10 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
+    override fun inflate(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSearchSongsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        container: ViewGroup?
+    ): FragmentSearchSongsBinding = FragmentSearchSongsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,23 +51,11 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.startUpdates(observer = { searchUiState ->
-            searchUiState.show(
-                input = binding.inputView,
-                adapter = adapter
-            )
-        })
         binding.inputView.addTextChangedListener(searchTextWatcher)
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopUpdates()
         binding.inputView.removeTextChangedListener(searchTextWatcher)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
