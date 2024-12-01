@@ -2,9 +2,9 @@ package com.ru.androidexperts.muzicapp.view.play
 
 import androidx.annotation.DrawableRes
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.view.UiState
+import java.io.Serializable
 
-interface PlayStopUiState : UiState {
+interface PlayStopUiState : Serializable {
 
     fun update(updatePlayStop: UpdatePlayStopButton)
 

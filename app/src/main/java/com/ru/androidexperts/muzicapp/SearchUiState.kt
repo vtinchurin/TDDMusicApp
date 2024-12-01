@@ -2,9 +2,10 @@ package com.ru.androidexperts.muzicapp
 
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.core.UiState
 import com.ru.androidexperts.muzicapp.view.UpdateText
 
-interface SearchUiState {
+interface SearchUiState : UiState {
 
     fun show(
         input: UpdateText,
