@@ -4,26 +4,22 @@ import com.ru.androidexperts.muzicapp.MusicPlayer
 import com.ru.androidexperts.muzicapp.PlayerCallback
 import com.ru.androidexperts.muzicapp.SearchUiState
 import com.ru.androidexperts.muzicapp.core.RunAsync
+import com.ru.androidexperts.muzicapp.di.core.viewmodels.ViewModelTag
 import com.ru.androidexperts.muzicapp.domain.repository.SearchRepository
 import com.ru.androidexperts.muzicapp.presentation.adapter.RecyclerActions
 import com.ru.androidexperts.muzicapp.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.presentation.mappers.UiMapper
 import com.ru.androidexperts.muzicapp.uiObservable.UiObservable
-import com.ru.androidexperts.muzicapp.uiObservable.UiObserver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 class SearchViewModel(
-    private val runAsync: RunAsync = RunAsync.Search(),
-    private val observable: UiObservable.Playlist<SearchUiState> = UiObservable.Playlist.Base(),
+    runAsync: RunAsync,
+    observable: UiObservable.Playlist<SearchUiState>,
     private val repository: SearchRepository,
     private val player: MusicPlayer,
     private val toUi: UiMapper,
     private val toPlayList: PlayerMapper,
-) : RecyclerActions.Mutable {
+) : ViewModelTag.AbstractAsync<SearchUiState>(observable, runAsync), RecyclerActions.Mutable {
 
-    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val playerCallback = PlayerCallback { isPlaying, trackId ->
         if (isPlaying) {
             toUi.update(trackId)
@@ -46,8 +42,7 @@ class SearchViewModel(
 
     fun fetch(term: String) {
         observable.updateUi(SearchUiState.Loading)
-        runAsync.handleAsync(
-            scope = viewModelScope,
+        handleAsync(
             heavyOperation = { repository.load(term) }
         ) { loadResult ->
             player.update(loadResult.map(toPlayList))
@@ -65,13 +60,5 @@ class SearchViewModel(
 
     override fun pause() {
         player.pause()
-    }
-
-    fun startUpdates(observer: UiObserver<SearchUiState>) {
-        observable.update(observer)
-    }
-
-    fun stopUpdates() {
-        observable.update()
     }
 }

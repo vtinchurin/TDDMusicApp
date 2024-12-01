@@ -12,7 +12,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class ObservableTest {
+class AbstractTest {
 
     private lateinit var observer: UiObserver<SearchUiState>
     private lateinit var input: FakeUpdateText
@@ -144,7 +144,7 @@ class ObservableTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1",isPlaying = true), "1", "123", PlayStopUiState.Play),
+                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1", isPlaying = true), "1", "123", PlayStopUiState.Play),
                 RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
@@ -155,7 +155,7 @@ class ObservableTest {
         adapter.assertRecyclerList(
             listOf(
                 RecyclerItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2",isPlaying = true), "2", "123", PlayStopUiState.Play)
+                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2", isPlaying = true), "2", "123", PlayStopUiState.Play)
             )
         )
 

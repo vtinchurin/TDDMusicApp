@@ -1,17 +1,15 @@
 package com.ru.androidexperts.muzicapp.presentation
 
-
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.ru.androidexperts.muzicapp.MuzicApp
 import com.ru.androidexperts.muzicapp.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.databinding.FragmentSearchSongsBinding
+import com.ru.androidexperts.muzicapp.di.core.viewmodels.ProvideViewModel
 
 class SearchFragment : Fragment() {
 
@@ -46,7 +44,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = (requireActivity().application as MuzicApp).searchViewModel
+        viewModel =
+            (requireActivity() as ProvideViewModel).makeViewModel(SearchViewModel::class.java)
 
         adapter = GenericAdapter.Base(
             clickActions = viewModel
