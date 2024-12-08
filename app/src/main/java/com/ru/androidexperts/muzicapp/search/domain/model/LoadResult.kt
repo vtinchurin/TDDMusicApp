@@ -31,8 +31,8 @@ interface LoadResult {
         }
     }
 
-
     interface Mapper<T : Any> {
+
         fun mapSuccess(data: List<TrackModel>): T
         fun mapError(errorResId: Int): T
         fun mapNoTrack():T

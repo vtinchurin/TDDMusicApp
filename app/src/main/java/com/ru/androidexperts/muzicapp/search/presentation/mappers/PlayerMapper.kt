@@ -16,17 +16,11 @@ interface PlayerMapper : LoadResult.Mapper<Playlist> {
             }
         }
 
-        override fun mapError(errorResId: Int): Playlist {
-            return listOf()
-        }
+        override fun mapError(errorResId: Int): Playlist = emptyList()
 
-        override fun mapNoTrack(): Playlist {
-            return listOf()
-        }
+        override fun mapNoTrack(): Playlist = emptyList()
 
-        override fun mapEmpty(): Playlist {
-            return listOf()
-        }
+        override fun mapEmpty(): Playlist = emptyList()
 
         private object InnerMapper : TrackModel.Mapper<Item> {
 

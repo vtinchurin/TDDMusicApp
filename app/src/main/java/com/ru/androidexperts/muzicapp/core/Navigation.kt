@@ -8,5 +8,4 @@ interface Navigation : NavigateToSearch {
     fun navigate(screen:Screen)
 
     override fun navigateToSearch() = navigate(SearchScreen)
-
 }

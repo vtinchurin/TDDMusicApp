@@ -24,6 +24,5 @@ interface TrackModel {
             coverUrl: String,
             sourceUrl: String,
         ): T
-
     }
 }

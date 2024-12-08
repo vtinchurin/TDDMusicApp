@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 interface GenericAdapter {
+
     fun update(newList: List<RecyclerItem>)
 
     class Base(

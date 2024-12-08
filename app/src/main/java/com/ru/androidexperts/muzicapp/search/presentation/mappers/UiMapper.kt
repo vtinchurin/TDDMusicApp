@@ -1,19 +1,20 @@
 package com.ru.androidexperts.muzicapp.search.presentation.mappers
 
-import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
-import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
 import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
 import com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImageUiState
 
 interface UiMapper : LoadResult.Mapper<SearchUiState> {
 
-    fun update(trackId: Long = -1L)
+    fun update(trackId: Long = MusicPlayer.EMPTY_TRACK_ID)
 
     class Base : UiMapper {
 
-        private var playingTrackId = -1L
+        private var playingTrackId = MusicPlayer.EMPTY_TRACK_ID
 
         override fun update(trackId: Long) {
             playingTrackId = trackId
@@ -27,20 +28,18 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             return SearchUiState.Success(tracksUiList)
         }
 
-        override fun mapError(errorResId: Int): SearchUiState {
-            return SearchUiState.Error(errorResId)
-        }
+        override fun mapError(errorResId: Int): SearchUiState =
+            SearchUiState.Error(errorResId)
 
-        override fun mapNoTrack(): SearchUiState {
-            return SearchUiState.NoTracks
-        }
+        override fun mapNoTrack(): SearchUiState =
+            SearchUiState.NoTracks
 
-        override fun mapEmpty(): SearchUiState {
-            return SearchUiState.Initial()
-        }
+        override fun mapEmpty(): SearchUiState =
+            SearchUiState.Initial()
 
-        private inner class InnerMapper(private val playingTrackId: Long = -1L) :
-            TrackModel.Mapper<RecyclerItem> {
+        private inner class InnerMapper(
+            private val playingTrackId: Long = MusicPlayer.EMPTY_TRACK_ID
+        ) : TrackModel.Mapper<RecyclerItem> {
 
             override fun mapToTrackUi(
                 id: Long,

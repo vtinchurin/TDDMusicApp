@@ -1,9 +1,9 @@
 package com.ru.androidexperts.muzicapp.search.di
 
-import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
 import com.ru.androidexperts.muzicapp.core.HandleError
 import com.ru.androidexperts.muzicapp.core.RunAsync
-import com.ru.androidexperts.muzicapp.core.cache.StringCache
+import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
+import com.ru.androidexperts.muzicapp.core.player.MusicPlayerBase
 import com.ru.androidexperts.muzicapp.di.Core
 import com.ru.androidexperts.muzicapp.di.Module
 import com.ru.androidexperts.muzicapp.search.data.DataException
@@ -11,7 +11,6 @@ import com.ru.androidexperts.muzicapp.search.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.search.data.cloud.TrackService
 import com.ru.androidexperts.muzicapp.search.data.repository.SearchRepositoryBase
-import com.ru.androidexperts.muzicapp.search.data.repository.SearchRepositoryFake
 import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.UiMapper
@@ -28,46 +27,33 @@ class SearchModule(private val core: Core) : Module<SearchViewModel> {
             .addInterceptor(HttpLoggingInterceptor().apply {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
             })
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(HTTP_CLIENT_READ_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(HTTP_CLIENT_WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(HTTP_CLIENT_CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build()
+
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
+            .baseUrl(API_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val repository = if (core.runUiTests)
-            SearchRepositoryFake(
-                handleError = HandleError.ToData(),
-                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
-                termCache = StringCache.Base(
-                    "termKey", core.sharedPreferences, ""
-                )
-            )
-        else
-            SearchRepositoryBase(
-                cacheDataSource = CacheDataSource.Base(
-                    dao = core.database.dao()
-                ),
-                cloudDataSource = CloudDataSource.Base(
-                    service = retrofit.create(TrackService::class.java)
-                ),
-                handleError = HandleError.ToData(),
-                errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
-                termCache = StringCache.Base(
-                    "termKey", core.sharedPreferences, ""
-                )
-            )
+        val repository = SearchRepositoryBase(
+            cacheDataSource = CacheDataSource.Base(
+                dao = core.cacheModule.dao()
+            ),
+            cloudDataSource = CloudDataSource.Base(
+                service = retrofit.create(TrackService::class.java)
+            ),
+            handleError = HandleError.ToData(),
+            errorLoadResult = DataException.Mapper.ToErrorLoadResult(),
+            termCache = core.termCache
+        )
 
         val runAsync: RunAsync = RunAsync.Search()
 
-        val player: MusicPlayer = if (core.runUiTests)
-            MusicPlayer.TestPlayer()
-        else
-            MusicPlayer.Base(core.exoPlayer)
+        val player: MusicPlayer = MusicPlayerBase(core.exoPlayer)
 
         return SearchViewModel(
             observable = core.observable,
@@ -77,5 +63,13 @@ class SearchModule(private val core: Core) : Module<SearchViewModel> {
             toUi = UiMapper.Base(),
             toPlayList = PlayerMapper.Base()
         )
+    }
+
+    companion object {
+
+        private const val API_URL = "https://itunes.apple.com/"
+        private const val HTTP_CLIENT_READ_TIMEOUT = 60L
+        private const val HTTP_CLIENT_WRITE_TIMEOUT = 60L
+        private const val HTTP_CLIENT_CONNECT_TIMEOUT = 60L
     }
 }

@@ -14,6 +14,7 @@ interface TrackImageUiState : Serializable {
         private val url: String,
         private val isPlaying: Boolean = false,
     ) : TrackImageUiState {
+
         override fun update(view: TrackImageUpdate) {
             Picasso.get() //TODO need to looking for better solution for Picasso integration
                 .load(url)
@@ -27,8 +28,7 @@ interface TrackImageUiState : Serializable {
                 view.stopAnimation()
         }
 
-        override fun changeState(): TrackImageUiState {
-            return this.copy(isPlaying = !isPlaying)
-        }
+        override fun changeState(): TrackImageUiState =
+            this.copy(isPlaying = !isPlaying)
     }
 }

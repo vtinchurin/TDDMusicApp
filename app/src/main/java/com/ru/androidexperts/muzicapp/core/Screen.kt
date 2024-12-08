@@ -5,22 +5,19 @@ import androidx.fragment.app.FragmentManager
 
 interface Screen {
 
-    fun show(containerId:Int,fragmentManager: FragmentManager)
+    fun show(containerId: Int, fragmentManager: FragmentManager) = Unit
 
-    abstract class Replace(private val fragmentClass: Class<out Fragment>):Screen{
+    abstract class Replace(private val fragmentClass: Class<out Fragment>) : Screen {
+
         override fun show(containerId: Int, fragmentManager: FragmentManager) {
             fragmentManager.beginTransaction()
-                .replace(containerId,newFragment())
+                .replace(containerId, newFragment())
                 .commit()
         }
 
-        protected open fun newFragment(): Fragment = fragmentClass.getDeclaredConstructor().newInstance()
+        protected open fun newFragment(): Fragment =
+            fragmentClass.getDeclaredConstructor().newInstance()
     }
 
-    object Empty : Screen {
-        override fun show(
-            containerId: Int,
-            fragmentManager: FragmentManager,
-        ) = Unit
-    }
+    object Empty : Screen
 }

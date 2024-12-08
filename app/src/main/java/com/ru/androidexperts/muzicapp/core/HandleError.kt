@@ -9,10 +9,10 @@ interface HandleError {
 
     class ToData : HandleError {
         override fun handleError(e: Exception): DataException {
-            return when (e) {
-                is IOException -> DataException.NoInternetConnectionException()
-                else -> DataException.ServiceUnavailable()
-            }
+            return if (e is IOException)
+                DataException.NoInternetConnectionException()
+            else
+                DataException.ServiceUnavailable()
         }
     }
 }

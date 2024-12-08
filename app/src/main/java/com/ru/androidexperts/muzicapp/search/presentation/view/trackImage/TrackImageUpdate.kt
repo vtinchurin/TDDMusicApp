@@ -7,5 +7,4 @@ interface TrackImageUpdate {
     fun startAnimation()
 
     fun stopAnimation()
-
 }

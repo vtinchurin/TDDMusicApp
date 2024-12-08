@@ -36,7 +36,10 @@ interface ViewModelTag {
 
         protected val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-        protected fun<R:Any> handleAsync(heavyOperation: suspend () -> R, uiOperation: (R) -> Unit) {
+        protected fun <R : Any> handleAsync(
+            heavyOperation: suspend () -> R,
+            uiOperation: (R) -> Unit
+        ) {
             runAsync.handleAsync(viewModelScope, heavyOperation, uiOperation)
         }
     }

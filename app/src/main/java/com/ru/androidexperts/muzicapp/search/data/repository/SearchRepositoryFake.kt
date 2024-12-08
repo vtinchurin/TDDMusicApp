@@ -66,7 +66,7 @@ class SearchRepositoryFake(
     }
 
     companion object {
-        private val EXISTENT_ARTIST = "ExistentArtist"
-        private val NON_EXISTENT_ARTIST = "NonExistentArtist"
+        private const val EXISTENT_ARTIST = "ExistentArtist"
+        private const val NON_EXISTENT_ARTIST = "NonExistentArtist"
     }
 }

@@ -14,5 +14,8 @@ class ProvideSearchViewModel(
     viewModelClass = SearchViewModel::class.java
 ) {
 
-    override fun module() = SearchModule(core)
+    override fun module() = if (core.runUiTests)
+        TestSearchModule(core)
+    else
+        SearchModule(core)
 }

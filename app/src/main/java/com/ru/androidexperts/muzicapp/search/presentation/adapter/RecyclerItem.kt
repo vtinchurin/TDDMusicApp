@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp.search.presentation.adapter
 
+import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
 import com.ru.androidexperts.muzicapp.search.presentation.view.UpdateText
 import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
 import com.ru.androidexperts.muzicapp.search.presentation.view.play.UpdatePlayStopButton
@@ -25,7 +26,7 @@ interface RecyclerItem {
 
     fun id(): String = this.javaClass.simpleName
 
-    fun trackId(): Long = -1L
+    fun trackId(): Long = MusicPlayer.EMPTY_TRACK_ID
 
     fun isPlaying(): Boolean = false
 
@@ -60,9 +61,9 @@ interface RecyclerItem {
 
         override fun changePlaying(): RecyclerItem {
             return if (isPlaying is PlayStopUiState.Play)
-                this.copy(coverUrl = coverUrl.changeState(),isPlaying = PlayStopUiState.Stop)
+                this.copy(coverUrl = coverUrl.changeState(), isPlaying = PlayStopUiState.Stop)
             else
-                this.copy(coverUrl = coverUrl.changeState(),isPlaying = PlayStopUiState.Play)
+                this.copy(coverUrl = coverUrl.changeState(), isPlaying = PlayStopUiState.Play)
         }
 
         override fun type() = RecyclerItemType.Track

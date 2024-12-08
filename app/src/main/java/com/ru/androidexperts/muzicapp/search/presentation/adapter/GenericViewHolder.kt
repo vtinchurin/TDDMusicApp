@@ -16,6 +16,7 @@ abstract class GenericViewHolder(view: View) :
         private val binding: ItemTrackBinding,
         private val clickActions: RecyclerActions.TogglePlayPause
     ) : GenericViewHolder(binding.root) {
+
         override fun bind(recyclerItem: RecyclerItem) {
             binding.playButton.setOnClickListener {
                 recyclerItem.playOrStop(clickActions)
@@ -37,6 +38,7 @@ abstract class GenericViewHolder(view: View) :
         private val binding: ItemErrorBinding,
         private val clickActions: RecyclerActions.Retry
     ) : GenericViewHolder(binding.root) {
+
         override fun bind(recyclerItem: RecyclerItem) {
             binding.retryButton.setOnClickListener {
                 clickActions.retry()

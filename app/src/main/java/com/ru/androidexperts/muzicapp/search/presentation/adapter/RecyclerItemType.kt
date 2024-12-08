@@ -12,6 +12,7 @@ interface RecyclerItemType {
     fun viewHolder(parent: ViewGroup, clickActions: RecyclerActions.Mutable): GenericViewHolder
 
     data object Track : RecyclerItemType {
+
         override fun viewHolder(
             parent: ViewGroup,
             clickActions: RecyclerActions.Mutable
@@ -23,6 +24,7 @@ interface RecyclerItemType {
     }
 
     data object Progress : RecyclerItemType {
+
         override fun viewHolder(
             parent: ViewGroup,
             clickActions: RecyclerActions.Mutable
@@ -34,6 +36,7 @@ interface RecyclerItemType {
     }
 
     data object Error : RecyclerItemType {
+
         override fun viewHolder(
             parent: ViewGroup,
             clickActions: RecyclerActions.Mutable
@@ -46,6 +49,7 @@ interface RecyclerItemType {
     }
 
     data object NoTrack : RecyclerItemType {
+
         override fun viewHolder(
             parent: ViewGroup,
             clickActions: RecyclerActions.Mutable

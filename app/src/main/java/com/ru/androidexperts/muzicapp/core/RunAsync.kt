@@ -15,23 +15,8 @@ interface RunAsync {
         uiOperation: (T) -> Unit
     )
 
-    class Base : RunAsync {
-        override fun <T : Any> handleAsync(
-            scope: CoroutineScope,
-            heavyOperation: suspend () -> T,
-            uiOperation: (T) -> Unit
-        ) {
-            scope.launch(Dispatchers.IO) {
-                val result = heavyOperation.invoke()
-                withContext(Dispatchers.Main) {
-                    uiOperation.invoke(result)
-                }
-            }
-        }
-    }
-
-    class Search(
-        private val delayMillis: Long = 350L,
+    abstract class Abstract(
+        private val delayMillis: Long = 0
     ) : RunAsync {
 
         private var job: Job = Job()
@@ -50,5 +35,14 @@ interface RunAsync {
                 }
             }
         }
+    }
+
+    class Base : Abstract()
+
+    class Search : Abstract(delayMillis = DELAY_BEFORE_HEAVY_OPERATION)
+
+    companion object {
+
+        private const val DELAY_BEFORE_HEAVY_OPERATION = 350L
     }
 }

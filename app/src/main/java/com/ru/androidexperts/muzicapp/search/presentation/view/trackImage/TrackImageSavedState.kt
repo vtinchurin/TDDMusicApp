@@ -38,6 +38,7 @@ class TrackImageSavedState : View.BaseSavedState {
     override fun describeContents() = 0
 
     companion object CREATOR : Parcelable.ClassLoaderCreator<TrackImageSavedState> {
+
         override fun createFromParcel(source: Parcel, loader: ClassLoader): TrackImageSavedState =
             TrackImageSavedState(source, loader)
 
@@ -48,5 +49,4 @@ class TrackImageSavedState : View.BaseSavedState {
         override fun newArray(size: Int): Array<TrackImageSavedState?> =
             arrayOfNulls(size)
     }
-
 }
