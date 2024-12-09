@@ -22,7 +22,7 @@ interface PlayerMapper : LoadResult.Mapper<Playlist> {
 
         override fun mapEmpty(): Playlist = emptyList()
 
-        private object InnerMapper : TrackModel.Mapper<Item> {
+        private companion object InnerMapper : TrackModel.Mapper<Item> {
 
             override fun mapToTrackUi(
                 id: Long,

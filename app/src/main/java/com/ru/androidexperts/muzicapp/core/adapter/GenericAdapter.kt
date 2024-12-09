@@ -1,4 +1,4 @@
-package com.ru.androidexperts.muzicapp.search.presentation.adapter
+package com.ru.androidexperts.muzicapp.core.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,15 +9,10 @@ interface GenericAdapter {
 
     fun update(newList: List<RecyclerItem>)
 
-    class Base(
-        private val clickActions: RecyclerActions.Mutable,
-        private val typeList: List<RecyclerItemType> = listOf(
-            RecyclerItemType.Track,
-            RecyclerItemType.Progress,
-            RecyclerItemType.Error,
-            RecyclerItemType.NoTrack,
-        )
-    ) : RecyclerView.Adapter<GenericViewHolder>(), GenericAdapter {
+    abstract class Abstract<actions : RecyclerActions>(
+        private val clickActions: actions,
+        private val typeList: List<RecyclerItemType>,
+    ) : RecyclerView.Adapter<GenericViewHolder<RecyclerItem>>(), GenericAdapter {
 
         private val data = mutableListOf<RecyclerItem>()
 
@@ -34,19 +29,22 @@ interface GenericAdapter {
             return typeList.indexOf(type)
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenericViewHolder {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): GenericViewHolder<RecyclerItem> {
             return typeList[viewType].viewHolder(parent, clickActions)
         }
 
         override fun getItemCount() = data.size
 
-        override fun onBindViewHolder(holder: GenericViewHolder, position: Int) =
+        override fun onBindViewHolder(holder: GenericViewHolder<RecyclerItem>, position: Int) =
             holder.bind(data[position])
 
         override fun onBindViewHolder(
-            holder: GenericViewHolder,
+            holder: GenericViewHolder<RecyclerItem>,
             position: Int,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             holder.bind(data[position])
         }

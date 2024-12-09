@@ -20,6 +20,7 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
 
         override fun updateUi(input: String) {
             this.input = input
+            cached += input
         }
 
         override fun update(observer: UiObserver<SearchUiState>) {
@@ -35,11 +36,7 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
         }
 
         override fun updateUi(data: SearchUiState) {
-            cached = if (input.isNotEmpty()) {
-                SearchUiState.Initial(input, data.recyclerState())
-            } else
-                data
-
+            cached = data + input
             if (!observer.isEmpty()) {
                 observer.updateUi(cached)
                 order.add(OBSERVABLE_POST)
@@ -48,31 +45,11 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
         }
 
         override fun play(trackId: Long) {
-            val tracks = cached.recyclerState().toMutableList()
-            tracks.find {
-                it.isPlaying()
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            tracks.find {
-                it.trackId() == trackId
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            updateUi(SearchUiState.Success(recyclerState = tracks))
+            updateUi(cached.play(trackId))
         }
 
         override fun stop() {
-            val tracks = cached.recyclerState().toMutableList()
-            tracks.find {
-                it.isPlaying()
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            updateUi(SearchUiState.Success(recyclerState = tracks))
+            updateUi(cached.stop())
         }
 
         override fun assertCurrentUiState(uiState: SearchUiState) {

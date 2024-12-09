@@ -1,8 +1,8 @@
 package com.ru.androidexperts.muzicapp.search.presentation.uiObservable
 
-import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObservable
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 
 interface Playlist<T : Any> : UiObservable<T> {
 
@@ -20,7 +20,7 @@ interface Playlist<T : Any> : UiObservable<T> {
 
         override fun updateUi(input: String) {
             this.input = input
-            cached = SearchUiState.Initial(input)
+            cached += input
         }
 
         override fun update(observer: UiObserver<SearchUiState>) {
@@ -32,40 +32,18 @@ interface Playlist<T : Any> : UiObservable<T> {
         }
 
         override fun updateUi(data: SearchUiState) {
-            cached = if (input.isNotEmpty()) {
-                SearchUiState.Initial(input, data.recyclerState())
-            } else data
+            cached = data + input
             if (!observer.isEmpty()) {
                 observer.updateUi(cached)
             }
         }
 
         override fun play(trackId: Long) {
-            val tracks = cached.recyclerState().toMutableList()
-            tracks.find {
-                it.isPlaying()
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            tracks.find {
-                it.trackId() == trackId
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            updateUi(SearchUiState.Success(recyclerState = tracks))
+            updateUi(cached.play(trackId))
         }
 
         override fun stop() {
-            val tracks = cached.recyclerState().toMutableList()
-            tracks.find {
-                it.isPlaying()
-            }?.let {
-                val index = tracks.indexOf(it)
-                tracks[index] = it.changePlaying()
-            }
-            updateUi(SearchUiState.Success(recyclerState = tracks))
+            updateUi(cached.stop())
         }
     }
 }

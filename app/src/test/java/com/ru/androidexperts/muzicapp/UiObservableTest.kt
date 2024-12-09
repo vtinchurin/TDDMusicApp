@@ -1,9 +1,10 @@
 import com.ru.androidexperts.muzicapp.Order
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
-import com.ru.androidexperts.muzicapp.search.presentation.adapter.GenericAdapter
-import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
+import com.ru.androidexperts.muzicapp.core.adapter.GenericAdapter
+import com.ru.androidexperts.muzicapp.core.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchItem
 import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
 import com.ru.androidexperts.muzicapp.search.presentation.view.UpdateText
 import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
@@ -56,7 +57,7 @@ class AbstractTest {
         observable.updateUi(SearchUiState.Loading)
         observable.update(observer)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        adapter.assertRecyclerList(listOf(SearchItem.ProgressUi))
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
@@ -76,7 +77,7 @@ class AbstractTest {
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        adapter.assertRecyclerList(listOf(SearchItem.ProgressUi))
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
@@ -97,7 +98,7 @@ class AbstractTest {
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        adapter.assertRecyclerList(listOf(SearchItem.ProgressUi))
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
@@ -107,8 +108,14 @@ class AbstractTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1",isPlaying = true), "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
+                SearchItem.TrackUi(
+                    0,
+                    TrackImageUiState.Base("1", isPlaying = true),
+                    "1",
+                    "123",
+                    PlayStopUiState.Play
+                ),
+                SearchItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -134,7 +141,7 @@ class AbstractTest {
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
         input.assertText("123")
-        adapter.assertRecyclerList(listOf(RecyclerItem.ProgressUi))
+        adapter.assertRecyclerList(listOf(SearchItem.ProgressUi))
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
@@ -144,8 +151,14 @@ class AbstractTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1", isPlaying = true), "1", "123", PlayStopUiState.Play),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
+                SearchItem.TrackUi(
+                    0,
+                    TrackImageUiState.Base("1", isPlaying = true),
+                    "1",
+                    "123",
+                    PlayStopUiState.Play
+                ),
+                SearchItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
             )
         )
 
@@ -154,8 +167,20 @@ class AbstractTest {
         input.assertText("123")
         adapter.assertRecyclerList(
             listOf(
-                RecyclerItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
-                RecyclerItem.TrackUi(1, TrackImageUiState.Base("2", isPlaying = true), "2", "123", PlayStopUiState.Play)
+                SearchItem.TrackUi(
+                    0,
+                    TrackImageUiState.Base("1"),
+                    "1",
+                    "123",
+                    PlayStopUiState.Stop
+                ),
+                SearchItem.TrackUi(
+                    1,
+                    TrackImageUiState.Base("2", isPlaying = true),
+                    "2",
+                    "123",
+                    PlayStopUiState.Play
+                )
             )
         )
 
@@ -195,11 +220,11 @@ class AbstractTest {
 
     companion object {
         private val SUCCESS_LIST = listOf(
-            RecyclerItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
-            RecyclerItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
+            SearchItem.TrackUi(0, TrackImageUiState.Base("1"), "1", "123", PlayStopUiState.Stop),
+            SearchItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
         )
-        private val ERROR_NO_ITEM = listOf(RecyclerItem.NoTracksUi)
-        private val ERROR_MESSAGE = listOf(RecyclerItem.ErrorUi(R.string.no_internet_connection))
+        private val ERROR_NO_ITEM = listOf(SearchItem.NoTracksUi)
+        private val ERROR_MESSAGE = listOf(SearchItem.ErrorUi(R.string.no_internet_connection))
         private fun emptyString() = ""
     }
 

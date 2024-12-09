@@ -1,9 +1,9 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchItem
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.UiMapper
 import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
@@ -90,7 +90,7 @@ class SearchViewModelTest {
         repository.expectTermCached(termCache = "Q")
         viewModel.init(isFirstRun = true)
 
-        val initUiState = SearchUiState.Initial(inputText = "Q", listOf(RecyclerItem.ProgressUi))
+        val initUiState = SearchUiState.Initial(inputText = "Q", SearchItem.ProgressUi)
 
         observable.assertCurrentUiState(initUiState)
         repository.assertLoadCalledCount(1)
@@ -297,15 +297,15 @@ class SearchViewModelTest {
         private val SEARCH_UI_STATE_ERROR_NO_INTERNET =
             SearchUiState.Error(R.string.no_internet_connection)
         private val SEARCH_UI_STATE_SUCCESS_BASE = SearchUiState.Success(
-            listOf<RecyclerItem>(
-                RecyclerItem.TrackUi(
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
                     coverUrl = TrackImageUiState.Base("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
-                RecyclerItem.TrackUi(
+                SearchItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
@@ -315,15 +315,15 @@ class SearchViewModelTest {
             )
         )
         private val SEARCH_STATE_PLAY_FIRST = SearchUiState.Success(
-            listOf<RecyclerItem>(
-                RecyclerItem.TrackUi(
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
                     coverUrl = TrackImageUiState.Base("1",isPlaying = true),
                     isPlaying = PlayStopUiState.Play
                 ),
-                RecyclerItem.TrackUi(
+                SearchItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
@@ -333,15 +333,15 @@ class SearchViewModelTest {
             )
         )
         private val SEARCH_STATE_PLAY_SECOND = SearchUiState.Success(
-            listOf<RecyclerItem>(
-                RecyclerItem.TrackUi(
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
                     coverUrl = TrackImageUiState.Base("1"),
                     isPlaying = PlayStopUiState.Stop
                 ),
-                RecyclerItem.TrackUi(
+                SearchItem.TrackUi(
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",

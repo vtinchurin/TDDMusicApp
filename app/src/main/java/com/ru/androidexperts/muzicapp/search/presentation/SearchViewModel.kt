@@ -1,11 +1,11 @@
 package com.ru.androidexperts.muzicapp.search.presentation
 
+import com.ru.androidexperts.muzicapp.core.RunAsync
 import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
 import com.ru.androidexperts.muzicapp.core.player.PlayerCallback
-import com.ru.androidexperts.muzicapp.core.RunAsync
 import com.ru.androidexperts.muzicapp.di.ViewModelTag
 import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
-import com.ru.androidexperts.muzicapp.search.presentation.adapter.RecyclerActions
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchScreenActions
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.UiMapper
 import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
@@ -17,7 +17,7 @@ class SearchViewModel(
     private val player: MusicPlayer,
     private val toUi: UiMapper,
     private val toPlayList: PlayerMapper,
-) : ViewModelTag.AbstractAsync<SearchUiState>(observable, runAsync), RecyclerActions.Mutable {
+) : ViewModelTag.AbstractAsync<SearchUiState>(observable, runAsync), SearchScreenActions.Mutable {
 
     private val playerCallback = PlayerCallback { isPlaying, trackId ->
         if (isPlaying) {

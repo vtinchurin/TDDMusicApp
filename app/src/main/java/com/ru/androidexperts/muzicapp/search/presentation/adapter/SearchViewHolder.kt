@@ -1,23 +1,18 @@
 package com.ru.androidexperts.muzicapp.search.presentation.adapter
 
-import android.view.View
-import androidx.recyclerview.widget.RecyclerView
+import com.ru.androidexperts.muzicapp.core.adapter.GenericViewHolder
 import com.ru.androidexperts.muzicapp.databinding.ItemErrorBinding
 import com.ru.androidexperts.muzicapp.databinding.ItemNoSongsBinding
 import com.ru.androidexperts.muzicapp.databinding.ItemProgressBinding
 import com.ru.androidexperts.muzicapp.databinding.ItemTrackBinding
 
-abstract class GenericViewHolder(view: View) :
-    RecyclerView.ViewHolder(view) {
-
-    open fun bind(recyclerItem: RecyclerItem) = Unit
+interface SearchViewHolder {
 
     data class Track(
         private val binding: ItemTrackBinding,
-        private val clickActions: RecyclerActions.TogglePlayPause
-    ) : GenericViewHolder(binding.root) {
-
-        override fun bind(recyclerItem: RecyclerItem) {
+        private val clickActions: SearchScreenActions.TogglePlayPause,
+    ) : GenericViewHolder<SearchItem.Track>(binding.root) {
+        override fun bind(recyclerItem: SearchItem.Track) {
             binding.playButton.setOnClickListener {
                 recyclerItem.playOrStop(clickActions)
             }
@@ -31,15 +26,14 @@ abstract class GenericViewHolder(view: View) :
     }
 
     data class Progress(
-        private val binding: ItemProgressBinding
-    ) : GenericViewHolder(binding.root)
+        private val binding: ItemProgressBinding,
+    ) : GenericViewHolder<SearchItem.ProgressUi>(binding.root)
 
     data class Error(
         private val binding: ItemErrorBinding,
-        private val clickActions: RecyclerActions.Retry
-    ) : GenericViewHolder(binding.root) {
-
-        override fun bind(recyclerItem: RecyclerItem) {
+        private val clickActions: SearchScreenActions.Retry,
+    ) : GenericViewHolder<SearchItem.Error>(binding.root) {
+        override fun bind(recyclerItem: SearchItem.Error) {
             binding.retryButton.setOnClickListener {
                 clickActions.retry()
             }
@@ -51,5 +45,5 @@ abstract class GenericViewHolder(view: View) :
 
     data class NoTracks(
         private val binding: ItemNoSongsBinding,
-    ) : GenericViewHolder(binding.root)
+    ) : GenericViewHolder<SearchItem.NoTracksUi>(binding.root)
 }
