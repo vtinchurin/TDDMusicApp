@@ -23,9 +23,9 @@ class DrawableMatcher(private val drawableId: Int) : TypeSafeMatcher<View>() {
             return item.background == null
         }
 
-        val resources: Resources = item.getContext().applicationContext.resources
+        val resources: Resources = item.context.resources
         expectedResourceName = resources.getResourceEntryName(drawableId)
-        val expectedDrawable = resources.getDrawable(drawableId, null)
+        val expectedDrawable = resources.getDrawable(drawableId, item.context.theme)
         val bitmap = item.background.toBitmap()
         return bitmap.sameAs(expectedDrawable.toBitmap())
     }

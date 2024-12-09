@@ -10,7 +10,7 @@
     <com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImage
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="8dp"
         app:shapeAppearanceOverlay="@style/circleImageView"
         app:strokeWidth="0dp"
@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/textContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:padding="8dp"
         android:gravity="center"
@@ -53,7 +53,7 @@
         android:id="@+id/playButton"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:background="@drawable/ic_stop"
         android:layout_margin="8dp"
         android:paddingHorizontal="8dp"/>

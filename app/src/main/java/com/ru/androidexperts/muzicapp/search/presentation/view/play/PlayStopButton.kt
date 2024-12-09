@@ -40,7 +40,7 @@ class PlayStopButton : AppCompatImageButton, UpdatePlayStopButton {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun update(newRes: Int) {
-        val drawable = this.resources.getDrawable(newRes,null)
+        val drawable = resources.getDrawable(newRes, context.theme)
         setBackgroundDrawable(drawable)
     }
 }
