@@ -35,7 +35,7 @@ class Core(context: Context) {
     companion object {
 
         private const val TEST_SHARED_PREFS_NAME = "test"
-        private const val ESPRESSO_CLASS_NAME = "androidx.test.ext.junit.runners.AndroidJUnit4"
+        private const val ESPRESSO_CLASS_NAME = "com.ru.androidexperts.muzicapp.ScenarioTest"
         private const val TERM_CACHE_KEY = "termKey"
     }
 }
