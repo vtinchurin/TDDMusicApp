@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.core.RunAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
@@ -26,8 +27,10 @@ interface FakeRunAsync : RunAsync {
 
         override fun returnResult() {
             cached.invoke(result)
+            order.add(RUN_ASYNC_RETURN_RESULT)
         }
     }
 }
 
 const val RUN_ASYNC_HANDLE = "runAsync handle"
+const val RUN_ASYNC_RETURN_RESULT = "runAsync returnResult"

@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ru.androidexperts.muzicapp.data.cache.TermsCache
-import com.ru.androidexperts.muzicapp.data.cache.TrackCache
-import com.ru.androidexperts.muzicapp.data.cache.TrackIdByTermCache
-import com.ru.androidexperts.muzicapp.data.cache.TracksDao
-import com.ru.androidexperts.muzicapp.data.cache.TracksDatabase
+import com.ru.androidexperts.muzicapp.search.data.cache.TermsCache
+import com.ru.androidexperts.muzicapp.search.data.cache.TrackCache
+import com.ru.androidexperts.muzicapp.search.data.cache.TrackIdByTermCache
+import com.ru.androidexperts.muzicapp.search.data.cache.TracksDao
+import com.ru.androidexperts.muzicapp.search.data.cache.TracksDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals

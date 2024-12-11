@@ -1,10 +1,16 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
+import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchItem
+import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
+import com.ru.androidexperts.muzicapp.search.presentation.mappers.UiMapper
+import com.ru.androidexperts.muzicapp.search.presentation.view.play.PlayStopUiState
+import com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackImageUiState
 import org.junit.Before
 import org.junit.Test
 
-//TODO tests for play/stop track
 class SearchViewModelTest {
 
     private lateinit var viewModel: SearchViewModel
@@ -19,32 +25,34 @@ class SearchViewModelTest {
     fun setUp() {
         order = Order()
         repository = FakeSearchRepository.Base(order)
-        observable = object : FakeUiObservable.Abstract<SearchUiState>(order)
+        observable = FakeUiObservable.Base(order)
         runAsync = FakeRunAsync.Base(order)
         player = FakeMusicPlayer.Base(order)
         viewModel = SearchViewModel(
             repository = repository,
             observable = observable,
             runAsync = runAsync,
-            player = player
+            player = player,
+            toUi = UiMapper.Base(),
+            toPlayList = PlayerMapper.Base()
         )
         fragment = FakeFragment.Base()
 
         repository.expectTrackList(
-            listOf<Track>(
-                Track(
+            listOf<TrackModel>(
+                TrackModel.Base(
                     id = 1L,
-                    authorName = "1",
+                    authorName = "Q",
                     trackTitle = "1",
                     coverUrl = "1",
-                    trackUrl = "1"
+                    sourceUrl = "1"
                 ),
-                Track(
+                TrackModel.Base(
                     id = 2L,
-                    authorName = "1",
+                    authorName = "Q",
                     trackTitle = "2",
                     coverUrl = "2",
-                    trackUrl = "2"
+                    sourceUrl = "2"
                 )
             )
         )
@@ -54,122 +62,140 @@ class SearchViewModelTest {
     fun initNoCacheTest() {
         repository.expectTermCached(termCache = "")
 
-        viewModel.init(firstRun = true)
+        viewModel.init(isFirstRun = true)
 
-        observable.assertPostUiStateCalledCount(0)
+        observable.assertCurrentUiState(SearchUiState.Initial())
         repository.assertLoadCalledCount(0)
 
         viewModel.startUpdates(observer = fragment)
 
-        observable.assertRegisterCalledCount(1)
-        fragment.assertCurrentUiStates(listOf())
+        observable.assertCurrentUiState(SearchUiState.Initial())
+        fragment.assertCurrentUiState(SearchUiState.Initial())
 
-        order.check(listOf(OBSERVABLE_REGISTER))
+        observable.assertUiStatesHistory(
+            listOf(SearchUiState.Initial())
+        )
+        order.check(
+            listOf(
+                PLAYER_INIT,
+                REPOSITORY_TERM,
+                OBSERVABLE_REGISTER,
+                OBSERVABLE_POST
+            )
+        )
     }
 
     @Test
     fun initWithCacheTest() {
-        repository.expectTermCached("Q")
-        viewModel.init(firstRun = true)
+        repository.expectTermCached(termCache = "Q")
+        viewModel.init(isFirstRun = true)
 
-        observable.assertPostUiStates(listOf(SearchUiState.Load("Q")))
-        observable.assertPostUiStateCalledCount(2)
+        val initUiState = SearchUiState.Initial(inputText = "Q", SearchItem.ProgressUi)
+
+        observable.assertCurrentUiState(initUiState)
+        repository.assertLoadCalledCount(1)
 
         viewModel.startUpdates(observer = fragment)
 
-        observable.assertRegisterCalledCount(1)
-        fragment.assertCurrentUiStates(listOf(SearchUiState.Load("Q")))
+        observable.assertCurrentUiState(initUiState)
+        fragment.assertCurrentUiState(initUiState)
 
         runAsync.returnResult()
 
         player.assertUpdateTracksUriList(TRACKS_URI_LIST)
-        observable.assertPostUiStates(SEARCH_UI_STATE_SUCCESS_BASE)
-        observable.assertPostUiStateCalledCount(3)
-        fragment.assertCurrentUiStates(
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+        fragment.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+
+        observable.assertUiStatesHistory(
             listOf(
-                SearchUiState.Load("Q"),
+                initUiState,
                 SEARCH_UI_STATE_SUCCESS_BASE
             )
         )
-
         order.check(
             listOf(
+                PLAYER_INIT,
                 REPOSITORY_TERM,
-                OBSERVABLE_POST,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
+                OBSERVABLE_POST,
                 PLAYER_UPDATE,
-                OBSERVABLE_POST
+                OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
 
     @Test
     fun loadTest() {
-        viewModel.load(term = "Q")
-        observable.assertPostUiStates(listOf(SearchUiState.Load("Q")))
-        observable.assertPostUiStateCalledCount(1)
+        viewModel.init(isFirstRun = true)
+        viewModel.fetch(term = "Q")
+        observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(1)
 
         viewModel.startUpdates(observer = fragment)
-        observable.assertRegisterCalledCount(1)
-        fragment.assertCurrentUiStates(listOf(SearchUiState.Load("Q")))
+        fragment.assertCurrentUiState(SearchUiState.Loading)
 
         runAsync.returnResult()
         player.assertUpdateTracksUriList(TRACKS_URI_LIST)
-        observable.assertPostUiStates(listOf(SearchUiState.Load("Q"), SEARCH_UI_STATE_SUCCESS_BASE))
-        observable.assertPostUiStateCalledCount(2)
-        fragment.assertCurrentUiStates(
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+        fragment.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+
+        observable.assertUiStatesHistory(
             listOf(
-                SearchUiState.Load("Q"),
+                SearchUiState.Loading,
                 SEARCH_UI_STATE_SUCCESS_BASE
             )
         )
-
         order.check(
             listOf(
-                OBSERVABLE_POST,
+                PLAYER_INIT,
+                REPOSITORY_TERM,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
+                OBSERVABLE_REGISTER,
+                OBSERVABLE_POST,
                 PLAYER_UPDATE,
-                OBSERVABLE_POST
+                OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
 
     @Test
     fun noTrackLoadTest() {
-        repository.expectTrackList(listOf<Track>())
+        repository.expectTrackList(listOf<TrackModel>())
 
-        viewModel.load(term = "QQ")
+        viewModel.fetch(term = "QQ")
 
-        observable.assertPostUiStates(listOf(SearchUiState.Load("QQ")))
-        observable.assertPostUiStateCalledCount(1)
+        observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(1)
 
         viewModel.startUpdates(observer = fragment)
 
-        observable.assertRegisterCalledCount(1)
-        fragment.assertCurrentUiStates(listOf(SearchUiState.Load("QQ")))
+        fragment.assertCurrentUiState(SearchUiState.Loading)
 
         runAsync.returnResult()
 
-        observable.assertPostUiStates(
+        observable.assertCurrentUiState(SearchUiState.Success(emptyList()))
+        fragment.assertCurrentUiState(SearchUiState.Success(emptyList()))
+
+        observable.assertUiStatesHistory(
             listOf(
-                SearchUiState.Load("QQ"),
-                SearchUiState.NoTracks("QQ")
+                SearchUiState.Loading,
+                SearchUiState.Success(emptyList())
             )
         )
-        observable.assertPostUiStateCalledCount(2)
-        fragment.assertCurrentUiStates(SearchUiState.NoTracks("QQ"))
-
         order.check(
             listOf(
-                OBSERVABLE_POST,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
-                OBSERVABLE_POST
+                OBSERVABLE_REGISTER,
+                OBSERVABLE_POST,
+                PLAYER_UPDATE,
+                OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
@@ -178,137 +204,149 @@ class SearchViewModelTest {
     fun recreateActivityTest() {
         repository.expectError()
 
-        viewModel.load(term = "Q")
+        viewModel.fetch(term = "Q")
 
-        observable.assertPostUiStates(listOf(SearchUiState.Load("Q")))
-        observable.assertPostUiStateCalledCount(1)
+        observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(1)
 
         runAsync.returnResult()
         viewModel.startUpdates(observer = fragment)
 
-        observable.assertPostUiStates(
-            listOf(
-                SearchUiState.Load("Q"),
-                SearchUiState.Error("No internet connection")
-            )
-        )
-        observable.assertPostUiStateCalledCount(2)
-        fragment.assertCurrentUiStates(listOf(SearchUiState.Error("No internet connection")))
+        observable.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
+        fragment.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
 
-        val failLoadOrderList =
-            listOf(
-                OBSERVABLE_POST,
-                RUN_ASYNC_HANDLE,
-                REPOSITORY_LOAD,
-                OBSERVABLE_POST,
-                OBSERVABLE_REGISTER
-            )
+        val failLoadOrderList = listOf(
+            RUN_ASYNC_HANDLE,
+            REPOSITORY_LOAD,
+            PLAYER_UPDATE,
+            RUN_ASYNC_RETURN_RESULT,
+            OBSERVABLE_REGISTER,
+            OBSERVABLE_POST
+        )
         order.check(failLoadOrderList)
 
         val newInstanceFragment = FakeFragment.Base()
 
-        viewModel.init(firstRun = false)
+        viewModel.init(isFirstRun = false)
 
-        observable.assertPostUiStateCalledCount(2)
         repository.assertLoadCalledCount(1)
 
         viewModel.startUpdates(observer = newInstanceFragment)
-        observable.assertRegisterCalledCount(2)
-        newInstanceFragment.assertCurrentUiStates(listOf(SearchUiState.Error("No internet connection")))
+        newInstanceFragment.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
 
-        val newInstanceFragmentOrderList = listOf(OBSERVABLE_REGISTER)
+        val newInstanceFragmentOrderList = listOf(
+            OBSERVABLE_REGISTER,
+            OBSERVABLE_POST
+        )
         order.check(failLoadOrderList + newInstanceFragmentOrderList)
 
         repository.expectSuccess()
-        viewModel.load(term = "Q")
+        viewModel.fetch(term = "Q")
 
-        observable.assertPostUiStates(
-            listOf(
-                SearchUiState.Load("Q"),
-                SearchUiState.Error("No internet connection"),
-                SearchUiState.Load("Q")
-            )
-        )
-        observable.assertPostUiStateCalledCount(3)
+        observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(2)
 
-        newInstanceFragment.checkUiState(
-            listOf(
-                SearchUiState.Error("No internet connection"),
-                SearchUiState.Load("Q")
-            )
+        newInstanceFragment.assertCurrentUiState(
+            SearchUiState.Loading
         )
 
         runAsync.returnResult()
 
         player.assertUpdateTracksUriList(TRACKS_URI_LIST)
-        observable.assertPostUiStates(
-            listOf(
-                SearchUiState.Load("Q"),
-                SearchUiState.Error("No internet connection"),
-                SearchUiState.Load("Q"),
-                SEARCH_UI_STATE_SUCCESS_BASE
-            )
-        )
-        observable.assertPostUiStateCalledCount(4)
-        newInstanceFragment.assertCurrentUiStates(
-            listOf(
-                SearchUiState.Error("No internet connection"),
-                SearchUiState.Load("Q"),
-                SEARCH_UI_STATE_SUCCESS_BASE
-            )
-        )
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+        newInstanceFragment.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
 
+        observable.assertUiStatesHistory(
+            listOf(
+                SEARCH_UI_STATE_ERROR_NO_INTERNET,
+                SEARCH_UI_STATE_ERROR_NO_INTERNET,
+                SearchUiState.Loading,
+                SEARCH_UI_STATE_SUCCESS_BASE
+            )
+        )
         val loadAfterRecreateOrderList =
             listOf(
                 OBSERVABLE_POST,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
                 PLAYER_UPDATE,
-                OBSERVABLE_POST
+                OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT
             )
         order.check(failLoadOrderList + newInstanceFragmentOrderList + loadAfterRecreateOrderList)
     }
 
+    @Test
+    fun playPauseTest() {
+        loadTest()
+
+        viewModel.play(trackId = 1)
+        observable.assertCurrentUiState(SEARCH_STATE_PLAY_FIRST)
+
+        viewModel.pause()
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+
+        viewModel.play(trackId = 2)
+        observable.assertCurrentUiState(SEARCH_STATE_PLAY_SECOND)
+
+        viewModel.pause()
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+    }
+
     companion object {
+        private val SEARCH_UI_STATE_ERROR_NO_INTERNET =
+            SearchUiState.Error(R.string.no_internet_connection)
         private val SEARCH_UI_STATE_SUCCESS_BASE = SearchUiState.Success(
-            listOf<RecyclerItem>(
-                TrackUi(
-                    id = 1L,
-                    sourceUrl = "1",
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
+                    trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Stop
+                    coverUrl = TrackImageUiState.Base("1"),
+                    isPlaying = PlayStopUiState.Stop
                 ),
-                TrackUi(
-                    id = 2L,
-                    sourceUrl = "2",
+                SearchItem.TrackUi(
+                    trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
+                    coverUrl = TrackImageUiState.Base("2"),
+                    isPlaying = PlayStopUiState.Stop
                 )
             )
         )
         private val SEARCH_STATE_PLAY_FIRST = SearchUiState.Success(
-            listOf<RecyclerItem>(
-                TrackUi(
-                    id = 1L,
-                    sourceUrl = "1",
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
+                    trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = "1",
-                    state = PlayStopUiState.Play
+                    coverUrl = TrackImageUiState.Base("1",isPlaying = true),
+                    isPlaying = PlayStopUiState.Play
                 ),
-                TrackUi(
-                    id = 2L,
-                    sourceUrl = "2",
+                SearchItem.TrackUi(
+                    trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = "2",
-                    state = PlayStopUiState.Stop
+                    coverUrl = TrackImageUiState.Base("2"),
+                    isPlaying = PlayStopUiState.Stop
+                )
+            )
+        )
+        private val SEARCH_STATE_PLAY_SECOND = SearchUiState.Success(
+            listOf<SearchItem.Track>(
+                SearchItem.TrackUi(
+                    trackId = 1L,
+                    authorName = "Q",
+                    trackTitle = "1",
+                    coverUrl = TrackImageUiState.Base("1"),
+                    isPlaying = PlayStopUiState.Stop
+                ),
+                SearchItem.TrackUi(
+                    trackId = 2L,
+                    authorName = "Q",
+                    trackTitle = "2",
+                    coverUrl = TrackImageUiState.Base("2",isPlaying = true),
+                    isPlaying = PlayStopUiState.Play
                 )
             )
         )

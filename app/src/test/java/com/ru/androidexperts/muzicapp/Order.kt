@@ -11,3 +11,4 @@ class Order {
         assertEquals(expectedTrace, trace)
     }
 }
+

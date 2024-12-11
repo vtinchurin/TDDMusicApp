@@ -3,4 +3,6 @@
     <string name="no_songs_found">No songs found</string>
     <string name="retry">Retry</string>
     <string name="name_of_track_or_artist">Name of track or artist</string>
+    <string name="no_internet_connection">no internet connection</string>
+    <string name="service_unavailable">service unavailable</string>
 </resources>

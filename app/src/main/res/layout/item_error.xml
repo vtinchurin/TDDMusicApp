@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <com.ru.androidexperts.muzicapp.view.CustomTextView
+    <com.ru.androidexperts.muzicapp.search.presentation.view.CustomTextView
         android:id="@+id/errorTextView"
         android:gravity="center"
         android:layout_width="match_parent"

@@ -1,53 +1,67 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
+import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
+import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
 import org.junit.Assert.assertEquals
 
-interface FakeUiObservable<T> : UiObservable<T> {
-    fun assertPostUiStateCalledCount(count: Int)
-    fun assertRegisterCalledCount(count: Int)
-    fun assertPostUiStates(uiStates: List<T>)
-    abstract class Abstract<T : Any>(
-        private val order: Order
-    ) : FakeUiObservable<T> {
-        private var uiStateCached: T? = null
-        private var observerCached: ((T) -> Unit)? = null
-        private var unregisterCalledCount = 0
-        private var registerCalledCount = 0
-        private var postUiStatesListCalled = mutableListOf<T>()
-        override fun register(observer: (T) -> Unit) {
-            order.add(OBSERVABLE_REGISTER)
-            registerCalledCount++
-            observerCached = observer
-            if (uiStateCached != null) {
-                observerCached!!.invoke(uiStateCached!!)
+interface FakeUiObservable<T: Any> : Playlist<T> {
+
+    fun assertCurrentUiState(uiState: SearchUiState)
+
+    fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>)
+
+    class Base(private val order: Order) : FakeUiObservable<SearchUiState> {
+
+        private var cached: SearchUiState = SearchUiState.Initial("")
+        private var input = ""
+        private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
+        private val uiStatesHistory = mutableListOf<SearchUiState>()
+
+        override fun updateUi(input: String) {
+            this.input = input
+            cached += input
+        }
+
+        override fun update(observer: UiObserver<SearchUiState>) {
+            this.observer = observer
+            if (!observer.isEmpty()) {
+                observer.updateUi(cached)
+                order.add(OBSERVABLE_REGISTER)
+                order.add(OBSERVABLE_POST)
+                uiStatesHistory.add(cached)
+            } else
+                order.add(OBSERVABLE_UNREGISTER)
+            input = ""
+        }
+
+        override fun updateUi(data: SearchUiState) {
+            cached = data + input
+            if (!observer.isEmpty()) {
+                observer.updateUi(cached)
+                order.add(OBSERVABLE_POST)
+                uiStatesHistory.add(cached)
             }
         }
-        override fun unregister() {
-            order.add(OBSERVABLE_UNREGISTER)
-            unregisterCalledCount++
-            observerCached = null
-        }
-        override fun postUiState(uiState: T) {
-            postUiStatesListCalled.add(uiState)
-            order.add(OBSERVABLE_POST)
-            if (observerCached != null)
-                observerCached?.invoke(uiState)
-            uiStateCached = uiState
+
+        override fun play(trackId: Long) {
+            updateUi(cached.play(trackId))
         }
 
-        override fun assertPostUiStateCalledCount(count: Int) {
-            assertEquals(count, postUiStatesListCalled.size)
+        override fun stop() {
+            updateUi(cached.stop())
         }
 
-        override fun assertRegisterCalledCount(count: Int) {
-            assertEquals(count, registerCalledCount)
+        override fun assertCurrentUiState(uiState: SearchUiState) {
+            assertEquals(uiState, cached)
         }
 
-        override fun assertPostUiStates(uiStates: List<T>) {
-            assertEquals(uiStates, postUiStatesListCalled)
+        override fun assertUiStatesHistory(expectedUiStates: List<SearchUiState>) {
+            assertEquals(expectedUiStates, uiStatesHistory)
         }
     }
 }
+
 const val OBSERVABLE_REGISTER = "observable register"
 const val OBSERVABLE_UNREGISTER = "observable unregister"
 const val OBSERVABLE_POST= "observable post"

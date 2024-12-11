@@ -1,8 +1,8 @@
 package com.ru.androidexperts.muzicapp
 
-import com.ru.androidexperts.muzicapp.data.cloud.CloudDataSource
-import com.ru.androidexperts.muzicapp.data.cloud.TrackCloud
-import com.ru.androidexperts.muzicapp.data.cloud.TrackService
+import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
+import com.ru.androidexperts.muzicapp.search.data.cloud.TrackCloud
+import com.ru.androidexperts.muzicapp.search.data.cloud.TrackService
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

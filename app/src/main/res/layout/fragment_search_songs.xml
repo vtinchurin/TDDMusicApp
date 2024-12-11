@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.ru.androidexperts.muzicapp.view.InputView
+    <com.ru.androidexperts.muzicapp.search.presentation.view.InputView
         android:id="@+id/inputView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -1,24 +1,50 @@
 package com.ru.androidexperts.muzicapp
 
+import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
+import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
+import okio.IOException
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
-    fun expectTrackList(list: List<Track>)
+
+    fun expectTrackList(list: List<TrackModel>)
+
     fun assertLoadCalledCount(expectedCount: Int)
+
     fun expectTermCached(termCache: String)
+
     fun expectError()
+
     fun expectSuccess()
 
     class Base(
         private val order: Order,
     ) : FakeSearchRepository {
 
-        private var expectedTrackList: List<Track> = listOf()
+        private var expectedTrackList: List<TrackModel> = listOf()
         private var loadCalledCount = 0
         private var termCached = ""
         private var expectError = false
 
-        override fun expectTrackList(list: List<Track>) {
+        override suspend fun load(term: String): LoadResult {
+            try {
+                loadCalledCount++
+                order.add(REPOSITORY_LOAD)
+                if (expectError)
+                    throw IOException("No internet connection")
+                return LoadResult.Tracks(expectedTrackList)
+            } catch (e: Exception) {
+                return LoadResult.Error(R.string.no_internet_connection)
+            }
+        }
+
+        override fun lastCachedTerm(): String {
+            order.add(REPOSITORY_TERM)
+            return termCached
+        }
+
+        override fun expectTrackList(list: List<TrackModel>) {
             expectedTrackList = list
         }
 
@@ -28,19 +54,6 @@ interface FakeSearchRepository : SearchRepository {
 
         override fun expectTermCached(termCache: String) {
             this.termCached = termCache
-        }
-
-        override suspend fun load(term: String): LoadResult {
-            loadCalledCount++
-            order.add(REPOSITORY_LOAD)
-            if (expectError)
-                throw IllegalStateException("No internet connection")
-            return LoadResult.Seccess(expectedTrackList)
-        }
-
-        override fun termCached(): String {
-            order.add(REPOSITORY_TERM)
-            return termCached
         }
 
         override fun expectError() {
