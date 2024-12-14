@@ -1,4 +1,4 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.core
 
 import org.junit.Assert.assertEquals
 

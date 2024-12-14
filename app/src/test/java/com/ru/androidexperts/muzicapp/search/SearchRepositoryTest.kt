@@ -1,5 +1,6 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search
 
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.core.HandleError
 import com.ru.androidexperts.muzicapp.core.cache.StringCache
 import com.ru.androidexperts.muzicapp.search.data.DataException

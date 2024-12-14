@@ -1,5 +1,6 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search.fakes
 
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.core.RunAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking

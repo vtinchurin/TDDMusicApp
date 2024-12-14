@@ -1,4 +1,4 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search
 
 import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.search.data.cloud.TrackCloud

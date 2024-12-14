@@ -1,5 +1,20 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search
 
+import com.ru.androidexperts.muzicapp.search.fakes.FakeFragment
+import com.ru.androidexperts.muzicapp.search.fakes.FakeMusicPlayer
+import com.ru.androidexperts.muzicapp.search.fakes.FakeRunAsync
+import com.ru.androidexperts.muzicapp.search.fakes.FakeSearchRepository
+import com.ru.androidexperts.muzicapp.search.fakes.FakeUiObservable
+import com.ru.androidexperts.muzicapp.search.fakes.OBSERVABLE_POST
+import com.ru.androidexperts.muzicapp.search.fakes.OBSERVABLE_REGISTER
+import com.ru.androidexperts.muzicapp.core.Order
+import com.ru.androidexperts.muzicapp.search.fakes.PLAYER_INIT
+import com.ru.androidexperts.muzicapp.search.fakes.PLAYER_UPDATE
+import com.ru.androidexperts.muzicapp.R
+import com.ru.androidexperts.muzicapp.search.fakes.REPOSITORY_LOAD
+import com.ru.androidexperts.muzicapp.search.fakes.REPOSITORY_TERM
+import com.ru.androidexperts.muzicapp.search.fakes.RUN_ASYNC_HANDLE
+import com.ru.androidexperts.muzicapp.search.fakes.RUN_ASYNC_RETURN_RESULT
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel

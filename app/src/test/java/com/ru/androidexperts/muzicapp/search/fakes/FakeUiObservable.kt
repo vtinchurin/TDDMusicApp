@@ -1,5 +1,6 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search.fakes
 
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist

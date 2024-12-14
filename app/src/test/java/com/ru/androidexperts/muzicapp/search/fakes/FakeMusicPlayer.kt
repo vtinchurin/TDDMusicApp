@@ -1,5 +1,6 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search.fakes
 
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.core.player.MusicPlayer
 import com.ru.androidexperts.muzicapp.core.player.PlayerCallback
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.Playlist
@@ -11,7 +12,7 @@ interface FakeMusicPlayer : MusicPlayer {
 
     fun assertUpdateTracksUriList(tracksUriList: List<Pair<Long, String>>)
 
-    class Base(private val order: Order) : FakeMusicPlayer{
+    class Base(private val order: Order) : FakeMusicPlayer {
 
         private var currentTrack: Long = -1
         private var updateCallback: PlayerCallback = PlayerCallback.Empty
