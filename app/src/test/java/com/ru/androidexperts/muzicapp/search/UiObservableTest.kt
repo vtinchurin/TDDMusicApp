@@ -1,4 +1,4 @@
-import com.ru.androidexperts.muzicapp.Order
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.core.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.core.adapter.RecyclerItem

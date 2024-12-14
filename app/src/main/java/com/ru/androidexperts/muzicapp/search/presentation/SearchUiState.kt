@@ -1,7 +1,7 @@
 package com.ru.androidexperts.muzicapp.search.presentation
 
+import com.ru.androidexperts.muzicapp.core.UiState
 import com.ru.androidexperts.muzicapp.core.adapter.GenericAdapter
-import com.ru.androidexperts.muzicapp.di.UiState
 import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchItem
 import com.ru.androidexperts.muzicapp.search.presentation.view.UpdateText
 

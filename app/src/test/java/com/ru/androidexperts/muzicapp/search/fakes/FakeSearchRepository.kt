@@ -1,5 +1,7 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search.fakes
 
+import com.ru.androidexperts.muzicapp.R
+import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
