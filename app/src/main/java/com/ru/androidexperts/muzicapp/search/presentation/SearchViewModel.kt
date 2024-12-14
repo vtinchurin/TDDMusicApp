@@ -30,7 +30,8 @@ class SearchViewModel(
     }
 
     fun init(isFirstRun: Boolean = true) {
-        if (isFirstRun) {
+        if (isFirstRun || processDeath) {
+            processDeath = false
             player.init(playerCallback)
             val lastTerm = repository.lastCachedTerm()
             observable.updateUi(lastTerm)

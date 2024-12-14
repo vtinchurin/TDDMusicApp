@@ -20,6 +20,8 @@ interface ViewModelTag {
         protected open val observable: Playlist<T>,
     ) : Observable<T> {
 
+        protected var processDeath: Boolean = true
+
         override fun startUpdates(observer: UiObserver<T>) {
             observable.update(observer)
         }
@@ -38,7 +40,7 @@ interface ViewModelTag {
 
         protected fun <R : Any> handleAsync(
             heavyOperation: suspend () -> R,
-            uiOperation: (R) -> Unit
+            uiOperation: (R) -> Unit,
         ) {
             runAsync.handleAsync(viewModelScope, heavyOperation, uiOperation)
         }

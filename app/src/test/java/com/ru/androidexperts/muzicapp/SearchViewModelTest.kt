@@ -108,6 +108,7 @@ class SearchViewModelTest {
 
         observable.assertUiStatesHistory(
             listOf(
+                SearchUiState.Initial(),
                 initUiState,
                 SEARCH_UI_STATE_SUCCESS_BASE
             )
@@ -120,9 +121,9 @@ class SearchViewModelTest {
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
                 OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT,
                 PLAYER_UPDATE,
                 OBSERVABLE_POST,
-                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
@@ -144,6 +145,7 @@ class SearchViewModelTest {
 
         observable.assertUiStatesHistory(
             listOf(
+                SearchUiState.Initial(),
                 SearchUiState.Loading,
                 SEARCH_UI_STATE_SUCCESS_BASE
             )
@@ -156,9 +158,9 @@ class SearchViewModelTest {
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
                 OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT,
                 PLAYER_UPDATE,
                 OBSERVABLE_POST,
-                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
@@ -178,13 +180,14 @@ class SearchViewModelTest {
 
         runAsync.returnResult()
 
-        observable.assertCurrentUiState(SearchUiState.Success(emptyList()))
-        fragment.assertCurrentUiState(SearchUiState.Success(emptyList()))
+        observable.assertCurrentUiState(SearchUiState.NoTracks)
+        fragment.assertCurrentUiState(SearchUiState.NoTracks)
 
         observable.assertUiStatesHistory(
             listOf(
+                SearchUiState.Initial(),
                 SearchUiState.Loading,
-                SearchUiState.Success(emptyList())
+                SearchUiState.NoTracks
             )
         )
         order.check(
@@ -193,15 +196,17 @@ class SearchViewModelTest {
                 REPOSITORY_LOAD,
                 OBSERVABLE_REGISTER,
                 OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT,
                 PLAYER_UPDATE,
                 OBSERVABLE_POST,
-                RUN_ASYNC_RETURN_RESULT
             )
         )
     }
 
     @Test
     fun recreateActivityTest() {
+        initNoCacheTest()
+
         repository.expectError()
 
         viewModel.fetch(term = "Q")
@@ -210,18 +215,22 @@ class SearchViewModelTest {
         repository.assertLoadCalledCount(1)
 
         runAsync.returnResult()
-        viewModel.startUpdates(observer = fragment)
 
         observable.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
         fragment.assertCurrentUiState(SEARCH_UI_STATE_ERROR_NO_INTERNET)
 
         val failLoadOrderList = listOf(
+            PLAYER_INIT,
+            REPOSITORY_TERM,
+            OBSERVABLE_REGISTER,
+            OBSERVABLE_POST,
+            // viewModel#fetch(term: String)
+            OBSERVABLE_POST,
             RUN_ASYNC_HANDLE,
             REPOSITORY_LOAD,
-            PLAYER_UPDATE,
             RUN_ASYNC_RETURN_RESULT,
-            OBSERVABLE_REGISTER,
-            OBSERVABLE_POST
+            PLAYER_UPDATE,
+            OBSERVABLE_POST,
         )
         order.check(failLoadOrderList)
 
@@ -258,7 +267,8 @@ class SearchViewModelTest {
 
         observable.assertUiStatesHistory(
             listOf(
-                SEARCH_UI_STATE_ERROR_NO_INTERNET,
+                SearchUiState.Initial(),
+                SearchUiState.Loading,
                 SEARCH_UI_STATE_ERROR_NO_INTERNET,
                 SearchUiState.Loading,
                 SEARCH_UI_STATE_SUCCESS_BASE
@@ -269,9 +279,9 @@ class SearchViewModelTest {
                 OBSERVABLE_POST,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
+                RUN_ASYNC_RETURN_RESULT,
                 PLAYER_UPDATE,
                 OBSERVABLE_POST,
-                RUN_ASYNC_RETURN_RESULT
             )
         order.check(failLoadOrderList + newInstanceFragmentOrderList + loadAfterRecreateOrderList)
     }
@@ -320,7 +330,7 @@ class SearchViewModelTest {
                     trackId = 1L,
                     authorName = "Q",
                     trackTitle = "1",
-                    coverUrl = TrackImageUiState.Base("1",isPlaying = true),
+                    coverUrl = TrackImageUiState.Base("1", isPlaying = true),
                     isPlaying = PlayStopUiState.Play
                 ),
                 SearchItem.TrackUi(
@@ -345,7 +355,7 @@ class SearchViewModelTest {
                     trackId = 2L,
                     authorName = "Q",
                     trackTitle = "2",
-                    coverUrl = TrackImageUiState.Base("2",isPlaying = true),
+                    coverUrl = TrackImageUiState.Base("2", isPlaying = true),
                     isPlaying = PlayStopUiState.Play
                 )
             )

@@ -16,7 +16,7 @@ interface FakeRunAsync : RunAsync {
         override fun <T : Any> handleAsync(
             scope: CoroutineScope,
             heavyOperation: suspend () -> T,
-            updateUi: (T) -> Unit
+            updateUi: (T) -> Unit,
         ) {
             runBlocking {
                 order.add(RUN_ASYNC_HANDLE)
@@ -26,8 +26,8 @@ interface FakeRunAsync : RunAsync {
         }
 
         override fun returnResult() {
-            cached.invoke(result)
             order.add(RUN_ASYNC_RETURN_RESULT)
+            cached.invoke(result)
         }
     }
 }

@@ -33,6 +33,8 @@ interface FakeSearchRepository : SearchRepository {
                 order.add(REPOSITORY_LOAD)
                 if (expectError)
                     throw IOException("No internet connection")
+                if (expectedTrackList.isEmpty())
+                    return LoadResult.NoTracks
                 return LoadResult.Tracks(expectedTrackList)
             } catch (e: Exception) {
                 return LoadResult.Error(R.string.no_internet_connection)

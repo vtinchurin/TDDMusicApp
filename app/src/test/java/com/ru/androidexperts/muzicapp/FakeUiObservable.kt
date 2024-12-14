@@ -5,7 +5,7 @@ import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
 import org.junit.Assert.assertEquals
 
-interface FakeUiObservable<T: Any> : Playlist<T> {
+interface FakeUiObservable<T : Any> : Playlist<T> {
 
     fun assertCurrentUiState(uiState: SearchUiState)
 
@@ -13,10 +13,10 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
 
     class Base(private val order: Order) : FakeUiObservable<SearchUiState> {
 
-        private var cached: SearchUiState = SearchUiState.Initial("")
+        private var cached: SearchUiState = SearchUiState.Initial()
         private var input = ""
         private var observer: UiObserver<SearchUiState> = UiObserver.Empty()
-        private val uiStatesHistory = mutableListOf<SearchUiState>()
+        private val uiStatesHistory = mutableListOf(cached)
 
         override fun updateUi(input: String) {
             this.input = input
@@ -29,7 +29,6 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
                 observer.updateUi(cached)
                 order.add(OBSERVABLE_REGISTER)
                 order.add(OBSERVABLE_POST)
-                uiStatesHistory.add(cached)
             } else
                 order.add(OBSERVABLE_UNREGISTER)
             input = ""
@@ -37,10 +36,10 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
 
         override fun updateUi(data: SearchUiState) {
             cached = data + input
+            uiStatesHistory.add(cached)
             if (!observer.isEmpty()) {
                 observer.updateUi(cached)
                 order.add(OBSERVABLE_POST)
-                uiStatesHistory.add(cached)
             }
         }
 
@@ -64,4 +63,4 @@ interface FakeUiObservable<T: Any> : Playlist<T> {
 
 const val OBSERVABLE_REGISTER = "observable register"
 const val OBSERVABLE_UNREGISTER = "observable unregister"
-const val OBSERVABLE_POST= "observable post"
+const val OBSERVABLE_POST = "observable post"
