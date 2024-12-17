@@ -51,8 +51,10 @@ class SearchRepositoryFake(
             if (term == NON_EXISTENT_ARTIST)
                 return LoadResult.NoTracks
 
-            if (term == EXISTENT_ARTIST)
+            if (term == EXISTENT_ARTIST) {
+                loadCalledCount = 0
                 return LoadResult.Tracks(tracks)
+            }
         } catch (e: Exception) {
             val dataException = handleError.handleError(e)
             return dataException.map(errorLoadResult)

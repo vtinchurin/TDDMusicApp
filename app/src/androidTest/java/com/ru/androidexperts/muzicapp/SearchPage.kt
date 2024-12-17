@@ -65,6 +65,10 @@ class SearchPage : Ui.Container(
         recyclerUi.clickFirstTrackPlayButton()
     }
 
+    fun clickSecondTrackPlayButton() {
+        recyclerUi.clickSecondTrackPlayButton()
+    }
+
     fun assertFirstTrackPlayState() {
         recyclerUi.assertFirstTrackPlayState()
     }
@@ -75,6 +79,10 @@ class SearchPage : Ui.Container(
 
     fun assertSecondTrackPlayState() {
         recyclerUi.assertSecondTrackPlayState()
+    }
+
+    fun assertSecondTrackStopState() {
+        recyclerUi.assertSecondTrackStopState()
     }
 
     fun waitTillSecondTrackStopped() {

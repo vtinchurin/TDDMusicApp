@@ -19,6 +19,7 @@ interface RecyclerUi : Visibility {
     fun assertSuccessState()
     fun assertFirstTrackPlayState()
     fun assertSecondTrackPlayState()
+    fun assertSecondTrackStopState()
     fun waitTillError()
     fun waitTillNoTracksResponse()
     fun waitTillSuccessResponse()
@@ -122,6 +123,11 @@ interface RecyclerUi : Visibility {
         override fun assertSecondTrackPlayState() {
             tracks[0].assertStopState()
             tracks[1].assertPlayState()
+        }
+
+        override fun assertSecondTrackStopState() {
+            tracks[0].assertStopState()
+            tracks[1].assertStopState()
         }
 
         override fun waitTillFirstTrackStopped() {
