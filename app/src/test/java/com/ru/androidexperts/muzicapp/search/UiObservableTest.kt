@@ -1,5 +1,6 @@
+package com.ru.androidexperts.muzicapp.search
+
 import com.ru.androidexperts.muzicapp.core.Order
-import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.core.adapter.GenericAdapter
 import com.ru.androidexperts.muzicapp.core.adapter.RecyclerItem
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
@@ -13,7 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class AbstractTest {
+class UiObservableTest {
 
     private lateinit var observer: UiObserver<SearchUiState>
     private lateinit var input: FakeUpdateText
@@ -49,6 +50,23 @@ class AbstractTest {
         input.assertText("123")
         adapter.assertRecyclerList(SUCCESS_LIST)
         order.check(listOf(SET_TEXT, UPDATE_RECYCLER, UPDATE_UI))
+    }
+
+    @Test
+    fun `with unregister observer`() {
+        `initial - observer was subscribed after result returned`()
+        observable.update()
+        observable.updateUi(SearchUiState.Loading)
+        observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
+        observable.update(observer)
+        input.assertText("123")
+        adapter.assertRecyclerList(SUCCESS_LIST)
+        order.check(
+            listOf(
+                SET_TEXT, UPDATE_RECYCLER, UPDATE_UI,
+                UPDATE_RECYCLER, UPDATE_UI
+            )
+        )
     }
 
     @Test
@@ -212,7 +230,7 @@ class AbstractTest {
     fun `error internet connection message`() {
         observable.updateUi(SearchUiState.Initial("123"))
         observable.update(observer)
-        observable.updateUi(SearchUiState.Error(R.string.no_internet_connection))
+        observable.updateUi(SearchUiState.Error(errorResId = -777))
         input.assertText("123")
         adapter.assertRecyclerList(ERROR_MESSAGE)
         order.check(listOf(SET_TEXT, UPDATE_RECYCLER, UPDATE_UI, UPDATE_RECYCLER, UPDATE_UI))
@@ -224,7 +242,7 @@ class AbstractTest {
             SearchItem.TrackUi(1, TrackImageUiState.Base("2"), "2", "123", PlayStopUiState.Stop)
         )
         private val ERROR_NO_ITEM = listOf(SearchItem.NoTracksUi)
-        private val ERROR_MESSAGE = listOf(SearchItem.ErrorUi(R.string.no_internet_connection))
+        private val ERROR_MESSAGE = listOf(SearchItem.ErrorUi(resId = -777))
         private fun emptyString() = ""
     }
 

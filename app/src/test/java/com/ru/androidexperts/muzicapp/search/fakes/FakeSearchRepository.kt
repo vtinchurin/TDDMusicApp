@@ -1,11 +1,9 @@
 package com.ru.androidexperts.muzicapp.search.fakes
 
-import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
-import okio.IOException
 import org.junit.Assert.assertEquals
 
 interface FakeSearchRepository : SearchRepository {
@@ -30,17 +28,13 @@ interface FakeSearchRepository : SearchRepository {
         private var expectError = false
 
         override suspend fun load(term: String): LoadResult {
-            try {
-                loadCalledCount++
-                order.add(REPOSITORY_LOAD)
-                if (expectError)
-                    throw IOException("No internet connection")
-                if (expectedTrackList.isEmpty())
-                    return LoadResult.NoTracks
-                return LoadResult.Tracks(expectedTrackList)
-            } catch (e: Exception) {
-                return LoadResult.Error(R.string.no_internet_connection)
-            }
+            loadCalledCount++
+            order.add(REPOSITORY_LOAD)
+            return if (expectError)
+                LoadResult.Error(errorResId = -777)
+            else if (expectedTrackList.isEmpty())
+                LoadResult.NoTracks
+            else LoadResult.Tracks(expectedTrackList)
         }
 
         override fun lastCachedTerm(): String {

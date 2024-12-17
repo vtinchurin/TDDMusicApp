@@ -1,7 +1,6 @@
 package com.ru.androidexperts.muzicapp.search
 
 import com.ru.androidexperts.muzicapp.core.Order
-import com.ru.androidexperts.muzicapp.core.HandleError
 import com.ru.androidexperts.muzicapp.core.cache.StringCache
 import com.ru.androidexperts.muzicapp.search.data.DataException
 import com.ru.androidexperts.muzicapp.search.data.cache.CacheDataSource
@@ -12,6 +11,7 @@ import com.ru.androidexperts.muzicapp.search.data.repository.SearchRepositoryBas
 import com.ru.androidexperts.muzicapp.search.domain.model.LoadResult
 import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.domain.repository.SearchRepository
+import com.ru.androidexperts.muzicapp.search.fakes.FakeHandleError
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -23,7 +23,7 @@ class SearchRepositoryTest {
     private lateinit var cacheDataSource: FakeCacheDataSource
     private lateinit var cloudDataSource: FakeCloudDataSource
     private lateinit var cachedTerm: FakeCache
-    private lateinit var handleError: HandleError
+    private lateinit var handleError: FakeHandleError
     private lateinit var mapper: DataException.Mapper<LoadResult.Error>
     private lateinit var order: Order
 
@@ -33,7 +33,7 @@ class SearchRepositoryTest {
         cacheDataSource = FakeCacheDataSource.Base(order)
         cloudDataSource = FakeCloudDataSource.Base(order)
         cachedTerm = FakeCache.Base(order)
-        handleError = HandleError.ToData()
+        handleError = FakeHandleError.Base()
         mapper = DataException.Mapper.ToErrorLoadResult()
         cacheDataSource.setCachedData(CACHED_TRACKS)
         repository = SearchRepositoryBase(
@@ -79,6 +79,60 @@ class SearchRepositoryTest {
                 SHARED_PREFS_SAVE,
                 CHECK_TERM_CONTAINS,
                 CACHE_LOAD,
+            )
+        )
+    }
+
+    @Test
+    fun `last term correctly saved`(): Unit = runBlocking {
+        repository.load("data")
+        val result = repository.lastCachedTerm()
+        assertEquals(result, "data")
+    }
+
+    @Test
+    fun `fetch empty term`(): Unit = runBlocking {
+        val tracks: LoadResult = repository.load("")
+        cacheDataSource.assertContainsCalledCount(count = 0)
+        cloudDataSource.assertLoadCalledCount(count = 0)
+        cacheDataSource.assertSaveCalledCount(count = 0)
+        assertEquals(tracks, LoadResult.Empty)
+        cachedTerm.assertValue("")
+        order.check(
+            listOf(
+                SHARED_PREFS_SAVE
+            )
+        )
+    }
+
+    @Test
+    fun `error result`(): Unit = runBlocking {
+        cloudDataSource.expectError()
+        val result: LoadResult = repository.load("query")
+        cacheDataSource.assertContainsCalledCount(count = 1)
+        cloudDataSource.assertLoadCalledCount(count = 0)
+        cacheDataSource.assertSaveCalledCount(count = 0)
+        assertEquals(result, LoadResult.Error(-777))
+        order.check(
+            listOf(
+                SHARED_PREFS_SAVE,
+                CHECK_TERM_CONTAINS
+            )
+        )
+    }
+
+    @Test
+    fun `no tracks result`(): Unit = runBlocking {
+        val result: LoadResult = repository.load("no data")
+        cacheDataSource.assertContainsCalledCount(count = 1)
+        cloudDataSource.assertLoadCalledCount(count = 1)
+        cacheDataSource.assertSaveCalledCount(count = 0)
+        assertEquals(result, LoadResult.NoTracks)
+        order.check(
+            listOf(
+                SHARED_PREFS_SAVE,
+                CHECK_TERM_CONTAINS,
+                CLOUD_LOAD
             )
         )
     }
@@ -217,11 +271,14 @@ private interface FakeCacheDataSource : CacheDataSource {
 
 private interface FakeCloudDataSource : CloudDataSource {
 
+    fun expectError()
+
     fun assertLoadCalledCount(count: Int)
 
     class Base(private val order: Order) : FakeCloudDataSource {
 
         private var loadCalledCount = 0
+        private var expectedError = false
         private val tracks: List<TrackCloud> = listOf(
             TrackCloud(
                 trackId = 3L,
@@ -239,11 +296,16 @@ private interface FakeCloudDataSource : CloudDataSource {
             )
         )
 
+        override fun expectError() {
+            expectedError = true
+        }
+
         override fun assertLoadCalledCount(count: Int) {
             assertEquals(count, loadCalledCount)
         }
 
         override suspend fun load(term: String): List<TrackCloud> {
+            if (expectedError) throw Exception()
             order.add(CLOUD_LOAD)
             loadCalledCount++
             return if (term == "not_cached")

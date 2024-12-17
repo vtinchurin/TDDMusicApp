@@ -1,5 +1,7 @@
 package com.ru.androidexperts.muzicapp.search
 
+import com.ru.androidexperts.muzicapp.core.Order
+import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.fakes.FakeFragment
 import com.ru.androidexperts.muzicapp.search.fakes.FakeMusicPlayer
 import com.ru.androidexperts.muzicapp.search.fakes.FakeRunAsync
@@ -7,15 +9,12 @@ import com.ru.androidexperts.muzicapp.search.fakes.FakeSearchRepository
 import com.ru.androidexperts.muzicapp.search.fakes.FakeUiObservable
 import com.ru.androidexperts.muzicapp.search.fakes.OBSERVABLE_POST
 import com.ru.androidexperts.muzicapp.search.fakes.OBSERVABLE_REGISTER
-import com.ru.androidexperts.muzicapp.core.Order
 import com.ru.androidexperts.muzicapp.search.fakes.PLAYER_INIT
 import com.ru.androidexperts.muzicapp.search.fakes.PLAYER_UPDATE
-import com.ru.androidexperts.muzicapp.R
 import com.ru.androidexperts.muzicapp.search.fakes.REPOSITORY_LOAD
 import com.ru.androidexperts.muzicapp.search.fakes.REPOSITORY_TERM
 import com.ru.androidexperts.muzicapp.search.fakes.RUN_ASYNC_HANDLE
 import com.ru.androidexperts.muzicapp.search.fakes.RUN_ASYNC_RETURN_RESULT
-import com.ru.androidexperts.muzicapp.search.domain.model.TrackModel
 import com.ru.androidexperts.muzicapp.search.presentation.SearchUiState
 import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.search.presentation.adapter.SearchItem
@@ -219,7 +218,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun recreateActivityTest() {
+    fun `recreate Activity and retry test`() {
         initNoCacheTest()
 
         repository.expectError()
@@ -265,7 +264,8 @@ class SearchViewModelTest {
         order.check(failLoadOrderList + newInstanceFragmentOrderList)
 
         repository.expectSuccess()
-        viewModel.fetch(term = "Q")
+
+        viewModel.retry()
 
         observable.assertCurrentUiState(SearchUiState.Loading)
         repository.assertLoadCalledCount(2)
@@ -291,6 +291,7 @@ class SearchViewModelTest {
         )
         val loadAfterRecreateOrderList =
             listOf(
+                REPOSITORY_TERM,
                 OBSERVABLE_POST,
                 RUN_ASYNC_HANDLE,
                 REPOSITORY_LOAD,
@@ -318,9 +319,49 @@ class SearchViewModelTest {
         observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
     }
 
+    @Test
+    fun `test with process death handle`() {
+        loadTest()
+        setUp()
+        repository.expectTermCached("Q")
+        viewModel.init(isFirstRun = false)
+        observable.assertCurrentUiState(SearchUiState.Initial("Q", SearchItem.ProgressUi))
+        repository.assertLoadCalledCount(1)
+
+        viewModel.startUpdates(observer = fragment)
+        fragment.assertCurrentUiState(SearchUiState.Initial("Q", SearchItem.ProgressUi))
+
+        runAsync.returnResult()
+        player.assertUpdateTracksUriList(TRACKS_URI_LIST)
+        observable.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+        fragment.assertCurrentUiState(SEARCH_UI_STATE_SUCCESS_BASE)
+
+        // after process death
+        observable.assertUiStatesHistory(
+            listOf(
+                SearchUiState.Initial(),
+                SearchUiState.Initial("Q", SearchItem.ProgressUi),
+                SEARCH_UI_STATE_SUCCESS_BASE
+            )
+        )
+        order.check(
+            listOf(
+                PLAYER_INIT,
+                REPOSITORY_TERM,
+                RUN_ASYNC_HANDLE,
+                REPOSITORY_LOAD,
+                OBSERVABLE_REGISTER,
+                OBSERVABLE_POST,
+                RUN_ASYNC_RETURN_RESULT,
+                PLAYER_UPDATE,
+                OBSERVABLE_POST,
+            )
+        )
+    }
+
     companion object {
         private val SEARCH_UI_STATE_ERROR_NO_INTERNET =
-            SearchUiState.Error(R.string.no_internet_connection)
+            SearchUiState.Error(errorResId = -777)
         private val SEARCH_UI_STATE_SUCCESS_BASE = SearchUiState.Success(
             listOf<SearchItem.Track>(
                 SearchItem.TrackUi(
