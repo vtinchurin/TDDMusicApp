@@ -46,7 +46,10 @@ class SearchRepositoryTest {
 
     @Test
     fun `not cached data load`(): Unit = runBlocking {
+        /* Action */
         val tracks: LoadResult = repository.load(term = "not_cached")
+
+        /* Assertion */
         cachedTerm.assertSave("not_cached")
         cacheDataSource.assertIsCachedCalled(expectedTerm = "not_cached")
         cloudDataSource.assertLoadCalled(expectedTerm = "not_cached")
@@ -56,61 +59,77 @@ class SearchRepositoryTest {
         )
         cacheDataSource.assertGetTracksCalled(expectedTerm = "not_cached")
         assertEquals(tracks, SUCCESS_CLOUD_LOAD_RESULT)
-        order.printTrace()
+
         order.assertTraceSize(5)
     }
 
     @Test
     fun `cached data load`(): Unit = runBlocking {
+        /* Action */
         val tracks: LoadResult = repository.load(term = "cached")
+
+        /* Assertion */
         cachedTerm.assertSave("cached")
         cacheDataSource.assertIsCachedCalled(expectedTerm = "cached")
         cacheDataSource.assertGetTracksCalled(expectedTerm = "cached")
         assertEquals(tracks, SUCCESS_CACHED_LOAD_RESULT)
+
         order.assertTraceSize(3)
     }
 
     @Test
     fun `last term correctly saved`(): Unit = runBlocking {
+        /* Action */
         repository.load("data")
+
+        /* Assertion */
         cachedTerm.assertSave("data")
         cacheDataSource.assertIsCachedCalled("data")
         cloudDataSource.assertLoadCalled("data")
         val result = repository.lastCachedTerm()
         cachedTerm.assertRestore()
         assertEquals(result, "data")
-        order.printTrace()
+
         order.assertTraceSize(4)
     }
 
     @Test
     fun `fetch empty term`(): Unit = runBlocking {
+        /* Action */
         val tracks: LoadResult = repository.load("")
+
+        /* Assertion */
         cachedTerm.assertSave("")
         assertEquals(tracks, LoadResult.Empty)
+
         order.assertTraceSize(1)
     }
 
     @Test
     fun `error result`(): Unit = runBlocking {
         cloudDataSource.expectError()
+        /* Action */
         val result: LoadResult = repository.load("query")
 
+        /* Assertion */
         cachedTerm.assertSave("query")
         cacheDataSource.assertIsCachedCalled("query")
-
         assertEquals(result, LoadResult.Error(-777))
+
         order.assertTraceSize(2)
     }
 
     @Test
     fun `no tracks result`(): Unit = runBlocking {
+        /* Action */
         val result: LoadResult = repository.load("no data")
+
+        /* Assertion */
         cachedTerm.assertSave("no data")
         cacheDataSource.assertIsCachedCalled("no data")
         cloudDataSource.assertLoadCalled("no data")
         assertEquals(result, LoadResult.NoTracks)
-        order.printTrace()
+
         order.assertTraceSize(3)
     }
 
