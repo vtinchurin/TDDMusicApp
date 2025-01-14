@@ -51,7 +51,7 @@ interface SearchItem : RecyclerItem {
         }
 
         override fun changePlaying(): Track {
-            return if (isPlaying is PlayStopUiState.Play)
+            return if (isPlaying.isPlaying())
                 this.copy(
                     coverUrl = coverUrl.changeState(),
                     isPlaying = PlayStopUiState.Stop
@@ -64,7 +64,7 @@ interface SearchItem : RecyclerItem {
         }
 
         override fun playOrStop(actions: SearchScreenActions.TogglePlayPause) {
-            if (isPlaying is PlayStopUiState.Play)
+            if (isPlaying.isPlaying())
                 actions.pause()
             else
                 actions.play(trackId)

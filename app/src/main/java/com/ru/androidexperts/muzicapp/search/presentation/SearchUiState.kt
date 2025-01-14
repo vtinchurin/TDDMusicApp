@@ -103,10 +103,10 @@ interface SearchUiState : UiState {
     data class Error(private val errorResId: Int) :
         Abstract(recyclerItem = SearchItem.ErrorUi(resId = errorResId))
 
-    object Loading :
+    data object Loading :
         Abstract(recyclerItem = SearchItem.ProgressUi)
 
-    object NoTracks :
+    data object NoTracks :
         Abstract(recyclerItem = SearchItem.NoTracksUi)
 
     companion object {
