@@ -59,17 +59,20 @@ class SearchViewModelTest {
     fun initNoCacheTest() {
         repository.expectTermCached(termCache = "")
 
+        /* Action */
         viewModel.init(isFirstRun = true)
 
+        /* Assertion */
         player.assertInitCalled()
         repository.assertLastTermCachedCalled()
 
+        /* Action */
         viewModel.startUpdates(observer = fragment)
 
+        /* Assertion */
         observable.assertUpdateCalled(expectedObserver = fragment) // register + post
         fragment.assertUpdateCalled(expectedState = SearchUiState.Initial())
 
-        order.printTrace()
         order.assertTraceSize(5)
     }
 
@@ -103,12 +106,13 @@ class SearchViewModelTest {
         player.assertUpdateCalled()
         observable.assertUpdateUiCalled(SEARCH_UI_STATE_SUCCESS_BASE)
         fragment.assertUpdateCalled(SEARCH_UI_STATE_SUCCESS_BASE)
-        order.printTrace()
+
         order.assertTraceSize(13)
     }
 
     @Test
-    fun loadTest() {/* Action */
+    fun loadTest() {
+        /* Action */
         viewModel.init(isFirstRun = true)
 
         /* Assertion */
@@ -168,7 +172,6 @@ class SearchViewModelTest {
         observable.assertUpdateUiCalled(SearchUiState.NoTracks)
         fragment.assertUpdateCalled(SearchUiState.NoTracks)
 
-        order.printTrace()
         order.assertTraceSize(10)
 
     }
@@ -177,8 +180,11 @@ class SearchViewModelTest {
     fun `recreate Activity and retry test`() {
         initNoCacheTest()
         repository.expectError()
+
+        /* Action */
         viewModel.fetch(term = "Q")
 
+        /* Assertion */
         observable.assertUpdateUiCalled(expectedState = SearchUiState.Loading)
         fragment.assertUpdateCalled(expectedState = SearchUiState.Loading)
         runAsync.assertHandleAsyncCalled()
@@ -186,6 +192,7 @@ class SearchViewModelTest {
 
         runAsync.returnResult()
 
+        /* Assertion */
         player.assertUpdateCalled()
         observable.assertUpdateUiCalled(SEARCH_UI_STATE_ERROR_NO_INTERNET)
         fragment.assertUpdateCalled(SEARCH_UI_STATE_ERROR_NO_INTERNET)
@@ -194,19 +201,25 @@ class SearchViewModelTest {
 
         val newInstanceFragment = FakeFragment.Base(order)
 
+        /* Action */
         viewModel.init(isFirstRun = false)
 
+        /* Assertion */
         order.assertTraceSize(14)
 
+        /* Action */
         viewModel.startUpdates(observer = newInstanceFragment)
 
+        /* Assertion */
         observable.assertUpdateCalled(newInstanceFragment)
         newInstanceFragment.assertUpdateCalled(SEARCH_UI_STATE_ERROR_NO_INTERNET)
 
         repository.expectSuccess()
 
+        /* Action */
         viewModel.retry()
 
+        /* Assertion */
         repository.assertLastTermCachedCalled()
         observable.assertUpdateUiCalled(SearchUiState.Loading)
         fragment.assertUpdateCalled(SearchUiState.Loading)
@@ -215,11 +228,11 @@ class SearchViewModelTest {
 
         runAsync.returnResult()
 
+        /* Assertion */
         player.assertUpdateCalled()
         observable.assertUpdateUiCalled(SEARCH_UI_STATE_SUCCESS_BASE)
         fragment.assertUpdateCalled(SEARCH_UI_STATE_SUCCESS_BASE)
 
-        order.printTrace()
         order.assertTraceSize(27)
 
     }
@@ -253,7 +266,6 @@ class SearchViewModelTest {
         observable.assertPlayCalled(trackId = 2)
         observable.assertUpdateUiCalled(SEARCH_STATE_PLAY_SECOND)
         fragment.assertUpdateCalled(SEARCH_STATE_PLAY_SECOND)
-
 
         /* Action */
         viewModel.pause()
@@ -361,9 +373,6 @@ class SearchViewModelTest {
                     isPlaying = PlayStopUiState.Play
                 )
             )
-        )
-        private val TRACKS_URI_LIST = listOf(
-            Pair(1L, "1"), Pair(2L, "2")
         )
     }
 }
