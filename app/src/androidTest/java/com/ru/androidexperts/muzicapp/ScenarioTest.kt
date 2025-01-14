@@ -64,6 +64,9 @@ class ScenarioTest {
         assertWithRecreate { searchPage.assertSecondTrackPlayState() }
 
         searchPage.waitTillSecondTrackStopped()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
+
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 
@@ -74,10 +77,10 @@ class ScenarioTest {
         searchPage.clickFirstTrackPlayButton()
         assertWithRecreate { searchPage.assertFirstTrackPlayState() }
 
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackPlayState() }
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
 
-        searchPage.waitTillSecondTrackStopped()
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 
@@ -85,16 +88,16 @@ class ScenarioTest {
     fun last_click_play_click_stop_click_play_wait_till_stop() {
         error_empty_success_state()
 
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackPlayState() }
-
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackStopState() }
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
 
         searchPage.clickSecondTrackPlayButton()
         assertWithRecreate { searchPage.assertSecondTrackPlayState() }
 
-        searchPage.waitTillSecondTrackStopped()
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
+
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 

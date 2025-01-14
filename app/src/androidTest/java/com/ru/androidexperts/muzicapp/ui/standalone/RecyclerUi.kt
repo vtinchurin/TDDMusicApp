@@ -17,17 +17,14 @@ interface RecyclerUi : Visibility {
     fun assertErrorState()
     fun assertEmptyState()
     fun assertSuccessState()
-    fun assertFirstTrackPlayState()
-    fun assertSecondTrackPlayState()
-    fun assertSecondTrackStopState()
+    fun assertTrackPlayState(position: Int)
+    fun assertTrackStopState(position: Int)
     fun waitTillError()
     fun waitTillNoTracksResponse()
     fun waitTillSuccessResponse()
-    fun waitTillFirstTrackStopped()
-    fun waitTillSecondTrackStopped()
+    fun waitTillTrackStopped(position: Int)
     fun clickRetry()
-    fun clickFirstTrackPlayButton()
-    fun clickSecondTrackPlayButton()
+    fun clickTrackPlayButton(position: Int)
 
     class Base(
         id: Int,
@@ -58,6 +55,11 @@ interface RecyclerUi : Visibility {
             TrackUi.Base(
                 id = R.id.trackItem,
                 position = 1,
+                recyclerViewMatcher = recyclerViewMatcher
+            ),
+            TrackUi.Base(
+                id = R.id.trackItem,
+                position = 2,
                 recyclerViewMatcher = recyclerViewMatcher
             )
         )
@@ -100,44 +102,33 @@ interface RecyclerUi : Visibility {
         }
 
         override fun assertSuccessState() {
-            hasItemCount(2)
+            hasItemCount(tracks.size)
             tracks.forEach { trackUi ->
                 trackUi.assertVisible()
                 trackUi.assertStopState()
             }
         }
 
-        override fun clickFirstTrackPlayButton() {
-            tracks[0].click()
+        override fun clickTrackPlayButton(position: Int) {
+            tracks[position].click()
         }
 
-        override fun clickSecondTrackPlayButton() {
-            tracks[1].click()
+        override fun assertTrackPlayState(position: Int) {
+            tracks.forEachIndexed { pos, track ->
+                if (pos == position) track.assertPlayState()
+                else track.assertStopState()
+            }
         }
 
-        override fun assertFirstTrackPlayState() {
-            tracks[0].assertPlayState()
-            tracks[1].assertStopState()
+        override fun assertTrackStopState(position: Int) {
+            tracks[position].assertStopState()
         }
 
-        override fun assertSecondTrackPlayState() {
-            tracks[0].assertStopState()
-            tracks[1].assertPlayState()
-        }
-
-        override fun assertSecondTrackStopState() {
-            tracks[0].assertStopState()
-            tracks[1].assertStopState()
-        }
-
-        override fun waitTillFirstTrackStopped() {
-            tracks[1].assertStopState()
-            tracks[0].waitTillStopState()
-        }
-
-        override fun waitTillSecondTrackStopped() {
-            tracks[0].assertStopState()
-            tracks[1].waitTillStopState()
+        override fun waitTillTrackStopped(position: Int) {
+            tracks.forEachIndexed { pos, track ->
+                if (pos != position) track.assertStopState()
+            }
+            tracks[position].waitTillStopState()
         }
     }
 }
