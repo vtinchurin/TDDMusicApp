@@ -34,9 +34,10 @@ class SearchViewModel(
             processDeath = false
             player.init(playerCallback)
             val lastTerm = repository.lastCachedTerm()
-            observable.updateUi(lastTerm)
-            if (lastTerm.isNotEmpty())
+            if (lastTerm.isNotEmpty()) {
+                observable.updateUi(lastTerm)
                 fetch(lastTerm)
+            }
         }
     }
 

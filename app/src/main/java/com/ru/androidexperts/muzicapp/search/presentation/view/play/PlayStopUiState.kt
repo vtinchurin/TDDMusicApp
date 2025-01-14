@@ -17,10 +17,12 @@ interface PlayStopUiState : Serializable {
     }
 
     object Play : Abstract(R.drawable.ic_stop) {
+        private fun readResolve(): Any = Play
         override fun isPlaying() = true
     }
 
     object Stop : Abstract(R.drawable.ic_play) {
+        private fun readResolve(): Any = Stop
         override fun isPlaying() = false
     }
 }
