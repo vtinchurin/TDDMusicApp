@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import com.google.android.material.imageview.ShapeableImageView
+import com.ru.androidexperts.muzicapp.di.ProvidePicEngine
 
 class TrackImage : ShapeableImageView, TrackImageUpdate {
 
@@ -14,10 +15,10 @@ class TrackImage : ShapeableImageView, TrackImageUpdate {
     private val animation = ObjectAnimator.ofFloat(
         this,
         "rotation", 0f, 360f
-    ).also {
-        it.setDuration(6000)
-        it.interpolator = LinearInterpolator()
-        it.repeatCount = Animation.INFINITE
+    ).apply {
+        setDuration(6000)
+        interpolator = LinearInterpolator()
+        repeatCount = Animation.INFINITE
     }
 
     constructor(context: Context) : super(context)
@@ -40,6 +41,10 @@ class TrackImage : ShapeableImageView, TrackImageUpdate {
     override fun stopAnimation() {
         animation.setCurrentFraction(0f)
         animation.cancel()
+    }
+
+    override fun show(url: String) {
+        (context.applicationContext as ProvidePicEngine).picEngine().loadImage(this, url)
     }
 
     override fun onSaveInstanceState(): Parcelable? {

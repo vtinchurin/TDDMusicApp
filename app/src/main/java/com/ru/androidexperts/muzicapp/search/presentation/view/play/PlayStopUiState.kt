@@ -7,6 +7,7 @@ import java.io.Serializable
 interface PlayStopUiState : Serializable {
 
     fun update(updatePlayStop: UpdatePlayStopButton)
+    fun isPlaying(): Boolean
 
     abstract class Abstract(@DrawableRes private val backgroundResId: Int) : PlayStopUiState {
 
@@ -15,6 +16,11 @@ interface PlayStopUiState : Serializable {
         }
     }
 
-    object Play : Abstract(R.drawable.ic_stop)
-    object Stop : Abstract(R.drawable.ic_play)
+    object Play : Abstract(R.drawable.ic_stop) {
+        override fun isPlaying() = true
+    }
+
+    object Stop : Abstract(R.drawable.ic_play) {
+        override fun isPlaying() = false
+    }
 }
