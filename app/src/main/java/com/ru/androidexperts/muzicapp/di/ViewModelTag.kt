@@ -1,6 +1,7 @@
 package com.ru.androidexperts.muzicapp.di
 
 import com.ru.androidexperts.muzicapp.core.RunAsync
+import com.ru.androidexperts.muzicapp.core.UiState
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.search.presentation.uiObservable.Playlist
 import kotlinx.coroutines.CoroutineScope
@@ -9,14 +10,14 @@ import kotlinx.coroutines.SupervisorJob
 
 interface ViewModelTag {
 
-    interface Observable<T : Any> : ViewModelTag {
+    interface Observable<T : UiState> : ViewModelTag {
 
         fun startUpdates(observer: UiObserver<T>)
 
         fun stopUpdates()
     }
 
-    abstract class Abstract<T : Any>(
+    abstract class Abstract<T : UiState>(
         protected open val observable: Playlist<T>,
     ) : Observable<T> {
 
@@ -31,7 +32,7 @@ interface ViewModelTag {
         }
     }
 
-    abstract class AbstractAsync<T : Any>(
+    abstract class AbstractAsync<T : UiState>(
         observable: Playlist<T>,
         protected open val runAsync: RunAsync,
     ) : Abstract<T>(observable) {
