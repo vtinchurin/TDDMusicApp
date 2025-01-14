@@ -8,10 +8,9 @@ interface ProvideViewModel {
 
     class Make(core: Core) : ProvideViewModel {
 
-        private var chain: ProvideViewModel
+        private var chain: ProvideViewModel = Error
 
         init {
-            chain = Error()
             chain = ProvideSearchViewModel(core, chain)
         }
 
@@ -19,7 +18,7 @@ interface ProvideViewModel {
             chain.makeViewModel(clasz)
     }
 
-    class Error : ProvideViewModel {
+    object Error : ProvideViewModel {
 
         override fun <T : ViewModelTag> makeViewModel(clasz: Class<T>): T {
             throw IllegalStateException("unknown class $clasz")

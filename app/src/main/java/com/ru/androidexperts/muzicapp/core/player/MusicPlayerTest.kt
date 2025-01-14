@@ -40,7 +40,7 @@ class MusicPlayerTest : MusicPlayer {
     }
 
     override fun pause() {
-        callback.update(!MusicPlayer.IS_PLAYED, MusicPlayer.EMPTY_TRACK_ID)
+        callback.update(!MusicPlayer.IS_PLAYED, -1)
     }
 
     companion object {

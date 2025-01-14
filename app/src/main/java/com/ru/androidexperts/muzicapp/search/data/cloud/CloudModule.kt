@@ -6,11 +6,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-interface CloudModule<T : Any> {
+interface CloudModule {
 
-    fun service(): T
+    fun <T : Any> provideService(clazz: Class<T>): T
+    fun <T : Any> provideService(baseUrl: String, clazz: Class<T>): T
 
-    class Base(apiUrl: String) : CloudModule<TrackService> {
+    class Base : CloudModule {
 
         private val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -22,20 +23,22 @@ interface CloudModule<T : Any> {
             .retryOnConnectionFailure(true)
             .build()
 
-        private val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(apiUrl)
+        private val builder: Retrofit.Builder = Retrofit.Builder()
+            .baseUrl(API_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
-            .build()
 
-        override fun service(): TrackService {
-            return retrofit.create(TrackService::class.java)
-        }
+        override fun <T : Any> provideService(clazz: Class<T>): T =
+            builder.build().create(clazz)
+
+        override fun <T : Any> provideService(baseUrl: String, clazz: Class<T>): T =
+            builder.baseUrl(baseUrl).build().create(clazz)
     }
 
     companion object {
         private const val HTTP_CLIENT_READ_TIMEOUT = 60L
         private const val HTTP_CLIENT_WRITE_TIMEOUT = 60L
         private const val HTTP_CLIENT_CONNECT_TIMEOUT = 60L
+        private const val API_URL = "https://itunes.apple.com/"
     }
 }

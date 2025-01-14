@@ -55,7 +55,7 @@ class UiObservableTest {
     @Test
     fun `with unregister observer`() {
         `initial - observer was subscribed after result returned`()
-        observable.update()
+        observable.update(UiObserver.Empty())
         observable.updateUi(SearchUiState.Loading)
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
         observable.update(observer)

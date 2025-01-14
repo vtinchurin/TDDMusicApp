@@ -18,7 +18,7 @@ interface ViewModelTag {
     }
 
     abstract class Abstract<T : UiState>(
-        protected open val observable: Playlist<T>,
+        protected val observable: Playlist<T>,
     ) : Observable<T> {
 
         protected var processDeath: Boolean = true
@@ -28,16 +28,16 @@ interface ViewModelTag {
         }
 
         override fun stopUpdates() {
-            observable.update()
+            observable.update(UiObserver.Empty())
         }
     }
 
     abstract class AbstractAsync<T : UiState>(
         observable: Playlist<T>,
-        protected open val runAsync: RunAsync,
+        private val runAsync: RunAsync,
     ) : Abstract<T>(observable) {
 
-        protected val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         protected fun <R : Any> handleAsync(
             heavyOperation: suspend () -> R,

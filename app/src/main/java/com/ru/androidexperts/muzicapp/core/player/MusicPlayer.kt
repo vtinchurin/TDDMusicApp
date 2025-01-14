@@ -1,5 +1,6 @@
 package com.ru.androidexperts.muzicapp.core.player
 
+import androidx.media3.common.MediaItem
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.Playlist
 
 
@@ -16,7 +17,7 @@ interface MusicPlayer {
     companion object {
 
         const val IS_PLAYED = true
-        const val EMPTY_TRACK_ID = -1L
-        const val SEEK_POSITION_MS = 0L
     }
+
+    fun MediaItem?.trackId(): Long = this?.mediaId?.toLong() ?: -1
 }

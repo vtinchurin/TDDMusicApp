@@ -16,7 +16,7 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             updateCallback.update(
                 MusicPlayer.IS_PLAYED,
-                mediaItem.id()
+                mediaItem.trackId()
             )
         }
 
@@ -24,13 +24,13 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
             if (player.playbackState == Player.EVENT_IS_LOADING_CHANGED) {
                 updateCallback.update(
                     isPlaying,
-                    player.currentMediaItem.id()
+                    player.currentMediaItem.trackId()
                 )
             }
             if (player.playbackState == Player.EVENT_PLAYBACK_STATE_CHANGED) {
                 updateCallback.update(
                     !MusicPlayer.IS_PLAYED,
-                    player.currentMediaItem.id()
+                    player.currentMediaItem.trackId()
                 )
             }
             super.onIsPlayingChanged(isPlaying)
@@ -60,19 +60,21 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
             player.setMediaItems(mediaItems)
             player.addListener(listener)
             player.prepare()
-            player.seekTo(trackIndex, MusicPlayer.SEEK_POSITION_MS)
+            player.seekTo(trackIndex, SEEK_POSITION_MS)
             playlistWasUpdated = false
         }
         if (player.currentMediaItemIndex != trackIndex)
-            player.seekTo(trackIndex, MusicPlayer.SEEK_POSITION_MS)
+            player.seekTo(trackIndex, SEEK_POSITION_MS)
         else if (player.playbackState == Player.EVENT_PLAYBACK_STATE_CHANGED)
-            player.seekTo(MusicPlayer.SEEK_POSITION_MS)
+            player.seekTo(SEEK_POSITION_MS)
         player.play()
     }
 
     override fun pause() {
         player.pause()
     }
-}
 
-fun MediaItem?.id(): Long = this?.mediaId?.toLong() ?: -1
+    companion object {
+        const val SEEK_POSITION_MS = 0L
+    }
+}

@@ -9,6 +9,7 @@ import com.ru.androidexperts.muzicapp.di.Module
 import com.ru.androidexperts.muzicapp.search.data.DataException
 import com.ru.androidexperts.muzicapp.search.data.cache.CacheDataSource
 import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
+import com.ru.androidexperts.muzicapp.search.data.cloud.TrackService
 import com.ru.androidexperts.muzicapp.search.data.repository.SearchRepositoryBase
 import com.ru.androidexperts.muzicapp.search.presentation.SearchViewModel
 import com.ru.androidexperts.muzicapp.search.presentation.mappers.PlayerMapper
@@ -23,7 +24,7 @@ class SearchModule(private val core: Core) : Module<SearchViewModel> {
                 dao = core.cacheModule.dao()
             ),
             cloudDataSource = CloudDataSource.Base(
-                service = core.cloudModule.service()
+                service = core.cloudModule.provideService(TrackService::class.java)
             ),
             handleError = HandleError.ToData(),
             errorLoadResult = DataException.Mapper.ToErrorLoadResult(),

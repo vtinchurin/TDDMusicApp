@@ -30,14 +30,13 @@ class Core(context: Context) {
 
     val cacheModule: CacheModule = CacheModule.Base(context)
 
-    val cloudModule = CloudModule.Base(API_URL)
+    val cloudModule = CloudModule.Base()
 
     val exoPlayer = ExoPlayer.Builder(context).build()
 
     val observable: Playlist<SearchUiState> = Playlist.Base()
 
     companion object {
-        private const val API_URL = "https://itunes.apple.com/"
         private const val ESPRESSO_CLASS_NAME = "com.ru.androidexperts.muzicapp.ScenarioTest"
         private const val TERM_CACHE_KEY = "termKey"
     }
