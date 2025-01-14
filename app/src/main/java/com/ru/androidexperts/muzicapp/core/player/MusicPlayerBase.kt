@@ -16,7 +16,7 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             updateCallback.update(
                 MusicPlayer.IS_PLAYED,
-                mediaItem?.mediaId?.toLong() ?: MusicPlayer.EMPTY_TRACK_ID
+                mediaItem.id()
             )
         }
 
@@ -24,13 +24,13 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
             if (player.playbackState == Player.EVENT_IS_LOADING_CHANGED) {
                 updateCallback.update(
                     isPlaying,
-                    player.currentMediaItem?.mediaId?.toLong() ?: MusicPlayer.EMPTY_TRACK_ID
+                    player.currentMediaItem.id()
                 )
             }
             if (player.playbackState == Player.EVENT_PLAYBACK_STATE_CHANGED) {
                 updateCallback.update(
                     !MusicPlayer.IS_PLAYED,
-                    player.currentMediaItem?.mediaId?.toLong() ?: MusicPlayer.EMPTY_TRACK_ID
+                    player.currentMediaItem.id()
                 )
             }
             super.onIsPlayingChanged(isPlaying)
@@ -74,3 +74,5 @@ class MusicPlayerBase(private val player: ExoPlayer) : MusicPlayer {
         player.pause()
     }
 }
+
+fun MediaItem?.id(): Long = this?.mediaId?.toLong() ?: -1
