@@ -3,7 +3,7 @@ package com.ru.androidexperts.muzicapp.di
 interface ManageViewModels : ProvideViewModel {
 
     class Factory(
-        private val make: ProvideViewModel
+        private val make: ProvideViewModel,
     ) : ManageViewModels {
 
         private val viewModelsMap = mutableMapOf<Class<out ViewModelTag>, ViewModelTag?>()
@@ -13,7 +13,6 @@ interface ManageViewModels : ProvideViewModel {
                 val viewModel = make.makeViewModel(clasz)
                 viewModelsMap[clasz] = viewModel
                 viewModel
-            } else
-                viewModelsMap[clasz] as T
+            } else viewModelsMap[clasz] as T
     }
 }
