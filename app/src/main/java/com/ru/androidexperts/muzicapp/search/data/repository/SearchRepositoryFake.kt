@@ -26,6 +26,13 @@ class SearchRepositoryFake(
             authorName = "ExistentArtist",
             coverUrl = "cover url 2",
             sourceUrl = "source url 2"
+        ),
+        TrackModel.Base(
+            id = 2L,
+            trackTitle = "Song 3",
+            authorName = "ExistentArtist",
+            coverUrl = "cover url 3",
+            sourceUrl = "source url 3"
         )
     ),
     private val termCache: StringCache
