@@ -42,8 +42,10 @@ class UiObservableTest {
 
     @Test
     fun `initial - without cached data`() {
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial())
         adapter.assertUpdateCalled(emptyList())
         order.assertTraceSize(2)
@@ -55,8 +57,10 @@ class UiObservableTest {
         observable.updateUi(SearchUiState.Loading)
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial("123", SUCCESS_LIST))
         input.assertUpdateCalled("123")
         adapter.assertUpdateCalled(SUCCESS_LIST)
@@ -67,17 +71,23 @@ class UiObservableTest {
     fun `with unregister observer`() {
         `initial - observer was subscribed after result returned`()
 
+        /* Action */
         observable.update(UiObserver.Empty())
 
+        /* Assertion */
         order.assertTraceSize(3)
 
+        /* Action */
         observable.updateUi(SearchUiState.Loading)
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Assertion */
         order.assertTraceSize(3)
 
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
@@ -89,14 +99,17 @@ class UiObservableTest {
         observable.updateUi("123")
         observable.updateUi(SearchUiState.Loading)
 
+        /* Action */
         observable.update(observer)
 
         observer.assertUpdateCalled(SearchUiState.Initial("123", SearchItem.ProgressUi))
         input.assertUpdateCalled("123")
         adapter.assertUpdateCalled(SearchItem.ProgressUi)
 
+        /* Action */
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
@@ -105,20 +118,26 @@ class UiObservableTest {
 
     @Test
     fun `fetch - success result`() {
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial())
         adapter.assertUpdateCalled(emptyList())
 
+        /* Action */
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
 
+        /* Assertion */
         input.assertUpdateCalled("123")
         observer.assertUpdateCalled(SearchUiState.Loading)
         adapter.assertUpdateCalled(SearchItem.ProgressUi)
 
+        /* Action */
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
@@ -128,25 +147,33 @@ class UiObservableTest {
 
     @Test
     fun `success result and play first and stop`() {
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial())
         adapter.assertUpdateCalled(emptyList())
 
+        /* Action */
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
 
+        /* Assertion */
         input.assertUpdateCalled("123")
         observer.assertUpdateCalled(SearchUiState.Loading)
         adapter.assertUpdateCalled(SearchItem.ProgressUi)
 
+        /* Action */
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
+        /* Action */
         observable.play(0)
 
+        /* Assertion */
         observer.assertUpdateCalled(
             SearchUiState.Success(
                 listOf(
@@ -176,7 +203,10 @@ class UiObservableTest {
             )
         )
 
+        /* Action */
         observable.stop()
+
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
@@ -185,27 +215,34 @@ class UiObservableTest {
 
     @Test
     fun `success result and play first and play next and stop`() {
-
+        /* Action */
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial())
         adapter.assertUpdateCalled(emptyList())
         order.assertTraceSize(2)
 
+        /* Action */
         input.update("123")
         observable.updateUi(SearchUiState.Loading)
 
+        /* Assertion */
         input.assertUpdateCalled("123")
         observer.assertUpdateCalled(SearchUiState.Loading)
         adapter.assertUpdateCalled(SearchItem.ProgressUi)
 
+        /* Action */
         observable.updateUi(SearchUiState.Success(SUCCESS_LIST))
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
+        /* Action */
         observable.play(0)
 
+        /* Assertion */
         observer.assertUpdateCalled(
             SearchUiState.Success(
                 listOf(
@@ -235,8 +272,10 @@ class UiObservableTest {
             )
         )
 
+        /* Action */
         observable.play(1)
 
+        /* Assertion */
         observer.assertUpdateCalled(
             SearchUiState.Success(
                 listOf(
@@ -266,8 +305,10 @@ class UiObservableTest {
             )
         )
 
+        /* Action */
         observable.stop()
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Success(SUCCESS_LIST))
         adapter.assertUpdateCalled(SUCCESS_LIST)
 
@@ -276,9 +317,11 @@ class UiObservableTest {
 
     @Test
     fun `error no item message`() {
+        /* Action */
         observable.updateUi(SearchUiState.NoTracks)
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.NoTracks)
         adapter.assertUpdateCalled(SearchItem.NoTracksUi)
         order.assertTraceSize(2)
@@ -286,15 +329,19 @@ class UiObservableTest {
 
     @Test
     fun `error internet connection message`() {
+        /* Action */
         observable.updateUi(SearchUiState.Initial("123", SearchItem.ProgressUi))
         observable.update(observer)
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Initial("123", SearchItem.ProgressUi))
         input.assertUpdateCalled("123")
         adapter.assertUpdateCalled(SearchItem.ProgressUi)
 
+        /* Action */
         observable.updateUi(SearchUiState.Error(errorResId = -777))
 
+        /* Assertion */
         observer.assertUpdateCalled(SearchUiState.Error(errorResId = -777))
         adapter.assertUpdateCalled(SearchItem.ErrorUi(resId = -777))
         order.assertTraceSize(5)
