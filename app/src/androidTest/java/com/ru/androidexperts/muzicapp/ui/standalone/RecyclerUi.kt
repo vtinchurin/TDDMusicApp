@@ -32,33 +32,33 @@ interface RecyclerUi : Visibility {
     class Base(
         id: Int,
         matchers: List<Matcher<View>> = emptyList(),
-    ) : Ui.Recycler.Base(id, matchers), RecyclerUi {
+    ) : Ui.Recycler.Abstract(id, matchers), RecyclerUi {
 
         private val error: ErrorUi = ErrorUi.Base(
             id = R.id.errorItem,
-            recyclerViewMatcher = recyclerViewMatcher(),
+            recyclerViewMatcher = recyclerViewMatcher,
         )
 
         private val noTracks: NoSongsUi = NoSongsUi.Base(
             id = R.id.noSongsItem,
-            recyclerViewMatcher = recyclerViewMatcher(),
+            recyclerViewMatcher = recyclerViewMatcher,
         )
 
         private val progress: ProgressUi = ProgressUi.Base(
             id = R.id.progressItem,
-            recyclerViewMatcher = recyclerViewMatcher(),
+            recyclerViewMatcher = recyclerViewMatcher,
         )
 
         private val tracks: List<TrackUi> = listOf(
             TrackUi.Base(
                 id = R.id.trackItem,
                 position = 0,
-                recyclerViewMatcher = recyclerViewMatcher()
+                recyclerViewMatcher = recyclerViewMatcher
             ),
             TrackUi.Base(
                 id = R.id.trackItem,
                 position = 1,
-                recyclerViewMatcher = recyclerViewMatcher()
+                recyclerViewMatcher = recyclerViewMatcher
             )
         )
 

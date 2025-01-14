@@ -25,13 +25,12 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 
-interface Ui : Id, Visibility, Existence, Enabled {
+interface Ui : Visibility, Existence, Enabled {
 
     fun check(viewAssert: ViewAssertion)
 
     interface Single : Ui {
 
-        fun interaction(): ViewInteraction
         fun baseMatchers(): List<Matcher<View>>
         fun perform(action: ViewAction): ViewInteraction
     }
@@ -48,8 +47,8 @@ interface Ui : Id, Visibility, Existence, Enabled {
         protected val matchers: List<Matcher<View>> = emptyList(),
     ) : Single {
 
-        override fun interaction(): ViewInteraction =
-            onView(allOf(matchers + baseMatchers()))
+        protected open val interaction: ViewInteraction
+            get() = onView(allOf(matchers + baseMatchers()))
 
         override fun baseMatchers(): List<Matcher<View>> = listOf(
             withId(id),
@@ -57,16 +56,14 @@ interface Ui : Id, Visibility, Existence, Enabled {
         )
 
         override fun perform(action: ViewAction): ViewInteraction =
-            interaction().perform(action)
+            interaction.perform(action)
 
         override fun waitTillDisplayed(timeout: Long) {
             perform(waitTillDisplayed(id, timeout))
         }
 
-        override fun id(): Int = id
-
         override fun check(viewAssert: ViewAssertion) {
-            interaction().check(viewAssert)
+            interaction.check(viewAssert)
         }
 
         override fun assertEnabled() {
@@ -109,14 +106,12 @@ interface Ui : Id, Visibility, Existence, Enabled {
             isDescendantOfA(it)
         }
 
-        override fun perform(action: ViewAction): ViewInteraction {
-            return onView(isRoot()).perform(action)
-        }
+        override fun perform(action: ViewAction): ViewInteraction =
+            onView(isRoot()).perform(action)
     }
 
     interface Recycler : Group {
 
-        fun recyclerViewMatcher(): RecyclerViewMatcher
         fun hasItemCount(itemCount: Int)
         fun hasNoItems()
 
@@ -132,13 +127,14 @@ interface Ui : Id, Visibility, Existence, Enabled {
             matchers = matchers
         ), Single {
 
-            override fun interaction(): ViewInteraction = onView(
-                allOf(
-                    matchers +
-                            baseMatchers() +
-                            isDescendantOfA(recyclerViewMatcher.atPosition(position))
+            override val interaction: ViewInteraction
+                get() = onView(
+                    allOf(
+                        matchers +
+                                baseMatchers() +
+                                isDescendantOfA(recyclerViewMatcher.atPosition(position))
+                    )
                 )
-            )
         }
 
         abstract class Container(
@@ -153,32 +149,34 @@ interface Ui : Id, Visibility, Existence, Enabled {
             matchers = matchers
         ) {
 
-            override fun interaction(): ViewInteraction = onView(
-                allOf(
-                    matchers +
-                            baseMatchers() +
-                            recyclerViewMatcher.atPosition(position)
+            override val interaction: ViewInteraction
+                get() = onView(
+                    allOf(
+                        matchers +
+                                baseMatchers() +
+                                recyclerViewMatcher.atPosition(position)
+                    )
                 )
-            )
         }
 
-        abstract class Base(
+        abstract class Abstract(
             id: Int,
-            matchers: List<Matcher<View>>
+            matchers: List<Matcher<View>>,
         ) : Ui.Container(
             id = id,
             classType = RecyclerView::class.java,
             matchers = matchers
         ), Recycler {
 
-            override fun recyclerViewMatcher() = RecyclerViewMatcher.Base(id)
+            protected val recyclerViewMatcher: RecyclerViewMatcher
+                get() = RecyclerViewMatcher.Base(id)
 
             override fun hasItemCount(itemCount: Int) {
-                recyclerViewMatcher().hasItemCount(itemCount)
+                recyclerViewMatcher.hasItemCount(itemCount)
             }
 
             override fun hasNoItems() {
-                recyclerViewMatcher().hasItemCount(0)
+                recyclerViewMatcher.hasItemCount(0)
             }
         }
     }

@@ -3,7 +3,6 @@ package com.ru.androidexperts.muzicapp.ui.recycler.containers
 import android.view.View
 import android.widget.LinearLayout
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.core.Id
 import com.ru.androidexperts.muzicapp.core.Ui
 import com.ru.androidexperts.muzicapp.core.assertions.Clickable
 import com.ru.androidexperts.muzicapp.core.assertions.Visibility
@@ -12,7 +11,7 @@ import com.ru.androidexperts.muzicapp.ui.recycler.defaults.DefaultButton
 import com.ru.androidexperts.muzicapp.ui.recycler.defaults.DefaultText
 import org.hamcrest.Matcher
 
-interface ErrorUi : Id, Visibility, Clickable {
+interface ErrorUi : Visibility, Clickable {
 
     class Base(
         id: Int,
