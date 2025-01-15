@@ -21,7 +21,7 @@ interface FakeUiObservable<T : Any> : Playlist<T> {
 
         override fun update(observer: UiObserver<SearchUiState>) {
             this.observer = observer
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 order.add(OBSERVABLE_REGISTER, observer)
                 order.add(OBSERVABLE_POST) //TODO
                 observer.updateUi(cached)
@@ -31,12 +31,11 @@ interface FakeUiObservable<T : Any> : Playlist<T> {
         }
 
         override fun assertUpdateCalled(expectedObserver: UiObserver<SearchUiState>) {
-            if (expectedObserver.isEmpty())
-                order.assert(OBSERVABLE_UNREGISTER, expectedObserver)
-            else {
+            if (expectedObserver.isNotEmpty()) {
                 order.assert(OBSERVABLE_REGISTER, expectedObserver)
                 order.assert(OBSERVABLE_POST)
-            }
+            } else
+                order.assert(OBSERVABLE_UNREGISTER, expectedObserver)
         }
 
         override fun assertUpdateUiCalled(expectedInput: String) {
@@ -81,7 +80,7 @@ interface FakeUiObservable<T : Any> : Playlist<T> {
         override fun updateUi(data: SearchUiState) {
             cached = data + input
             order.add(OBSERVABLE_UPDATE_STATE, cached)
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 order.add(OBSERVABLE_POST, cached)
                 observer.updateUi(cached)
             }
