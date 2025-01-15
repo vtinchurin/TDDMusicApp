@@ -62,30 +62,42 @@ class SearchPage : Ui.Container(
     }
 
     fun clickFirstTrackPlayButton() {
-        recyclerUi.clickFirstTrackPlayButton()
+        recyclerUi.clickTrackPlayButton(position = 0)
     }
 
     fun clickSecondTrackPlayButton() {
-        recyclerUi.clickSecondTrackPlayButton()
+        recyclerUi.clickTrackPlayButton(position = 1)
     }
 
     fun assertFirstTrackPlayState() {
-        recyclerUi.assertFirstTrackPlayState()
+        recyclerUi.assertTrackPlayState(position = 0)
     }
 
     fun waitTillFirstTrackStopped() {
-        recyclerUi.waitTillFirstTrackStopped()
+        recyclerUi.waitTillTrackStopped(position = 0)
     }
 
     fun assertSecondTrackPlayState() {
-        recyclerUi.assertSecondTrackPlayState()
+        recyclerUi.assertTrackPlayState(position = 1)
     }
 
     fun assertSecondTrackStopState() {
-        recyclerUi.assertSecondTrackStopState()
+        recyclerUi.assertTrackStopState(position = 1)
     }
 
     fun waitTillSecondTrackStopped() {
-        recyclerUi.waitTillSecondTrackStopped()
+        recyclerUi.waitTillTrackStopped(position = 1)
+    }
+
+    fun assertThirdTrackPlayState() {
+        recyclerUi.assertTrackPlayState(position = 2)
+    }
+
+    fun waitTillThirdTrackStopped() {
+        recyclerUi.waitTillTrackStopped(position = 2)
+    }
+
+    fun clickThirdTrackPlayButton() {
+        recyclerUi.clickTrackPlayButton(position = 2)
     }
 }

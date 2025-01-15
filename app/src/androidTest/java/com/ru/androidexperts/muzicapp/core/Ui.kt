@@ -25,16 +25,27 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 
-interface Ui : Id, Visibility, Existence, Enabled {
+/**
+ *[Ui] is a parent interface, which contains methods for checking views
+ */
+
+interface Ui : Visibility, Existence, Enabled {
 
     fun check(viewAssert: ViewAssertion)
 
+    /**
+     * [Single] is a parent interface, for any View in Hierarchy
+     */
+
     interface Single : Ui {
 
-        fun interaction(): ViewInteraction
         fun baseMatchers(): List<Matcher<View>>
         fun perform(action: ViewAction): ViewInteraction
     }
+
+    /**
+     * [Group] is a parent interface, for any ViewGroup in Hierarchy
+     */
 
     interface Group : Single {
 
@@ -42,14 +53,18 @@ interface Ui : Id, Visibility, Existence, Enabled {
         fun descendantMatchers(): List<Matcher<View>>
     }
 
+    /**
+     * [Ui.Item] is a Abstract implementation for any final View
+     */
+
     abstract class Item(
         protected val id: Int,
         protected val classType: Class<out View>,
         protected val matchers: List<Matcher<View>> = emptyList(),
     ) : Single {
 
-        override fun interaction(): ViewInteraction =
-            onView(allOf(matchers + baseMatchers()))
+        protected open val interaction: ViewInteraction
+            get() = onView(allOf(matchers + baseMatchers()))
 
         override fun baseMatchers(): List<Matcher<View>> = listOf(
             withId(id),
@@ -57,16 +72,14 @@ interface Ui : Id, Visibility, Existence, Enabled {
         )
 
         override fun perform(action: ViewAction): ViewInteraction =
-            interaction().perform(action)
+            interaction.perform(action)
 
         override fun waitTillDisplayed(timeout: Long) {
             perform(waitTillDisplayed(id, timeout))
         }
 
-        override fun id(): Int = id
-
         override fun check(viewAssert: ViewAssertion) {
-            interaction().check(viewAssert)
+            interaction.check(viewAssert)
         }
 
         override fun assertEnabled() {
@@ -90,6 +103,10 @@ interface Ui : Id, Visibility, Existence, Enabled {
         }
     }
 
+    /**
+     * [Ui.Container] is a Abstract implementation for any ViewGroup
+     */
+
     abstract class Container(
         id: Int,
         classType: Class<out View>,
@@ -109,16 +126,23 @@ interface Ui : Id, Visibility, Existence, Enabled {
             isDescendantOfA(it)
         }
 
-        override fun perform(action: ViewAction): ViewInteraction {
-            return onView(isRoot()).perform(action)
-        }
+        override fun perform(action: ViewAction): ViewInteraction =
+            onView(isRoot()).perform(action)
     }
+
+    /**
+     * [Ui.Recycler] is a parent interface, for RecyclerView and Views inside
+     */
 
     interface Recycler : Group {
 
-        fun recyclerViewMatcher(): RecyclerViewMatcher
         fun hasItemCount(itemCount: Int)
         fun hasNoItems()
+
+        /**
+            [Recycler.Item] is a Abstract implementation for any View
+            in ViewGroup inside RecyclerView
+         */
 
         abstract class Item(
             id: Int,
@@ -132,14 +156,19 @@ interface Ui : Id, Visibility, Existence, Enabled {
             matchers = matchers
         ), Single {
 
-            override fun interaction(): ViewInteraction = onView(
-                allOf(
-                    matchers +
-                            baseMatchers() +
-                            isDescendantOfA(recyclerViewMatcher.atPosition(position))
+            override val interaction: ViewInteraction
+                get() = onView(
+                    allOf(
+                        matchers +
+                                baseMatchers() +
+                                isDescendantOfA(recyclerViewMatcher.atPosition(position))
+                    )
                 )
-            )
         }
+
+        /**
+            [Recycler.Container] is a Abstract implementation for any ViewGroup inside RecyclerView
+         */
 
         abstract class Container(
             id: Int,
@@ -153,32 +182,38 @@ interface Ui : Id, Visibility, Existence, Enabled {
             matchers = matchers
         ) {
 
-            override fun interaction(): ViewInteraction = onView(
-                allOf(
-                    matchers +
-                            baseMatchers() +
-                            recyclerViewMatcher.atPosition(position)
+            override val interaction: ViewInteraction
+                get() = onView(
+                    allOf(
+                        matchers +
+                                baseMatchers() +
+                                recyclerViewMatcher.atPosition(position)
+                    )
                 )
-            )
         }
 
-        abstract class Base(
+        /**
+            [Recycler.Abstract] is a Abstract implementation for RecyclerView
+         */
+
+        abstract class Abstract(
             id: Int,
-            matchers: List<Matcher<View>>
+            matchers: List<Matcher<View>>,
         ) : Ui.Container(
             id = id,
             classType = RecyclerView::class.java,
             matchers = matchers
         ), Recycler {
 
-            override fun recyclerViewMatcher() = RecyclerViewMatcher.Base(id)
+            protected val recyclerViewMatcher: RecyclerViewMatcher
+                get() = RecyclerViewMatcher.Base(id)
 
             override fun hasItemCount(itemCount: Int) {
-                recyclerViewMatcher().hasItemCount(itemCount)
+                recyclerViewMatcher.hasItemCount(itemCount)
             }
 
             override fun hasNoItems() {
-                recyclerViewMatcher().hasItemCount(0)
+                recyclerViewMatcher.hasItemCount(0)
             }
         }
     }

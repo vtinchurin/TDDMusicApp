@@ -25,7 +25,7 @@ interface Playlist<T : Any> : UiObservable<T> {
 
         override fun update(observer: UiObserver<SearchUiState>) {
             this.observer = observer
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 observer.updateUi(cached)
                 input = ""
             }
@@ -33,7 +33,7 @@ interface Playlist<T : Any> : UiObservable<T> {
 
         override fun updateUi(data: SearchUiState) {
             cached = data + input
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 observer.updateUi(cached)
             }
         }

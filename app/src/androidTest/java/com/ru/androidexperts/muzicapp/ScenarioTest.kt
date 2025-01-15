@@ -1,9 +1,9 @@
 package com.ru.androidexperts.muzicapp
 
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ru.androidexperts.muzicapp.core.SharedPreferencesWrapper
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -25,14 +25,15 @@ class ScenarioTest {
 
     @After
     fun close() {
-        val sharedPreferences = ApplicationProvider
-            .getApplicationContext<Context>()
-            .getSharedPreferences("test", Context.MODE_PRIVATE)
+        val sharedPreferences = SharedPreferencesWrapper.Test.sharedPreferences(
+            ApplicationProvider.getApplicationContext()
+        )
         sharedPreferences.edit().clear().apply()
     }
 
     @Test
     fun error_empty_success_state() {
+
         assertWithRecreate { searchPage.assertInitialState() }
 
         searchPage.addUserInput(text = "NonExistentArtist")
@@ -63,6 +64,9 @@ class ScenarioTest {
         assertWithRecreate { searchPage.assertSecondTrackPlayState() }
 
         searchPage.waitTillSecondTrackStopped()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
+
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 
@@ -73,10 +77,10 @@ class ScenarioTest {
         searchPage.clickFirstTrackPlayButton()
         assertWithRecreate { searchPage.assertFirstTrackPlayState() }
 
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackPlayState() }
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
 
-        searchPage.waitTillSecondTrackStopped()
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 
@@ -84,16 +88,16 @@ class ScenarioTest {
     fun last_click_play_click_stop_click_play_wait_till_stop() {
         error_empty_success_state()
 
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackPlayState() }
-
-        searchPage.clickSecondTrackPlayButton()
-        assertWithRecreate { searchPage.assertSecondTrackStopState() }
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
 
         searchPage.clickSecondTrackPlayButton()
         assertWithRecreate { searchPage.assertSecondTrackPlayState() }
 
-        searchPage.waitTillSecondTrackStopped()
+        searchPage.clickThirdTrackPlayButton()
+        assertWithRecreate { searchPage.assertThirdTrackPlayState() }
+
+        searchPage.waitTillThirdTrackStopped()
         assertWithRecreate { searchPage.assertSuccessState() }
     }
 

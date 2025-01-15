@@ -25,7 +25,7 @@ class SearchViewModel(
             observable.play(trackId)
         } else {
             observable.stop()
-            toUi.update()
+            toUi.stop()
         }
     }
 
@@ -34,19 +34,23 @@ class SearchViewModel(
             processDeath = false
             player.init(playerCallback)
             val lastTerm = repository.lastCachedTerm()
-            observable.updateUi(lastTerm)
-            if (lastTerm.isNotEmpty())
+            if (lastTerm.isNotEmpty()) {
+                observable.updateUi(lastTerm)
                 fetch(lastTerm)
+            }
         }
     }
 
     fun fetch(term: String) {
         observable.updateUi(SearchUiState.Loading)
         handleAsync(
-            heavyOperation = { repository.load(term) }
-        ) { loadResult ->
-            player.update(loadResult.map(toPlayList))
-            observable.updateUi(loadResult.map(toUi))
+            heavyOperation = {
+                val loadResult = repository.load(term)
+                loadResult.map(toPlayList) to loadResult.map(toUi)
+            }
+        ) { (playlist, uiState) ->
+            player.update(playlist)
+            observable.updateUi(uiState)
         }
     }
 

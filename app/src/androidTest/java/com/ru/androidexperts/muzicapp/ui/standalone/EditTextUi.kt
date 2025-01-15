@@ -24,7 +24,7 @@ interface EditTextUi : Visibility {
     ), EditTextUi {
 
         override fun addInput(text: String) {
-            interaction().perform(
+            interaction.perform(
                 ViewActions.click(),
                 clearText(),
                 typeText(text),

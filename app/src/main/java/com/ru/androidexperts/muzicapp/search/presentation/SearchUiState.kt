@@ -41,7 +41,7 @@ interface SearchUiState : UiState {
             } else super.plus(input)
 
         fun <T : SearchItem> playTrack(trackId: Long): List<T> {
-            val recyclerState = this.stopPlaying<SearchItem>() as MutableList
+            val recyclerState = this.stopPlaying<SearchItem>().toMutableList()
             playedTrackId = trackId
             recyclerState.filterIsInstance<SearchItem.Track>()
                 .find { track ->
@@ -54,7 +54,7 @@ interface SearchUiState : UiState {
         }
 
         fun <T : SearchItem> stopPlaying(): List<T> {
-            val recyclerState = recyclerState as MutableList
+            val recyclerState = recyclerState.toMutableList()
             recyclerState.filterIsInstance<SearchItem.Track>()
                 .find { track ->
                     track.trackId() == playedTrackId
@@ -103,10 +103,10 @@ interface SearchUiState : UiState {
     data class Error(private val errorResId: Int) :
         Abstract(recyclerItem = SearchItem.ErrorUi(resId = errorResId))
 
-    object Loading :
+    data object Loading :
         Abstract(recyclerItem = SearchItem.ProgressUi)
 
-    object NoTracks :
+    data object NoTracks :
         Abstract(recyclerItem = SearchItem.NoTracksUi)
 
     companion object {

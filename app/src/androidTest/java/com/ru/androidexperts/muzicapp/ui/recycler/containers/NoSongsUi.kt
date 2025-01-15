@@ -8,14 +8,13 @@ import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.core.Id
 import com.ru.androidexperts.muzicapp.core.Ui
 import com.ru.androidexperts.muzicapp.core.assertions.Visibility
 import com.ru.androidexperts.muzicapp.core.matchers.RecyclerViewMatcher
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 
-interface NoSongsUi : Id, Visibility {
+interface NoSongsUi : Visibility {
 
     class Base(
         id: Int,

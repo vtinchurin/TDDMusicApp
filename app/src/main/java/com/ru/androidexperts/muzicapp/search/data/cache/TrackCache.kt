@@ -16,9 +16,9 @@ data class TermsCache(
 @Entity(tableName = "tracks_by_term", primaryKeys = ["term_id", "track_id"])
 data class TrackIdByTermCache(
     @ColumnInfo("term_id")
-    val termId: Int,
+    val termId: Long,
     @ColumnInfo("track_id")
-    val trackId: Long
+    val trackId: Long,
 )
 
 @Entity(tableName = "tracks")

@@ -3,14 +3,13 @@ package com.ru.androidexperts.muzicapp.ui.recycler.containers
 import android.view.View
 import android.widget.FrameLayout
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.core.Id
 import com.ru.androidexperts.muzicapp.core.Ui
 import com.ru.androidexperts.muzicapp.core.assertions.Visibility
 import com.ru.androidexperts.muzicapp.core.matchers.RecyclerViewMatcher
 import com.ru.androidexperts.muzicapp.ui.recycler.defaults.DefaultProgress
 import org.hamcrest.Matcher
 
-interface ProgressUi : Id, Visibility {
+interface ProgressUi : Visibility {
 
     class Base(
         id: Int,

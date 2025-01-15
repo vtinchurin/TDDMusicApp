@@ -9,7 +9,9 @@ import com.ru.androidexperts.muzicapp.search.presentation.view.trackImage.TrackI
 
 interface UiMapper : LoadResult.Mapper<SearchUiState> {
 
-    fun update(trackId: Long = -1L)
+    fun update(trackId: Long)
+
+    fun stop()
 
     class Base : UiMapper {
 
@@ -17,10 +19,13 @@ interface UiMapper : LoadResult.Mapper<SearchUiState> {
             playingTrackId = trackId
         }
 
+        override fun stop() {
+            playingTrackId = -1
+        }
+
         override fun mapSuccess(data: List<TrackModel>): SearchUiState {
-            val mapper = InnerMapper
             val tracksUiList = data.map {
-                it.map(mapper)
+                it.map(InnerMapper)
             }
             return SearchUiState.Success(tracksUiList)
         }

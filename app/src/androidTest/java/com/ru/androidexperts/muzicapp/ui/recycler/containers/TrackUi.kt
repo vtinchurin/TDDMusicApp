@@ -3,7 +3,6 @@ package com.ru.androidexperts.muzicapp.ui.recycler.containers
 import android.view.View
 import android.widget.LinearLayout
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.core.Id
 import com.ru.androidexperts.muzicapp.core.Ui
 import com.ru.androidexperts.muzicapp.core.assertions.Clickable
 import com.ru.androidexperts.muzicapp.core.assertions.Visibility
@@ -13,7 +12,7 @@ import com.ru.androidexperts.muzicapp.ui.recycler.items.ImageButtonUi
 import com.ru.androidexperts.muzicapp.ui.recycler.items.ImageUi
 import org.hamcrest.Matcher
 
-interface TrackUi : Id, Visibility, Clickable {
+interface TrackUi : Visibility, Clickable {
 
     fun assertPlayState()
 
