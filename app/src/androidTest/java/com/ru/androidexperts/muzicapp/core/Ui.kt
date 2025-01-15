@@ -25,9 +25,17 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 
+/**
+    [Ui] is a parent interface, which contains methods for checking views
+ */
+
 interface Ui : Visibility, Existence, Enabled {
 
     fun check(viewAssert: ViewAssertion)
+
+    /**
+        [Single] is a parent interface, for any View in Hierarchy
+     */
 
     interface Single : Ui {
 
@@ -35,11 +43,19 @@ interface Ui : Visibility, Existence, Enabled {
         fun perform(action: ViewAction): ViewInteraction
     }
 
+    /**
+        [Group] is a parent interface, for any ViewGroup in Hierarchy
+     */
+
     interface Group : Single {
 
         fun parentMatchers(): List<Matcher<View>>
         fun descendantMatchers(): List<Matcher<View>>
     }
+
+    /**
+        [Ui.Item] is a Abstract implementation for any final View
+     */
 
     abstract class Item(
         protected val id: Int,
@@ -87,6 +103,10 @@ interface Ui : Visibility, Existence, Enabled {
         }
     }
 
+    /**
+        [Ui.Container] is a Abstract implementation for any ViewGroup
+     */
+
     abstract class Container(
         id: Int,
         classType: Class<out View>,
@@ -110,10 +130,19 @@ interface Ui : Visibility, Existence, Enabled {
             onView(isRoot()).perform(action)
     }
 
+    /**
+        [Ui.Recycler] is a parent interface, for RecyclerView and Views inside
+     */
+
     interface Recycler : Group {
 
         fun hasItemCount(itemCount: Int)
         fun hasNoItems()
+
+        /**
+            [Recycler.Item] is a Abstract implementation for any View
+            in ViewGroup inside RecyclerView
+         */
 
         abstract class Item(
             id: Int,
@@ -137,6 +166,10 @@ interface Ui : Visibility, Existence, Enabled {
                 )
         }
 
+        /**
+            [Recycler.Container] is a Abstract implementation for any ViewGroup inside RecyclerView
+         */
+
         abstract class Container(
             id: Int,
             classType: Class<out View>,
@@ -158,6 +191,10 @@ interface Ui : Visibility, Existence, Enabled {
                     )
                 )
         }
+
+        /**
+            [Recycler.Abstract] is a Abstract implementation for RecyclerView
+         */
 
         abstract class Abstract(
             id: Int,
