@@ -59,13 +59,13 @@ class RoomTest {
             )
         )
 
-        dao.saveTerm(value = newTerm)
+        val id = dao.saveTerm(value = newTerm)
         assertEquals(true, dao.isCached(value = termValue))
 
         dao.saveTracks(tracksList)
         tracksList.forEach { track ->
             dao.saveTrackIdByTerm(
-                TrackIdByTermCache(termId = newTerm.id, trackId = track.id)
+                TrackIdByTermCache(termId = id, trackId = track.id)
             )
         }
         assertEquals(tracksList, dao.tracksByTerm(term = termValue))

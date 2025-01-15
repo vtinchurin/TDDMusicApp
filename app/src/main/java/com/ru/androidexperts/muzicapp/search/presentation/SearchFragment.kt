@@ -33,7 +33,7 @@ class SearchFragment :
 
     override fun inflate(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentSearchSongsBinding = FragmentSearchSongsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

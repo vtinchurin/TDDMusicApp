@@ -5,7 +5,6 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import com.ru.androidexperts.muzicapp.R
-import com.ru.androidexperts.muzicapp.core.Id
 import com.ru.androidexperts.muzicapp.core.Ui
 import com.ru.androidexperts.muzicapp.core.assertions.Clickable
 import com.ru.androidexperts.muzicapp.core.assertions.Visibility
@@ -14,7 +13,7 @@ import com.ru.androidexperts.muzicapp.core.matchers.RecyclerViewMatcher
 import com.ru.androidexperts.muzicapp.core.matchers.waitForView
 import org.hamcrest.Matcher
 
-interface ImageButtonUi : Clickable, Visibility, Id {
+interface ImageButtonUi : Clickable, Visibility {
 
     fun assertPlayState()
     fun assertStopState()
@@ -44,7 +43,7 @@ interface ImageButtonUi : Clickable, Visibility, Id {
         override fun waitTillStop() {
             perform(
                 waitForView(
-                    id(),
+                    id,
                     DrawableMatcher(R.drawable.ic_play),
                     5000
                 )

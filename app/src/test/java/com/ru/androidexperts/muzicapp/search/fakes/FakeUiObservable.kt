@@ -26,7 +26,7 @@ interface FakeUiObservable<T : Any> : Playlist<T> {
 
         override fun update(observer: UiObserver<SearchUiState>) {
             this.observer = observer
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 observer.updateUi(cached)
                 order.add(OBSERVABLE_REGISTER)
                 order.add(OBSERVABLE_POST)
@@ -38,7 +38,7 @@ interface FakeUiObservable<T : Any> : Playlist<T> {
         override fun updateUi(data: SearchUiState) {
             cached = data + input
             uiStatesHistory.add(cached)
-            if (!observer.isEmpty()) {
+            if (observer.isNotEmpty()) {
                 observer.updateUi(cached)
                 order.add(OBSERVABLE_POST)
             }

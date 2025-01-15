@@ -9,12 +9,17 @@ import androidx.viewbinding.ViewBinding
 import com.ru.androidexperts.muzicapp.core.uiObservable.UiObserver
 import com.ru.androidexperts.muzicapp.di.ViewModelTag
 
+/**
+ * B - [ViewBinding]
+ * U - [UiState]
+ * V - [ViewModelTag]
+ */
 interface AbstractFragment {
 
-    abstract class Ui<binding : ViewBinding> : Fragment(), AbstractFragment {
-        private var _binding: binding? = null
+    abstract class Ui<B : ViewBinding> : Fragment(), AbstractFragment {
+        private var _binding: B? = null
         protected val binding get() = _binding!!
-        protected abstract fun inflate(inflater: LayoutInflater, container: ViewGroup?): binding
+        protected abstract fun inflate(inflater: LayoutInflater, container: ViewGroup?): B
 
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -31,11 +36,11 @@ interface AbstractFragment {
         }
     }
 
-    abstract class Async<binding : ViewBinding, uiState : UiState, viewModel : ViewModelTag.AbstractAsync<uiState>> :
-        Ui<binding>() {
+    abstract class Async<B : ViewBinding, U : UiState, V : ViewModelTag.AbstractAsync<U>> :
+        Ui<B>() {
 
-        protected abstract val update: UiObserver<uiState>
-        protected lateinit var viewModel: viewModel
+        protected abstract val update: UiObserver<U>
+        protected lateinit var viewModel: V
 
         override fun onResume() {
             super.onResume()

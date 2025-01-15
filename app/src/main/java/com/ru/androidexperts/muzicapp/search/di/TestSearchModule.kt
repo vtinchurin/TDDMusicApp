@@ -21,7 +21,7 @@ class TestSearchModule(private val core: Core) : Module<SearchViewModel> {
             termCache = core.termCache
         )
 
-        val runAsync: RunAsync = RunAsync.Search()
+        val runAsync: RunAsync = RunAsync.Base()
 
         val player: MusicPlayer = MusicPlayerTest()
 

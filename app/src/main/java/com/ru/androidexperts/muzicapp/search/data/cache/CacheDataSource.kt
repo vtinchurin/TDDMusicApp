@@ -16,7 +16,7 @@ interface CacheDataSource {
             val termId = dao.saveTerm(TermsCache(term = term))
             val tracksIds = dao.saveTracks(tracks)
             tracksIds.forEach {
-                dao.saveTrackIdByTerm(TrackIdByTermCache(termId.toInt(), it))
+                dao.saveTrackIdByTerm(TrackIdByTermCache(termId, it))
             }
         }
 
