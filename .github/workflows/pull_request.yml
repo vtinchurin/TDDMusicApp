@@ -1,0 +1,26 @@
+name: Run Tests
+
+on:
+
+  pull_request:
+    branches: [ "develop", "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/checkout@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grand Execute permissions
+        run : chmod +x gradlew
+
+      - name: Build and test
+        run: ./gradlew clean testDebug
