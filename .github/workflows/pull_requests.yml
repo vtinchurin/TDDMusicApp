@@ -24,7 +24,7 @@ jobs:
         run : chmod +x gradlew
 
       - name: Build and test
-        run: ./gradlew test
+        run: ./gradlew testDebugUnitTest
 
       - name: Android Tests Reporter
         uses: FlickerSoul/android-test-report-actions@v1.3.1
