@@ -1,4 +1,4 @@
-package com.ru.androidexperts.muzicapp
+package com.ru.androidexperts.muzicapp.search
 
 import com.ru.androidexperts.muzicapp.search.data.cloud.CloudDataSource
 import com.ru.androidexperts.muzicapp.search.data.cloud.TrackCloud
@@ -46,11 +46,11 @@ class RetrofitTest {
             assertEquals(12, dataList.size)
 
             val expected = TrackCloud(
-                trackId=264539104,
-                trackName="Tomorrow's Industry",
+                trackId=200692683,
+                trackName="I'm Shipping Up to Boston",
                 artistName="Dropkick Murphys",
-                artworkUrl="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/69/30/e2/6930e28c-02b8-46a4-2dfe-cfb8511fe315/075597996609.jpg/100x100bb.jpg",
-                previewUrl="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/dc/95/4fdc95b2-ba1d-4306-2faf-783a3698f4f7/mzaf_7008876201452666705.plus.aac.p.m4a"
+                artworkUrl="https://is1-ssl.mzstatic.com/image/thumb/Music/92/1b/05/mzi.jifetyuy.jpg/100x100bb.jpg",
+                previewUrl="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/f6/f4/c8/f6f4c841-c09f-6841-a1a3-bad674d4eeef/mzaf_10021739629244800269.plus.aac.p.m4a"
             )
             assertEquals(expected, dataList[0])
         } catch (e: Exception) {
