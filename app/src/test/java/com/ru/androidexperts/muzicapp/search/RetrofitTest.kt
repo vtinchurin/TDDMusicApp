@@ -43,14 +43,14 @@ class RetrofitTest {
     fun test_load(): Unit = runBlocking {
         try {
             val dataList = cloudDataSource.load("Dropkick Murphys")
-            assertEquals(12, dataList.size)
+            assertEquals(10, dataList.size)
 
             val expected = TrackCloud(
-                trackId=264539104,
-                trackName="Tomorrow's Industry",
+                trackId=1485050464,
+                trackName="I'm Shipping up to Boston",
                 artistName="Dropkick Murphys",
-                artworkUrl="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/69/30/e2/6930e28c-02b8-46a4-2dfe-cfb8511fe315/075597996609.jpg/100x100bb.jpg",
-                previewUrl="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/dc/95/4fdc95b2-ba1d-4306-2faf-783a3698f4f7/mzaf_7008876201452666705.plus.aac.p.m4a"
+                artworkUrl="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/51/87/bd/5187bdfd-c95c-910f-cbd7-920886443c0d/0045778047260.png/100x100bb.jpg",
+                previewUrl="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/54/10/ee/5410ee29-31c3-33d9-f793-1d0fa46bfa20/mzaf_14032484010004764652.plus.aac.p.m4a"
             )
             assertEquals(expected, dataList[0])
         } catch (e: Exception) {
